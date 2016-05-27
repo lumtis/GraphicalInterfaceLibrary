@@ -3,7 +3,7 @@
 //  projet_c_IG
 //
 
-#include "../include/ei_parser.h"
+#include "ei_parser.h"
 
 int ei_parse_file(char* file_path)
 {

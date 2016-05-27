@@ -8,18 +8,18 @@
 #include "../include/ei_widget.h"
 
 
-ei_widget_t*		ei_widget_create		(ei_widgetclass_name_t	class_name,
-							 ei_widget_t*		parent)
+ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
+			      ei_widget_t* parent)
 {
   
 }
 
-void			ei_widget_destroy		(ei_widget_t*		widget)
+void ei_widget_destroy(ei_widget_t* widget)
 {
   
 }
 
-ei_widget_t*		ei_widget_pick			(ei_point_t*		where)
+ei_widget_t* ei_widget_pick(ei_point_t*	where)
 {
   
 }

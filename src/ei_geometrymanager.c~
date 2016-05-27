@@ -8,22 +8,22 @@
 
 #include "../include/ei_geometrymanager.h"
 
-void			ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager)
+void ei_geometrymanager_register(ei_geometrymanager_t* geometrymanager)
 {
   
 }
 
-ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name)
+ei_geometrymanager_t* ei_geometrymanager_from_name(ei_geometrymanager_name_t name)
 {
   
 }
 
-void			ei_geometrymanager_unmap	(ei_widget_t*		widget)
+void ei_geometrymanager_unmap(ei_widget_t* widget)
 {
   
 }
 
-void 			ei_register_placer_manager 	()
+void ei_register_placer_manager()
 {
   
 }

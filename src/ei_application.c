@@ -7,7 +7,7 @@
  *
  */
 
-#include "../include/ei_application.h"
+#include "ei_application.h"
 
 void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
 {

@@ -9,10 +9,11 @@ INCFLAGS	:= -I${INCLUDES}
 #OPTFLAGS	:= -Os -DNDEBUG
 OPTFLAGS	:= -g
 CCFLAGS		:= -c ${OPTFLAGS} -Wall -std=c99
+SRCDIR		:= ./src
 
 # The list of objects to include in the library
 
-LIBEIOBJS	:= 	
+LIBEIOBJS	:= ${OBJDIR}/ei_application.o
 
 
 
@@ -138,6 +139,12 @@ ${OBJDIR}/minesweeper.o : ${TESTS}/minesweeper.c
 
 ${LIBEI} : ${LIBEIOBJS}
 	ar rcs ${LIBEI} ${LIBEIOBJS}
+
+
+# Builds the object files for the library
+
+${OBJDIR}/ei_application.o : ${SRCDIR}/ei_application.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_application.c -o ${OBJDIR}/ei_application.o
 
 
 
