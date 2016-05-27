@@ -4,6 +4,8 @@
 //
 
 #include "ei_parser.h"
+#include "debug.h"
+
 
 int ei_parse_file(char* file_path)
 {

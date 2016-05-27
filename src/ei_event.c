@@ -7,6 +7,8 @@
  */
 
 #include "ei_event.h"
+#include "debug.h"
+
 
 void		ei_bind			(ei_eventtype_t		eventtype,
 					 ei_widget_t*		widget,
