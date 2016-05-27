@@ -7,14 +7,24 @@
  *
  */
 
-#include "../include/ei_application.h"
+#include "ei_application.h"
+#include "debug.h"
+
 
 void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
 {
   hw_init();
   hw_create_window(main_window_size,fullscreen);
+  
+  // Boucle principale d'entrée
+  ei_app_run();
+  
+  // On termine le widget principale
   hw_quit();
+  
+  ei_app_free();
 }
+
 
 void ei_app_free()
 {

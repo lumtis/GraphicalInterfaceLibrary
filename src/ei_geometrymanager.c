@@ -6,7 +6,9 @@
  *
  */
 
-#include "../include/ei_geometrymanager.h"
+#include "ei_geometrymanager.h"
+#include "debug.h"
+
 
 void ei_geometrymanager_register(ei_geometrymanager_t* geometrymanager)
 {

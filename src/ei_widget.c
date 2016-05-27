@@ -5,7 +5,8 @@
  * 
  */
 
-#include "../include/ei_widget.h"
+#include "ei_widget.h"
+#include "debug.h"
 
 
 
@@ -45,6 +46,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
     
 }
 
+
 void ei_widget_destroy(ei_widget_t* widget)
 {
   if (widget == NULL ) 
@@ -71,6 +73,7 @@ ei_widget_t* ei_widget_pick(ei_point_t*	where)
   
 }
 
+
 void			ei_frame_configure		(ei_widget_t*		widget,
 							 ei_size_t*		requested_size,
 							 const ei_color_t*	color,
@@ -86,6 +89,7 @@ void			ei_frame_configure		(ei_widget_t*		widget,
 {
   
 }
+
 
 void			ei_button_configure		(ei_widget_t*		widget,
 							 ei_size_t*		requested_size,
@@ -105,6 +109,7 @@ void			ei_button_configure		(ei_widget_t*		widget,
 {
   
 }
+
 
 void			ei_toplevel_configure		(ei_widget_t*		widget,
 							 ei_size_t*		requested_size,

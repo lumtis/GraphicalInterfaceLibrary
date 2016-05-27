@@ -9,10 +9,11 @@ INCFLAGS	:= -I${INCLUDES}
 #OPTFLAGS	:= -Os -DNDEBUG
 OPTFLAGS	:= -g
 CCFLAGS		:= -c ${OPTFLAGS} -Wall -std=c99
+SRCDIR		:= ./src
 
 # The list of objects to include in the library
 
-LIBEIOBJS	:= 	
+LIBEIOBJS	:= ${OBJDIR}/ei_application.o ${OBJDIR}/ei_event.o ${OBJDIR}/ei_geometrymanager.o ${OBJDIR}/ei_parser.o ${OBJDIR}/ei_widget.o ${OBJDIR}/ei_widgetclass.o
 
 
 
@@ -139,6 +140,26 @@ ${OBJDIR}/minesweeper.o : ${TESTS}/minesweeper.c
 ${LIBEI} : ${LIBEIOBJS}
 	ar rcs ${LIBEI} ${LIBEIOBJS}
 
+
+# Builds the object files for the library
+
+${OBJDIR}/ei_application.o : ${SRCDIR}/ei_application.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_application.c -o ${OBJDIR}/ei_application.o
+
+${OBJDIR}/ei_event.o : ${SRCDIR}/ei_event.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_event.c -o ${OBJDIR}/ei_event.o
+
+${OBJDIR}/ei_geometrymanager.o : ${SRCDIR}/ei_geometrymanager.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_geometrymanager.c -o ${OBJDIR}/ei_geometrymanager.o
+
+${OBJDIR}/ei_parser.o : ${SRCDIR}/ei_parser.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_parser.c -o ${OBJDIR}/ei_parser.o
+
+${OBJDIR}/ei_widget.o : ${SRCDIR}/ei_widget.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_widget.c -o ${OBJDIR}/ei_widget.o
+
+${OBJDIR}/ei_widgetclass.o : ${SRCDIR}/ei_widgetclass.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_widgetclass.c -o ${OBJDIR}/ei_widgetclass.o
 
 
 # Building of the doxygen documentation.
