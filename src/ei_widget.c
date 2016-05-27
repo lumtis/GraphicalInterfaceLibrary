@@ -60,7 +60,7 @@ void ei_widget_destroy(ei_widget_t* widget)
     else 
       {
 	
-  
+	//TODO le reste de la fonction : faciiiiiiiile 
 	  
   
 }
