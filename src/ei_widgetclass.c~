@@ -6,7 +6,7 @@
  *
  */
 
-#include "../include/ei_widget_class.h"
+#include "ei_widgetclass.h"
 
 static inline char* ei_widgetclass_stringname(ei_widgetclass_name_t name)
 {

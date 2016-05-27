@@ -117,7 +117,7 @@ void			ei_widgetclass_register		(ei_widgetclass_t* widgetclass);
  *
  * @return			The structure describing the class.
  */
-ei_widgetclass_t*	ei_widgetclass_from_name	(ei_widgetclass_name_t name);
+ei_widgetclass_t* ei_widgetclass_from_name(ei_widgetclass_name_t name);
 
 /**
  * \brief	Registers the "frame" widget class in the program. This must be called only

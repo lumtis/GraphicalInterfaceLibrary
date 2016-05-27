@@ -6,12 +6,8 @@
  *
  */
 
-#include "ei_widget_class.h"
+#include "ei_widgetclass.h"
 
-static inline char* ei_widgetclass_stringname(ei_widgetclass_name_t name)
-{
-  
-}
 
 void ei_widgetclass_register(ei_widgetclass_t* widgetclass)
 {
