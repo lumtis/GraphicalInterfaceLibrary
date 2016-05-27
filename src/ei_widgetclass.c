@@ -17,60 +17,6 @@
 ei_widgetclass_t* wc = NULL;
 
 
-/**
- *********************************************************************************
- * Fonctions pour les frames
- */
-
-void* frameAllocfunc()
-{
-    void* ptr;
-    int size = 0;
-    
-    size += sizeof(ei_widget_t*);
-    size += sizeof(ei_size_t*);
-    size += sizeof(const ei_color_t*);
-    size += sizeof(int*);
-    size += sizeof(ei_relief_t*);
-    size += sizeof(char**);
-    size += sizeof(ei_font_t*);
-    size += sizeof(ei_color_t*);
-    size += sizeof(ei_anchor_t*);
-    size += sizeof(ei_surface_t*);
-    size += sizeof(ei_rect_t**);
-    size += sizeof(ei_anchor_t*);
-  
-    ptr = (void*)calloc(1,size);
-    
-    return ptr;
-}
-
-void frameReleasefunc(struct ei_widget_t* widget)
-{
-    
-}
-
-void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
-{
-  
-}
-			       
-void frameSetdefaultsfunc(struct ei_widget_t* widget)
-{
-  
-}
-
-void frameGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
-{
-  
-}
-
-
-/**
- *********************************************************************************
- * !Fonctions pour les frames
- */
-
 
 void ei_widgetclass_register(ei_widgetclass_t* widgetclass)
 {
@@ -109,11 +55,11 @@ void ei_frame_register_class()
     ei_widgetclass_t* frame = malloc(sizeof(ei_widgetclass_t));
      
     strcpy(frame->name, "frame");
-    frame->frameAllocfunc;
-    frame->frameReleasefunc;
-    frame->frameDrawfunc;
-    frame->frameSetdefaultsfunc;
-    frame->frameGeomnotifyfunc;
+    frame->allocfunc = frameAllocfunc;
+    frame->releasefunc = frameReleasefunc;
+    frame->drawfunc = frameDrawfunc;
+    frame->setdefaultsfunc = frameSetdefaultsfunc;
+    frame->geomnotifyfunc = frameGeomnotifyfunc;
     frame->next = NULL;
     
     ei_widgetclass_register(frame);

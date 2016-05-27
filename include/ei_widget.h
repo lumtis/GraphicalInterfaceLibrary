@@ -21,24 +21,7 @@ struct ei_geometry_param_t;
  * \brief	Fields common to all types of widget. Every widget classes specializes this base
  *		class by adding its own fields. 
  */
-typedef struct ei_widget_t {
-	ei_widgetclass_t*	wclass;		///< The class of widget of this widget. Avoid the field name "class" which is a keyword in C++.
-	uint32_t		pick_id;	///< Id of this widget in the picking offscreen.
-	ei_color_t*		pick_color;	///< pick_id encoded as a color.
-
-	/* Widget Hierachy Management */
-	struct ei_widget_t*	parent;		///< Pointer to the parent of this widget.
-	struct ei_widget_t*	children_head;	///< Pointer to the first child of this widget.	Children are chained with the "next_sibling" field.
-	struct ei_widget_t*	children_tail;	///< Pointer to the last child of this widget.
-	struct ei_widget_t*	next_sibling;	///< Pointer to the next child of this widget's parent widget.
-
-	/* Geometry Management */
-	struct ei_geometry_param_t*
-				geom_params;	///< Pointer to the geometry management parameters for this widget. If NULL, the widget is not currently managed and thus, is not mapped on the screen.
-	ei_size_t		requested_size;	///< Size requested by the widget (big enough for its label, for example), or by the programmer. This can be different than its screen size defined by the placer.
-	ei_rect_t		screen_location;///< Position and size of the widget expressed in the root window reference.
-	ei_rect_t*		content_rect;	///< Where to place children, when this widget is used as a container. By defaults, points to the screen_location.
-} ei_widget_t;
+c
 
 
 struct ei_event_t;
