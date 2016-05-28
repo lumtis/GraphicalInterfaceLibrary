@@ -2,7 +2,7 @@
  *  @file	widgetclass.h
  *  @brief	Definition and registration of widget classes.
  *
- *  \author 
+ *  \author
  *  Created by François Bérard on 02.12.11.
  *  Copyright 2011 Ensimag. All rights reserved.
  *
@@ -13,8 +13,9 @@
 
 #include "hw_interface.h"
 #include "ei_draw.h"
-
-
+#include "ei_widget_frame.h"
+#include "ei_widget_button.h"
+#include "ei_widget_toplevel.h"
 
 
 /**
