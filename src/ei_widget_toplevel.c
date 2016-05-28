@@ -10,7 +10,15 @@ void* toplevelAllocfunc()
 
 void toplevelReleasefunc(struct ei_widget_t* widget)
 {
+  // On convertie le widget pour effectuer les opérations
+  ei_widget_toplevel_t* wtl = (ei_widget_toplevel_t*)widget;
 
+  int* border_width,
+  const ei_color_t*	color,
+  char** title,
+  ei_bool_t* closable,
+  ei_axis_set_t* resizable,
+  ei_size_t**	min_size
 }
 
 

@@ -3,6 +3,7 @@
 
 #include "ei_widget.h"
 #include "ei_widgetclass.h"
+#include "ei_widget_frame.h"
 
 typedef struct ei_widget_button_t
 {
@@ -10,8 +11,7 @@ typedef struct ei_widget_button_t
 
 	// Specifique à button
 	int* border_width,
-  int* border_width,
-  int* corner_radius,
+	ei_color_t*	color,
   ei_relief_t* relief,
   char** text,
   ei_font_t* text_font,
@@ -20,6 +20,7 @@ typedef struct ei_widget_button_t
   ei_surface_t*	img,
   ei_rect_t**	img_rect,
   ei_anchor_t* img_anchor,
+	int* corner_radius,
   ei_callback_t* callback,
   void** user_param
 } ei_widget_button_t;

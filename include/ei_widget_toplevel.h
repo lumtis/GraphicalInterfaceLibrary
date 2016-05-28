@@ -10,6 +10,7 @@ typedef struct ei_widget_toplevel_t
 
 	// Specifique à toplevel
   int* border_width,
+	ei_color_t*	color,
   char** title,
   ei_bool_t* closable,
   ei_axis_set_t* resizable,
