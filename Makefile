@@ -13,7 +13,7 @@ SRCDIR		:= ./src
 
 # The list of objects to include in the library
 
-LIBEIOBJS	:= ${OBJDIR}/ei_application.o ${OBJDIR}/ei_event.o ${OBJDIR}/ei_geometrymanager.o ${OBJDIR}/ei_parser.o ${OBJDIR}/ei_widget.o ${OBJDIR}/ei_widgetclass.o
+LIBEIOBJS	:= ${OBJDIR}/ei_application.o ${OBJDIR}/ei_event.o ${OBJDIR}/ei_geometrymanager.o ${OBJDIR}/ei_parser.o ${OBJDIR}/ei_widget.o ${OBJDIR}/ei_widgetclass.o ${OBJDIR}/ei_widget_frame.o ${OBJDIR}/ei_widget_button.o ${OBJDIR}/ei_widget_toplevel.o
 
 
 
@@ -161,6 +161,18 @@ ${OBJDIR}/ei_widget.o : ${SRCDIR}/ei_widget.c
 ${OBJDIR}/ei_widgetclass.o : ${SRCDIR}/ei_widgetclass.c
 	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_widgetclass.c -o ${OBJDIR}/ei_widgetclass.o
 
+${OBJDIR}/ei_widget_frame.o : ${SRCDIR}/ei_widget_frame.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_widget_frame.c -o ${OBJDIR}/ei_widget_frame.o
+
+
+${OBJDIR}/ei_widget_button.o : ${SRCDIR}/ei_widget_button.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_widget_button.c -o ${OBJDIR}/ei_widget_button.o
+
+
+${OBJDIR}/ei_widget_toplevel.o : ${SRCDIR}/ei_widget_toplevel.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_widget_toplevel.c -o ${OBJDIR}/ei_widget_toplevel.o
+
+	
 
 # Building of the doxygen documentation.
 

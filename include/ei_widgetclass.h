@@ -2,7 +2,7 @@
  *  @file	widgetclass.h
  *  @brief	Definition and registration of widget classes.
  *
- *  \author 
+ *  \author
  *  Created by François Bérard on 02.12.11.
  *  Copyright 2011 Ensimag. All rights reserved.
  *
@@ -13,8 +13,9 @@
 
 #include "hw_interface.h"
 #include "ei_draw.h"
-
-
+#include "ei_widget_frame.h"
+#include "ei_widget_button.h"
+#include "ei_widget_toplevel.h"
 
 
 /**
@@ -87,8 +88,6 @@ typedef struct ei_widgetclass_t {
 	ei_widgetclass_geomnotifyfunc_t		geomnotifyfunc;		///< The function that is called to notify an instance of widget of this class that its geometry has changed.
 	struct ei_widgetclass_t*		next;			///< A pointer to the next instance of ei_widget_class_t, allows widget class descriptions to be chained.
 } ei_widgetclass_t;
-
-
 
 
 
