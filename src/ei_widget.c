@@ -8,7 +8,24 @@
 #include "ei_widget.h"
 #include "debug.h"
 
+/**
+ * @name ei_widget_destroy_rec
+ */
+void ei_widget_destroy_rec(ei_widget_t * widget)
+{
+  if (widget == NULL )
+    return;
+  else 
+    {
+      if (widget->children_head != NULL )
+	  ei_widget_destroy_rec(widget->children_head);
+      if (widget->next_sibling != NULL )
+	  ei_widget_destroy_rec(widget->next_sibling);
 
+      widget->wclass->releasefunc(widget);
+      free(widget);
+    }
+}
 
 ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 			      ei_widget_t* parent)
@@ -23,6 +40,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
   else 
     { 
       new_widget = (ei_widget*)classe_new_widget->allocfunc();
+      classe_new_widget->setdefaultsfunc(new_widget);
       new_widget->wclass = classe_new_widget;
       
       new_widget->parent =parent;
@@ -49,20 +67,53 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 
 void ei_widget_destroy(ei_widget_t* widget)
 {
+  ei_widget *p;
   if (widget == NULL ) 
     return ;
   else 
     if (widget->parent== NULL)
-    {
-      if (widget->children_head == NULL)
-	widget->wclass->releasefunc();
-      else 
-	  releaserec(children_head);
-    }
-    else 
+      {  
+      ei_widget_destroy_rec(widget->children_head);
+      widget->wclass->releasefunc(widget);
+      free(widget);
+      }
+    else
       {
+	p=widget->parent->children_head;
+	if ( p == widget)
+	  {
+	    if (p==widget->parent_children_tail)
+	      {
+		widget->parent->children_head = NULL;
+		widget->parent->children_tail= NULL;
+		ei_widget_destroy_rec(widget->children_head);
+		widget->wclass->releasefunc(widget);
+		free(widget);
+	      }
+	    else
+	      {
+		widget->parent->children_head= p.next_sibling;
+		ei_widget_destroy_rec(widget->children_head);
+		widget->wclass->releasefunc(widget);
+		free(widget);
+	      }
+	  }
+	else
+	  {
+	    while ( p.next_sibling != widget )
+	      {
+		 p=p.next_sibling;
+	      }
+	    p.next_sibling=widget.next_sibling;
+	    ei_widget_destroy_rec(widget->children_head);
+	    widget->wclass->releasefunc(widget);
+	    free(widget);
+	    
+	  }
+      }
+
 	
-	//TODO le reste de la fonction : faciiiiiiiile 
+
 	  
   
 }
