@@ -12,16 +12,13 @@ void frameReleasefunc(struct ei_widget_t* widget)
   // On convertie le widget pour effectuer les opérations
   ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
 
-  int* border_width,
-  const ei_color_t*	color,
-	ei_relief_t* relief,
-	char** text,
-	ei_font_t* text_font,
-	ei_color_t* text_color,
-	ei_anchor_t* text_anchor,
-	ei_surface_t*	img,
-	ei_rect_t**	img_rect,
-	ei_anchor_t* img_anchor
+  // on libere tout les membres qui ont ete alloués
+	if(wf->text != NULL)
+    free(wf->text);
+	if(wf->img_rect != NULL)
+    free(wf->img_rect);
+  if(wf->img != NULL)
+    free(wf->img);
 }
 
 void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -31,7 +28,19 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
 
 void frameSetdefaultsfunc(struct ei_widget_t* widget)
 {
+  // On convertie le widget pour effectuer les opérations
+  ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
 
+  wf->border_width = 0;
+	wf->color = ei_default_background_color;
+	wf->relief = ei_relief_none;
+	wf->text = NULL;
+	wf->text_font = ei_default_font;
+	wf->text_color = ei_font_default_color;
+	wf->text_anchor = ei_anc_center;
+	wf->img = NULL;
+	wf->img_rect = NULL;
+	wf->img_anchor = ei_anc_center;
 }
 
 void frameGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)

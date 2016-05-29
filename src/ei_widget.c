@@ -15,7 +15,7 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
 {
   if (widget == NULL )
     return;
-  else 
+  else
     {
       if (widget->children_head != NULL )
 	  ei_widget_destroy_rec(widget->children_head);
@@ -57,18 +57,17 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 					parent->children_tail = new_widget ;
 		  }
   }
-  // TODO : initialisation de pick_ id , pick_color , et parametre géometrique
 }
 
 
 void ei_widget_destroy(ei_widget_t* widget)
 {
   ei_widget *p;
-  if (widget == NULL ) 
+  if (widget == NULL )
     return ;
-  else 
+  else
     if (widget->parent== NULL)
-      {  
+      {
 	ei_widget_destroy_rec(widget->children_head);
 	widget->wclass->releasefunc(widget);
 	free(widget);
@@ -104,7 +103,7 @@ void ei_widget_destroy(ei_widget_t* widget)
 	    ei_widget_destroy_rec(widget->children_head);
 	    widget->wclass->releasefunc(widget);
 	    free(widget);
-	    
+
 	  }
       }
 }
@@ -129,7 +128,42 @@ void			ei_frame_configure		(ei_widget_t*		widget,
 							 ei_rect_t**		img_rect,
 							 ei_anchor_t*		img_anchor)
 {
+  ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
 
+  // TODO : requested_size
+
+  if(color != NULL)
+    wf->color = *color;
+  if(border_width != NULL)
+    wf->border_width = *border_width;
+  if(relief != NULL)
+    wf->relief = *relief;
+  if(text != NULL)
+  {
+    if(wf->text != NULL)
+      free(wf->text);
+    wf->text = *text;
+  }
+  if(text_font != NULL)
+    wf->text_font = *text_font;
+  if(text_color != NULL)
+    wf->text_color = *text_color;
+  if(text_anchor != NULL)
+    wf->text_anchor = *text_anchor;
+  if(img != NULL)
+  {
+    if(wf->img != NULL)
+      free(wf->img);
+    wf->img = *img;
+  }
+  if(img_rect != NULL)
+  {
+    if(wf->img_rect != NULL)
+      free(wf->img_rect);
+    wf->img_rect = *img_rect;
+  }
+  if(img_anchor != NULL)
+    wf->img_anchor = *img_anchor;
 }
 
 
@@ -149,7 +183,22 @@ void			ei_button_configure		(ei_widget_t*		widget,
 							 ei_callback_t*		callback,
 							 void**			user_param)
 {
+  ei_widget_button_t* wb = (ei_widget_button_t*)widget;
 
+  // TODO : requested_size
+
+  if(corner_radius != NULL)
+    wb->corner_radius = *corner_radius;
+  if(callback != NULL)
+    wb->callback = *callback;
+  if(user_param != NULL)
+  {
+    if(wb->user_param != NULL)
+      free(wb->user_param);
+    wb->user_param = *user_param;
+  }
+
+  ei_frame_configure(widget, requested_size, color, border_width, relief, text, text_font, text_color, text_anchor, img, img_rect, img_anchor);
 }
 
 
@@ -162,5 +211,28 @@ void			ei_toplevel_configure		(ei_widget_t*		widget,
 							 ei_axis_set_t*		resizable,
 						 	 ei_size_t**		min_size)
 {
+  ei_widget_toplevel_t* wtl = (ei_widget_toplevel_t*)widget;
 
+  // TODO : requested_size
+
+  if(color != NULL)
+    wtl->color = *color;
+  if(border_width != NULL)
+    wtl->border_width = *border_width;
+  if(title != NULL)
+  {
+    if(wtl->title != NULL)
+      free(wtl->title);
+    wtl->title = *title;
+  }
+  if(closable != NULL)
+    wtl->closable = *closable;
+  if(resizable != NULL)
+    wtl->resizable = *resizable;
+  if(min_size != NULL)
+  {
+    if(wtl->title != NULL)
+      free(wtl->title);
+    wtl->min_size = *min_size;
+  }
 }
