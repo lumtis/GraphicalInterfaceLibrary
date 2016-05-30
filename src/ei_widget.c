@@ -34,9 +34,9 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
   ei_widgetclasse_t * classe_new_widget = ei_widgetclass_from_name(class_name);
 
   if ( classe_new_widget == NULL)
-    	return NULL;
+    return NULL;
   else
-  {
+    {
       new_widget = (ei_widget*)classe_new_widget->allocfunc();
       classe_new_widget->setdefaultsfunc(new_widget);
       new_widget->wclass = classe_new_widget;
@@ -45,18 +45,18 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
       new_widget->children_head= NULL;
       new_widget->children_tail = NULL ;
       new_widget->next_sibling = NULL ;
-    	// précondition : le parent lui même n'est jamais NULL
-  		if (parent->children_head = NULL )
-		  {
-					parent->children_head=new_widget;
-						parent->children_tail=new_widget;
-		  }
-		  else
-		  {
-					parent->children_tail->next_sibling= new_widget ;
-					parent->children_tail = new_widget ;
-		  }
-  }
+      // précondition : le parent lui même n'est jamais NULL
+      if (parent->children_head == NULL )
+	{
+	  parent->children_head=new_widget;
+	  parent->children_tail=new_widget;
+	}
+      else
+	{
+	  parent->children_tail->next_sibling= new_widget ;
+	  parent->children_tail = new_widget ;
+	}
+    }
   // TODO : initialisation de pick_ id , pick_color , et parametre géometrique
 }
 
