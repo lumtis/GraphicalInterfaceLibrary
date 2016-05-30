@@ -2,7 +2,7 @@
  * @file	ei_widget.h
  *
  * @brief 	API for widgets management: creation, configuration, hierarchy, redisplay.
- *
+ * 
  *  Created by François Bérard on 30.12.11.
  *  Copyright 2011 Ensimag. All rights reserved.
  */
@@ -19,25 +19,26 @@ struct ei_geometry_param_t;
 
 /**
  * \brief	Fields common to all types of widget. Every widget classes specializes this base
- *		class by adding its own fields.
+ *		class by adding its own fields. 
  */
- typedef struct ei_widget_t {
- 	ei_widgetclass_t*	wclass;		///< The class of widget of this widget. Avoid the field name "class" which is a keyword in C++.
- 	uint32_t		pick_id;	///< Id of this widget in the picking offscreen.
- 	ei_color_t*		pick_color;	///< pick_id encoded as a color.
+typedef struct ei_widget_t {
+	ei_widgetclass_t*	wclass;		///< The class of widget of this widget. Avoid the field name "class" which is a keyword in C++.
+	uint32_t		pick_id;	///< Id of this widget in the picking offscreen.
+	ei_color_t*		pick_color;	///< pick_id encoded as a color.
 
- 	/* Widget Hierachy Management */
- 	struct ei_widget_t*	parent;		///< Pointer to the parent of this widget.
- 	struct ei_widget_t*	children_head;	///< Pointer to the first child of this widget.	Children are chained with the "next_sibling" field.
- 	struct ei_widget_t*	children_tail;	///< Pointer to the last child of this widget.
- 	struct ei_widget_t*	next_sibling;	///< Pointer to the next child of this widget's parent widget.
+	/* Widget Hierachy Management */
+	struct ei_widget_t*	parent;		///< Pointer to the parent of this widget.
+	struct ei_widget_t*	children_head;	///< Pointer to the first child of this widget.	Children are chained with the "next_sibling" field.
+	struct ei_widget_t*	children_tail;	///< Pointer to the last child of this widget.
+	struct ei_widget_t*	next_sibling;	///< Pointer to the next child of this widget's parent widget.
 
- 	/* Geometry Management */
- 	struct ei_geometry_param_t* ;	///< Pointer to the geometry management parameters for this widget. If NULL, the widget is not currently managed and thus, is not mapped on the screen.
- 	ei_size_t		requested_size;	///< Size requested by the widget (big enough for its label, for example), or by the programmer. This can be different than its screen size defined by the placer.
- 	ei_rect_t		screen_location;///< Position and size of the widget expressed in the root window reference.
- 	ei_rect_t*		content_rect;	///< Where to place children, when this widget is used as a container. By defaults, points to the screen_location.
- } ei_widget_t;
+	/* Geometry Management */
+	struct ei_geometry_param_t*
+				geom_params;	///< Pointer to the geometry management parameters for this widget. If NULL, the widget is not currently managed and thus, is not mapped on the screen.
+	ei_size_t		requested_size;	///< Size requested by the widget (big enough for its label, for example), or by the programmer. This can be different than its screen size defined by the placer.
+	ei_rect_t		screen_location;///< Position and size of the widget expressed in the root window reference.
+	ei_rect_t*		content_rect;	///< Where to place children, when this widget is used as a container. By defaults, points to the screen_location.
+} ei_widget_t;
 
 
 struct ei_event_t;
@@ -124,7 +125,7 @@ ei_widget_t*		ei_widget_pick			(ei_point_t*		where);
  *				parameter "text" and "img" should be used (i.e. non-NULL). Defaults
  *				to NULL.
  * @param	text_font	The font used to display the text. Defaults to \ref ei_default_font.
- * @param	text_color	The color used to display the text. Defaults to
+ * @param	text_color	The color used to display the text. Defaults to 
  *				\ref ei_font_default_color.
  * @param	text_anchor	The anchor of the text, i.e. where it is placed whithin the widget
  *				when the size of the widget is bigger than the size of the text.

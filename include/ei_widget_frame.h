@@ -7,7 +7,7 @@
 
 typedef struct ei_widget_frame_t
 {
-  ei_widget_t w;
+  struct ei_widget_t w;
 
   // Specifique à frame
   int border_width;

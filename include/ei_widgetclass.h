@@ -2,7 +2,7 @@
  *  @file	widgetclass.h
  *  @brief	Definition and registration of widget classes.
  *
- *  \author
+ *  \author 
  *  Created by François Bérard on 02.12.11.
  *  Copyright 2011 Ensimag. All rights reserved.
  *
@@ -13,9 +13,8 @@
 
 #include "hw_interface.h"
 #include "ei_draw.h"
-#include "ei_widget_frame.h"
-#include "ei_widget_button.h"
-#include "ei_widget_toplevel.h"
+
+
 
 
 /**
@@ -91,6 +90,8 @@ typedef struct ei_widgetclass_t {
 
 
 
+
+
 /**
  * \brief	Returns the string of the name of a class.
  *
@@ -116,7 +117,7 @@ void			ei_widgetclass_register		(ei_widgetclass_t* widgetclass);
  *
  * @return			The structure describing the class.
  */
-ei_widgetclass_t* ei_widgetclass_from_name(ei_widgetclass_name_t name);
+ei_widgetclass_t*	ei_widgetclass_from_name	(ei_widgetclass_name_t name);
 
 /**
  * \brief	Registers the "frame" widget class in the program. This must be called only

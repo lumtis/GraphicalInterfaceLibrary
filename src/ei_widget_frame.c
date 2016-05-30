@@ -71,12 +71,12 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     freeLinkedPoint(cadre);
 
     // Texte
-    if (wf->text != NULL) 
-      ei_draw_widget_text(surface, widget, wf->text, wf->text_font, wf->text_color, wf->text_anchor);
+    //if (wf->text != NULL) 
+      //ei_draw_text(surface, widget, wf->text, wf->text_font, wf->text_color, wf->text_anchor);
 
     // Image
-    if (wf->img != NULL) 
-      ei_draw_widget_img(surface, widget, wf->img, wf->img_rect, wf->img_anchor, 0);
+    //if (wf->img != NULL) 
+      //ei_draw_img(surface, widget, wf->img, wf->img_rect, wf->img_anchor, 0);
 }
 
 

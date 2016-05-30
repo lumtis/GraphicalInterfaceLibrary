@@ -7,7 +7,7 @@
 
 typedef struct ei_widget_button_t
 {
-	ei_widget_t w;
+	struct ei_widget_t w;
 
 	// Specifique à button
 	int border_width;
@@ -22,7 +22,7 @@ typedef struct ei_widget_button_t
 	ei_anchor_t img_anchor;
 	int corner_radius;
 	ei_callback_t callback;
-	void* user_param
+	void* user_param;
 } ei_widget_button_t;
 
 

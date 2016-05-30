@@ -6,7 +6,7 @@
 
 typedef struct ei_widget_toplevel_t
 {
-	ei_widget_t w;
+	struct ei_widget_t w;
 
 	// Specifique à toplevel
 	int border_width;
@@ -14,8 +14,8 @@ typedef struct ei_widget_toplevel_t
 	char* title;
 	ei_bool_t closable;
 	ei_axis_set_t resizable;
-	ei_size_t *min_size
-} ei_widget_frame_t;
+	ei_size_t *min_size;
+} ei_widget_toplevel_t;
 
 
 void* toplevelAllocfunc();
