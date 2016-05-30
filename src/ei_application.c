@@ -11,6 +11,7 @@
 #include "debug.h"
 #include "ei_widgetclass.h"
 
+
 ei_widget_frame_t * racine ;
 
 ei_surface_t window;
@@ -57,7 +58,7 @@ void ei_app_free()
 
 void ei_app_run()
 {
-  frameDrawfunc(racine, window, windowpick,racine->content_rect);
+  frameDrawfunc(racine, window, windowpick,racine->w.content_rect);
   ei_app_run_rec(racine->children_head, window,windowpick);
   getchar();
 }
