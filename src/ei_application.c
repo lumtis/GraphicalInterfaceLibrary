@@ -9,12 +9,15 @@
 
 #include "ei_application.h"
 #include "debug.h"
+#include "ei_widgetclass.h"
+
 
 
 void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
 {
   hw_init();
   hw_create_window(main_window_size,fullscreen);
+  ei_widgetclass_register(frame);
   
   // Boucle principale d'entrée
   ei_app_run();
