@@ -15,6 +15,7 @@
  */
 ei_geometrymanager_t* gm = NULL;
 
+
 void ei_geometrymanager_register(ei_geometrymanager_t* geometrymanager)
 {
   ei_geometrymanager_t* tmp;
@@ -30,7 +31,6 @@ void ei_geometrymanager_register(ei_geometrymanager_t* geometrymanager)
 
     }
 }
-
 
 ei_geometrymanager_t* ei_geometrymanager_from_name(ei_geometrymanager_name_t name)
 {

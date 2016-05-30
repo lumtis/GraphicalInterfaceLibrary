@@ -6,10 +6,7 @@
  *
  */
 
-#include "ei_geometrymanager.h"
-#include "debug.h"
 #include "ei_geometry_placer.h"
-#include "ei_widget.h"
 
 void placerRunfunc(struct ei_widget_t*	widget) //recalcule la position du widget dans son parent
 {
@@ -32,6 +29,5 @@ void placerRunfunc(struct ei_widget_t*	widget) //recalcule la position du widget
 
 void placerReleasefunc(struct ei_widget_t* widget)
 {
-  ei_geometrymanager_unmap(widget); //Retire le widget de l'ecran
-  
+    
 }

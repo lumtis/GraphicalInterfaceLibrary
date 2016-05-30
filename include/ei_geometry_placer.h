@@ -2,6 +2,8 @@
 #define EI_GEOMETRY_PLACER
 
 #include "ei_geometrymanager.h"
+#include "debug.h"
+#include "ei_widget.h"
 
 typedef struct ei_geometry_placer_t
 {
@@ -10,7 +12,7 @@ typedef struct ei_geometry_placer_t
 	//specifique a placer
 	
 	ei_widget_t* widget,
-	ei_anchor_t* anchor,
+	ei_anchor_t anchor,
 	int x,
 	int y,
 	int width,
@@ -24,3 +26,6 @@ typedef struct ei_geometry_placer_t
 
 void placerRunfunc(struct ei_widget_t*	widget);
 void placerReleasefunc(struct ei_widget_t* widget);
+
+
+#endif
