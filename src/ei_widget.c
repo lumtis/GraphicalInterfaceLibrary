@@ -45,7 +45,8 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
     new_widget->children_head= NULL;
     new_widget->children_tail = NULL ;
     new_widget->next_sibling = NULL ;
-    // précondition : le parent lui même n'est jamais NULL
+    
+    // precondition : le parent lui même n'est jamais NULL
     if (parent->children_head = NULL )
     {
       parent->children_head=new_widget;
