@@ -1,5 +1,5 @@
 
-#include "ei_widget_fame.h"
+#include "ei_widget_frame.h"
 
 void* frameAllocfunc()
 {
