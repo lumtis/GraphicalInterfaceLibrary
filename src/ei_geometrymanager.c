@@ -49,8 +49,12 @@ ei_geometrymanager_t* ei_geometrymanager_from_name(ei_geometrymanager_name_t nam
 
 
 void ei_geometrymanager_unmap(ei_widget_t* widget)
-{
-  widget->screen_location
+{  
+  widget->screen_location.top_left.x = 0; //place le widget a la position (0,0)
+  widget->screen_location.top_left.y = 0;
+  widget->screen_location.size = 0; // la taille du widget est reduite a 0
+  widget->geom_params->releasefunc(); //on appelle la fonction release du gestionnaire de geometrie qui gere le widget
+  free(widget->geom_params); //on libere les parametres geometriques du widget
 }
 
 

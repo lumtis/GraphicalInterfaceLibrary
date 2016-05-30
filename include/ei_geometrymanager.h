@@ -13,7 +13,9 @@
 
 #include "ei_types.h"
 #include "ei_widget.h"
-
+free(wb->text);
+  free(wb->img_rect);
+  free(wb->user_param);
 
 /**
  * \brief	A name of a geometry manager.

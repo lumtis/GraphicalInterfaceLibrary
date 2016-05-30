@@ -9,16 +9,16 @@ typedef struct ei_widget_frame_t
 	ei_widget_t w;
 
 	// Specifique à frame
-	int* border_width,
-	ei_color_t*	color,
-	ei_relief_t* relief,
-	char** text,
-	ei_font_t* text_font,
-	ei_color_t* text_color,
-	ei_anchor_t* text_anchor,
-	ei_surface_t*	img,
-	ei_rect_t**	img_rect,
-	ei_anchor_t* img_anchor
+	int border_width,
+	ei_color_t	color,
+	ei_relief_t relief,
+	char* text,
+	ei_font_t text_font,
+	ei_color_t text_color,
+	ei_anchor_t text_anchor,
+	ei_surface_t	img,
+	ei_rect_t*	img_rect,
+	ei_anchor_t img_anchor
 } ei_widget_frame_t;
 
 
