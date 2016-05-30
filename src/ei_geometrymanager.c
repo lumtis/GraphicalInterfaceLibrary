@@ -18,57 +18,56 @@ ei_geometrymanager_t* gm = NULL;
 
 void ei_geometrymanager_register(ei_geometrymanager_t* geometrymanager)
 {
-  ei_geometrymanager_t* tmp;
-  
+    ei_geometrymanager_t* tmp;
+
     // s'il n'y a pas de classe on la definit comme la premiere
     if(gm == NULL)
-	gm = geometrymanager;
+	     gm = geometrymanager;
     else
     {
-	tmp = gm;
-	for(tmp = gm; tmp->next != NULL; tmp = tmp->next);
-	tmp->next = geometrymanager;
-
+      	tmp = gm;
+      	for(tmp = gm; tmp->next != NULL; tmp = tmp->next);
+      	tmp->next = geometrymanager;
     }
 }
 
 ei_geometrymanager_t* ei_geometrymanager_from_name(ei_geometrymanager_name_t name)
 {
-   ei_geometrymanager_t* tmp;
-  
+    ei_geometrymanager_t* tmp;
+
     for(tmp = gm; tmp != NULL; tmp = tmp->next)
     {
-	if(!strcmp(tmp->name, name))
-	    return tmp;
+	      if(!strcmp(tmp->name, name))
+            return tmp;
     }
-    
+
     PRINT_DEBUG("ei_geometrymanager_from_name : classe non trouvee");
-    
+
     return NULL;
 }
 
 
 
 void ei_geometrymanager_unmap(ei_widget_t* widget)
-{  
-  widget->screen_location.top_left.x = 0; //place le widget a la position (0,0)
-  widget->screen_location.top_left.y = 0;
-  widget->screen_location.size = 0; // la taille du widget est reduite a 0
-  widget->geom_params->releasefunc(); //on appelle la fonction release du gestionnaire de geometrie qui gere le widget
-  free(widget->geom_params); //on libere les parametres geometriques du widget
+{
+    widget->screen_location.top_left.x = 0; //place le widget a la position (0,0)
+    widget->screen_location.top_left.y = 0;
+    widget->screen_location.size = 0; // la taille du widget est reduite a 0
+    widget->geom_params->releasefunc(); //on appelle la fonction release du gestionnaire de geometrie qui gere le widget
+    free(widget->geom_params); //on libere les parametres geometriques du widget
 }
 
 
 
 void ei_register_placer_manager()
 {
-  ei_geometrymanager_t* placer = malloc(sizeof(struct(ei_geometrymanager_t));
-  strcpy(placer->name, "placer");
-  	placer->runfunc=placerRunfunc;
-	placer->releasefunc=placerReleasefunc;
-	placer->next=NULL;
-	
-  ei_geometrymanager_register(placer);
+    ei_geometrymanager_t* placer = malloc(sizeof(struct(ei_geometrymanager_t));
+    strcpy(placer->name, "placer");
+    placer->runfunc=placerRunfunc;
+  	placer->releasefunc=placerReleasefunc;
+  	placer->next=NULL;
+
+    ei_geometrymanager_register(placer);
 }
 
 void	ei_place	(ei_widget_t*		widget,
@@ -82,54 +81,37 @@ void	ei_place	(ei_widget_t*		widget,
 			 float*			rel_width,
 			 float*			rel_height)
 {
-  ei_geometry_placer_t* pl = (ei_geometry_placer_t*) manager;
-  if (widget->geom_params != ei_geometry_placer_t)
-  {
-    widget->geom_params = NULL;
-  }
-  if (anchor != NULL)
-  {
-    pl->anchor = *anchor;
-  }
-  
-  if (x != NULL)
-  {
-    pl->x = *x;
-  }
-  
-  if (y != NULL)
-  {
-    pl->y = *y;
-  }
-  
-  if (width != NULL)
-  {
-    pl->width = *width;
-  }
-  
-  if (height != NULL)
-  {
-    pl->height = *height;
-  }
-  
-  if (rel_x != NULL)
-  {
-    pl->rel_x = *rel_x;
-  }
-  
-  if (rel_y != NULL)
-  {
-    pl->rel_y = *rel_y;
-  }
-  
-  if (rel_width != NULL)
-  {
-    pl->rel_width = *rel_width;
-  }
-  
-  if (rel_height != NULL)
-  {
-    pl->rel_height = *rel_height;
-  }
-  widget->geom_params = pl;
+    ei_geometry_placer_t* pl = (ei_geometry_placer_t*) manager;
+
+    if (widget->geom_params != ei_geometry_placer_t)
+        widget->geom_params = NULL;
+
+    if (anchor != NULL)
+        pl->anchor = *anchor;
+
+    if (x != NULL)
+        pl->x = *x;
+
+    if (y != NULL)
+        pl->y = *y;
+
+    if (width != NULL)
+        pl->width = *width;
+
+    if (height != NULL)
+        pl->height = *height;
+
+    if (rel_x != NULL)
+        pl->rel_x = *rel_x;
+
+    if (rel_y != NULL)
+        pl->rel_y = *rel_y;
+
+    if (rel_width != NULL)
+        pl->rel_width = *rel_width;
+
+    if (rel_height != NULL)
+        pl->rel_height = *rel_height;
+
+    widget->geom_params = pl;
 }

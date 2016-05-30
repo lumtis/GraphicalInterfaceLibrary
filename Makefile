@@ -171,6 +171,12 @@ ${OBJDIR}/ei_widget_button.o : ${SRCDIR}/ei_widget_button.c
 
 ${OBJDIR}/ei_widget_toplevel.o : ${SRCDIR}/ei_widget_toplevel.c
 	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_widget_toplevel.c -o ${OBJDIR}/ei_widget_toplevel.o
+	
+${OBJDIR}/ei_geometry_placer.o : ${SRCDIR}/ei_geometry_placer.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_geometry_placer.c -o ${OBJDIR}/ei_geometry_placer.o
+	
+${OBJDIR}/ei_draw_util.o : ${SRCDIR}/ei_draw_util.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${SRCDIR}/ei_draw_util.c -o ${OBJDIR}/ei_draw_util.o
 
 	
 

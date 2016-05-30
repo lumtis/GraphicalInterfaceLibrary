@@ -23,12 +23,12 @@ void ei_widgetclass_register(ei_widgetclass_t* widgetclass)
 
     // s'il n'y a pas de classe on l'a definit comme la premiere
     if(wc == NULL)
-	wc = widgetclass;
+      	wc = widgetclass;
     else
     {
-	tmp = wc;
-	for(tmp = wc; tmp->next != NULL; tmp = tmp->next);
-	tmp->next = widgetclass;
+      	tmp = wc;
+      	for(tmp = wc; tmp->next != NULL; tmp = tmp->next);
+      	tmp->next = widgetclass;
     }
 }
 
@@ -39,8 +39,8 @@ ei_widgetclass_t* ei_widgetclass_from_name(ei_widgetclass_name_t name)
 
     for(tmp = wc; tmp != NULL; tmp = tmp->next)
     {
-	if(!strcmp(tmp->name, name))
-	    return tmp;
+      	if(!strcmp(tmp->name, name))
+      	    return tmp;
     }
 
     PRINT_DEBUG("ei_widgetclass_from_name : classe non trouvee");
@@ -67,31 +67,31 @@ void ei_frame_register_class()
 
 void ei_button_register_class()
 {
-  ei_widgetclass_t* button = malloc(sizeof(ei_widgetclass_t));
+    ei_widgetclass_t* button = malloc(sizeof(ei_widgetclass_t));
 
-  strcpy(button->name, "button");
-  button->allocfunc = buttonAllocfunc;
-  button->releasefunc = buttonReleasefunc;
-  button->drawfunc = buttonDrawfunc;
-  button->setdefaultsfunc = buttonSetdefaultsfunc;
-  button->geomnotifyfunc = buttonGeomnotifyfunc;
-  button->next = NULL;
+    strcpy(button->name, "button");
+    button->allocfunc = buttonAllocfunc;
+    button->releasefunc = buttonReleasefunc;
+    button->drawfunc = buttonDrawfunc;
+    button->setdefaultsfunc = buttonSetdefaultsfunc;
+    button->geomnotifyfunc = buttonGeomnotifyfunc;
+    button->next = NULL;
 
-  ei_widgetclass_register(button);
+    ei_widgetclass_register(button);
 }
 
 
 void ei_toplevel_register_class()
 {
-  ei_widgetclass_t* toplevel = malloc(sizeof(ei_widgetclass_t));
+    ei_widgetclass_t* toplevel = malloc(sizeof(ei_widgetclass_t));
 
-  strcpy(toplevel->name, "toplevel");
-  toplevel->allocfunc = toplevelAllocfunc;
-  toplevel->releasefunc = toplevelReleasefunc;
-  toplevel->drawfunc = toplevelDrawfunc;
-  toplevel->setdefaultsfunc = toplevelSetdefaultsfunc;
-  toplevel->geomnotifyfunc = toplevelGeomnotifyfunc;
-  toplevel->next = NULL;
+    strcpy(toplevel->name, "toplevel");
+    toplevel->allocfunc = toplevelAllocfunc;
+    toplevel->releasefunc = toplevelReleasefunc;
+    toplevel->drawfunc = toplevelDrawfunc;
+    toplevel->setdefaultsfunc = toplevelSetdefaultsfunc;
+    toplevel->geomnotifyfunc = toplevelGeomnotifyfunc;
+    toplevel->next = NULL;
 
-  ei_widgetclass_register(toplevel);
+    ei_widgetclass_register(toplevel);
 }
