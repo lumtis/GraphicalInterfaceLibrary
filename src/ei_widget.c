@@ -16,15 +16,15 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
   if (widget == NULL )
     return;
   else
-    {
-      if (widget->children_head != NULL )
-	  ei_widget_destroy_rec(widget->children_head);
-      if (widget->next_sibling != NULL )
-	  ei_widget_destroy_rec(widget->next_sibling);
+  {
+    if (widget->children_head != NULL )
+      ei_widget_destroy_rec(widget->children_head);
+    if (widget->next_sibling != NULL )
+      ei_widget_destroy_rec(widget->next_sibling);
 
-      widget->wclass->releasefunc(widget);
-      free(widget);
-    }
+    widget->wclass->releasefunc(widget);
+    free(widget);
+  }
 }
 
 ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
@@ -34,28 +34,28 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
   ei_widgetclasse_t * classe_new_widget = ei_widgetclass_from_name(class_name);
 
   if ( classe_new_widget == NULL)
-    	return NULL;
+    return NULL;
   else
   {
-      new_widget = (ei_widget*)classe_new_widget->allocfunc();
-      classe_new_widget->setdefaultsfunc(new_widget);
-      new_widget->wclass = classe_new_widget;
+    new_widget = (ei_widget*)classe_new_widget->allocfunc();
+    classe_new_widget->setdefaultsfunc(new_widget);
+    new_widget->wclass = classe_new_widget;
 
-      new_widget->parent =parent;
-      new_widget->children_head= NULL;
-      new_widget->children_tail = NULL ;
-      new_widget->next_sibling = NULL ;
-    	// précondition : le parent lui même n'est jamais NULL
-  		if (parent->children_head = NULL )
-		  {
-					parent->children_head=new_widget;
-						parent->children_tail=new_widget;
-		  }
-		  else
-		  {
-					parent->children_tail->next_sibling= new_widget ;
-					parent->children_tail = new_widget ;
-		  }
+    new_widget->parent =parent;
+    new_widget->children_head= NULL;
+    new_widget->children_tail = NULL ;
+    new_widget->next_sibling = NULL ;
+    // précondition : le parent lui même n'est jamais NULL
+    if (parent->children_head = NULL )
+    {
+      parent->children_head=new_widget;
+      parent->children_tail=new_widget;
+    }
+    else
+    {
+      parent->children_tail->next_sibling= new_widget ;
+      parent->children_tail = new_widget ;
+    }
   }
 }
 
@@ -64,48 +64,47 @@ void ei_widget_destroy(ei_widget_t* widget)
 {
   ei_widget *p;
   if (widget == NULL )
-    return ;
+    return;
   else
+  {
     if (widget->parent== NULL)
-      {
-	ei_widget_destroy_rec(widget->children_head);
-	widget->wclass->releasefunc(widget);
-	free(widget);
-      }
+    {
+      ei_widget_destroy_rec(widget->children_head);
+      widget->wclass->releasefunc(widget);
+      free(widget);
+    }
     else
+    {
+      p=widget->parent->children_head;
+      if ( p == widget)
       {
-	p=widget->parent->children_head;
-	if ( p == widget)
-	  {
-	    if (p==widget->parent_children_tail)
-	      {
-		widget->parent->children_head = NULL;
-		widget->parent->children_tail= NULL;
-		ei_widget_destroy_rec(widget->children_head);
-		widget->wclass->releasefunc(widget);
-		free(widget);
-	      }
-	    else
-	      {
-		widget->parent->children_head= p.next_sibling;
-		ei_widget_destroy_rec(widget->children_head);
-		widget->wclass->releasefunc(widget);
-		free(widget);
-	      }
-	  }
+	if (p==widget->parent_children_tail)
+	{
+	  widget->parent->children_head = NULL;
+	  widget->parent->children_tail= NULL;
+	  ei_widget_destroy_rec(widget->children_head);
+	  widget->wclass->releasefunc(widget);
+	  free(widget);
+	 }
+	 else
+	 {
+	  widget->parent->children_head= p.next_sibling;
+	  ei_widget_destroy_rec(widget->children_head);
+	  widget->wclass->releasefunc(widget);
+	  free(widget);
+	 }
+	}
 	else
-	  {
-	    while ( p.next_sibling != widget )
-	      {
-		p=p.next_sibling;
-	      }
-	    p.next_sibling=widget.next_sibling;
-	    ei_widget_destroy_rec(widget->children_head);
-	    widget->wclass->releasefunc(widget);
-	    free(widget);
-
-	  }
-      }
+	{
+	  while ( p.next_sibling != widget )
+	    p=p.next_sibling;
+	  p.next_sibling=widget.next_sibling;
+	  ei_widget_destroy_rec(widget->children_head);
+	  widget->wclass->releasefunc(widget);
+	  free(widget);
+	 }
+     }
+  }
 }
 
 
@@ -130,7 +129,8 @@ void			ei_frame_configure		(ei_widget_t*		widget,
 {
   ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
 
-  // TODO : requested_size
+  if(requested_size != NULL)
+    widget->requested_size = *requested_size;
 
   if(color != NULL)
     wf->color = *color;
@@ -185,7 +185,8 @@ void			ei_button_configure		(ei_widget_t*		widget,
 {
   ei_widget_button_t* wb = (ei_widget_button_t*)widget;
 
-  // TODO : requested_size
+  if(requested_size != NULL)
+    widget->requested_size = *requested_size;
 
   if(corner_radius != NULL)
     wb->corner_radius = *corner_radius;
@@ -213,7 +214,8 @@ void			ei_toplevel_configure		(ei_widget_t*		widget,
 {
   ei_widget_toplevel_t* wtl = (ei_widget_toplevel_t*)widget;
 
-  // TODO : requested_size
+  if(requested_size != NULL)
+    widget->requested_size = *requested_size;
 
   if(color != NULL)
     wtl->color = *color;
