@@ -10,7 +10,7 @@ typedef struct ei_widget_frame_t
 
 	// Specifique à frame
 	int border_width,
-	ei_color_t	color,
+	ei_color_t color,
 	ei_relief_t relief,
 	char* text,
 	ei_font_t text_font,

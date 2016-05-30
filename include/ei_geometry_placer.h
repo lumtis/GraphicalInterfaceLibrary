@@ -10,7 +10,7 @@ typedef struct ei_geometry_placer_t
 	//specifique a placer
 	
 	ei_widget_t* widget,
-	ei_anchor_t* anchor,
+	ei_anchor_t anchor,
 	int x,
 	int y,
 	int width,
