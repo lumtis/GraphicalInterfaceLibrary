@@ -2,7 +2,7 @@
  *  @file	ei_event.c
  *  @brief	Allows the binding and unbinding of callbacks to events.
  *
- *  \author 
+ *  \author
  *
  */
 
@@ -16,7 +16,7 @@ void		ei_bind			(ei_eventtype_t		eventtype,
 					 ei_callback_t		callback,
 					 void*			user_param)
 {
-					   
+
 }
 
 void		ei_unbind		(ei_eventtype_t		eventtype,
@@ -25,5 +25,5 @@ void		ei_unbind		(ei_eventtype_t		eventtype,
 					 ei_callback_t		callback,
 					 void*			user_param)
 {
-  
+
 }
