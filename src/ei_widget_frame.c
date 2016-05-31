@@ -98,7 +98,11 @@ void frameSetdefaultsfunc(struct ei_widget_t* widget)
     wf->img = NULL;
     wf->img_rect = NULL;
     wf->img_anchor = ei_anc_center;
+    
+    // Pour un frame le content_rect est egal au screen_location
+    widget->content_rect = widget->screen_location;
 }
+
 
 void frameGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 {

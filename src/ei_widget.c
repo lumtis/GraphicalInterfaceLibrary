@@ -53,16 +53,16 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
       new_widget->wclass = classe_new_widget;
       new_widget->pick_id = vgpick_id ;
       new_widget->pick_color = calloc(1, sizeof(ei_color_t));
-      new_widget->pick_color->red=vgpick_id;
+      new_widget->pick_color->red = vgpick_id;
       new_widget->pick_color->alpha = 255 ;
       new_widget->pick_color->blue =0;	
       new_widget->pick_color->green=0;
-      // précondition : le parent n'est pas NULL
+      
       new_widget->screen_location=parent->screen_location;
       new_widget->parent = parent;
       new_widget->geom_params= NULL;
       classe_new_widget->setdefaultsfunc(new_widget);
-      // précondition : le parent lui même n'est jamais NULL
+      
       if (parent->children_head == NULL )
 	{
 	  parent->children_head=new_widget;
@@ -166,7 +166,11 @@ void			ei_frame_configure		(ei_widget_t*		widget,
     ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
 
     if(requested_size != NULL)
+    {
         widget->requested_size = *requested_size;
+	if(widget->requested_size > widget->screen_location.size)
+	    widget->screen_location.size = widget->requested_size;
+    }
 
     if(color != NULL)
         wf->color = *color;
@@ -203,7 +207,7 @@ void			ei_frame_configure		(ei_widget_t*		widget,
 }
 
 
-
+// TODO : Changer taille
 void			ei_button_configure		(ei_widget_t*		widget,
 							 ei_size_t*		requested_size,
 							 const ei_color_t*	color,
@@ -241,6 +245,7 @@ void			ei_button_configure		(ei_widget_t*		widget,
 
 
 
+// TODO : Changer taille
 void			ei_toplevel_configure		(ei_widget_t*		widget,
 							 ei_size_t*		requested_size,
 							 ei_color_t*		color,
