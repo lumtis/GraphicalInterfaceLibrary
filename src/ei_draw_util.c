@@ -13,6 +13,7 @@
 ei_linked_point_t* getCadre(struct ei_widget_t* widget)
 {
     ei_linked_point_t* ret = NULL;
+    ei_linked_point_t* tmpL;
     ei_point_t tmp;
 
     // Premier point
@@ -23,17 +24,17 @@ ei_linked_point_t* getCadre(struct ei_widget_t* widget)
     // Deuxieme point
     tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
     tmp.y = widget->screen_location.top_left.y;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(ret, tmp);
 
     // Troisieme point
     tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
     tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     // Quatrieme point
     tmp.x = widget->screen_location.top_left.x;
     tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     return ret;
 }
@@ -42,56 +43,58 @@ ei_linked_point_t* getCadre(struct ei_widget_t* widget)
 ei_linked_point_t* getBordure(struct ei_widget_t* widget, int bord)
 {
     ei_linked_point_t* ret = NULL;
+    ei_linked_point_t* tmpL;
     ei_point_t tmp;
 
     // Premier point
     ret->point.x = widget->screen_location.top_left.x;
     ret->point.y = widget->screen_location.top_left.y;
-
+    ret = addLinkedPoint(ret, tmp);
+    
     // Deuxieme point
     tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
     tmp.y = widget->screen_location.top_left.y;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(ret, tmp);
 
     // Troisieme point
     tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
     tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     // Quatrieme point
     tmp.x = widget->screen_location.top_left.x;
     tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     // Cinquieme point
     tmp.x = widget->screen_location.top_left.x;
     tmp.y = widget->screen_location.top_left.y;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     // Sixieme point
     tmp.x = widget->screen_location.top_left.x - bord;
     tmp.y = widget->screen_location.top_left.y - bord;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     // Septieme point
     tmp.x = widget->screen_location.top_left.x - bord;
     tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height + bord;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     // Huitieme point
     tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width + bord;
     tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height + bord;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     // Neuvieme point
     tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width + bord;
     tmp.y = widget->screen_location.top_left.y - bord;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     // Dixieme point
     tmp.x = widget->screen_location.top_left.x - bord;
     tmp.y = widget->screen_location.top_left.y - bord;
-    ret = addLinkedPoint(ret, tmp);
+    tmpL = addLinkedPoint(tmpL, tmp);
 
     return ret;
 }
@@ -152,6 +155,7 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_w
 
 ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleDebut, int angleFin, int nbPoints)
 {
+  /*
   ei_linked_point_t* dernierPoint;
   ei_point_t premierPoint;
   int pasAngle = (angleFin-angleDebut)/nbPoints;
@@ -168,10 +172,14 @@ ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleDebut, int angleFi
       dernierPoint=addLinkedPoint(dernierPoint,newPoint); //on chaine ce nouveau point au dernier point
     }
   return premierPoint;
+  */
+  
+  return NULL;
 }
 
 ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse)
 {
+  /*
   ei_point_t centre1;
   ei_linked_point_t* debutArc1;
   ei_linked_point_t* finArc1;
@@ -268,16 +276,21 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
      
       return(debutArc1);
     }
+   */
+  
+  return NULL;
 }
 
 ei_linked_point_t* lastPoint(ei_linked_point_t* l) //retourne le dernier point d une liste chainee
 {
+  /*
   ei_linked_point_t tmp = l;
   while(tmp->next != NULL)
     {
       tmp = tmp->next;
     }
   return tmp;
+  */
 }
 
 int min(int a, int b)
@@ -294,6 +307,7 @@ int min(int a, int b)
 
 void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
 {
+  /*
   ei_size_t* s;
   ei_surface_t surface;
   ei_color_t fonce;
@@ -324,15 +338,6 @@ void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
       draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),fonce,NULL,&rect);
       draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),clair,NULL,&rect);
     }
+    */
 }
 
-
-void main()
-{
-  ei_rect_t rect;
-  rect.topleft.x = 5.0;
-  rect.topleft.y = 5.0;
-  rect.size.width = 80;
-  rect.size.height = 100;
-  draw_button(rect,20,false);
-}

@@ -32,13 +32,15 @@ void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windo
 }
 
 
+// TODO : Implémenter fullscreen
 void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
 { 
     ei_color_t * coloracine;
   
     hw_init();
-    // initialisation de la racine frame 
+
     ei_frame_register_class();
+    
     racine = frameAllocfunc();
     frameSetdefaultsfunc(racine);
     
@@ -47,7 +49,17 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     coloracine->green = 0;
     coloracine->blue = 0;
     coloracine->alpha = 255;
+    
+    // Initialisation de la racine
     racine->pick_color = coloracine;
+    racine->wclass = ei_widgetclass_from_name("frame");
+    racine->pick_id = 255;
+    racine->requested_size = *main_window_size;
+    racine->screen_location.top_left.x = 0;
+    racine->screen_location.top_left.y = 0;
+    racine->screen_location.size = *main_window_size;
+    racine->content_rect = malloc(sizeof(ei_rect_t));
+    *(racine->content_rect) = racine->screen_location;
     
     // initialisation du tableau de widget 
     for ( int i =0 ; i <256 ; i++)

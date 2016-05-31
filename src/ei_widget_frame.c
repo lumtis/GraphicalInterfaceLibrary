@@ -68,7 +68,7 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     ei_draw_polygon(surface, cadre, wf->color, clipper);
     //ei_draw_polyline(surface, cadre, gris, clipper);
     // Offsreen
-    pickColor = *(widget->pick_color); // Segmentation
+    //pickColor = *(widget->pick_color); // Segmentation
     //ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
 
     freeLinkedPoint(cadre);
