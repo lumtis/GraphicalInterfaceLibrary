@@ -32,6 +32,7 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
             ei_widget_destroy_rec(widget->next_sibling);
 
         widget->wclass->releasefunc(widget);
+	free(widget->pick_color);
         free(widget);
     }
 }
@@ -39,25 +40,24 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
 ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 			      ei_widget_t* parent)
 {
-<<<<<<< HEAD
   ei_widget_t* new_widget ;
-  ei_widgetclasse_t * classe_new_widget = ei_widgetclass_from_name(class_name);
+  ei_widgetclass_t * classe_new_widget = ei_widgetclass_from_name(class_name);
 
   if ( classe_new_widget == NULL)
     return NULL;
   else
   {
-      
-      new_widget = (ei_widget*)classe_new_widget->allocfunc();
+      new_widget = (ei_widget_t*)classe_new_widget->allocfunc();
       classe_new_widget->setdefaultsfunc(new_widget);
       new_widget->wclass = classe_new_widget;
-      new_widget->pick_id = vgpick_id ;
-      new_widget->pick_color->red=vgpick_id;
+      new_widget->pick_id = vgpick_id;
+
+      new_widget->pick_color = calloc(1, sizeof(ei_color_t));
+      new_widget->pick_color->red = (unsigned char)vgpick_id;	// Segmentation fault
       new_widget->pick_color->alpha = 255 ;
-      vgpick_id=vgpick_id +1; 
-      new_widget->parent =parent;
       
-      
+      vgpick_id++; 
+      new_widget->parent = parent;
 
       // précondition : le parent lui même n'est jamais NULL
       if (parent->children_head == NULL )
@@ -67,37 +67,11 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 	}
       else
 	{
-	  parent->children_tail->next_sibling= new_widget ;
-	  parent->children_tail = new_widget ;
+	  parent->children_head->next_sibling = new_widget;
+	  parent->children_head = new_widget;
 	}
-=======
-    ei_widget_t* new_widget ;
-    ei_widgetclass_t * classe_new_widget = ei_widgetclass_from_name(class_name);
-
-    if ( classe_new_widget == NULL)
-        return NULL;
-    else
-    {
-        new_widget = (ei_widget_t*)classe_new_widget->allocfunc();
-        classe_new_widget->setdefaultsfunc(new_widget);
-        new_widget->wclass = classe_new_widget;
-        new_widget->pick_id = vgpick_id ;
-        vgpick_id=vgpick_id +1;
-        new_widget->parent =parent;
-
-        // précondition : le parent lui même n'est jamais NULL
-        if (parent->children_head == NULL )
-  	    {
-        	  parent->children_head=new_widget;
-        	  parent->children_tail=new_widget;
-  	    }
-        else
-  	    {
-        	  parent->children_tail->next_sibling= new_widget;
-        	  parent->children_tail = new_widget;
-  	    }
->>>>>>> 9953076c712b693c39c227b231ccb882bdadc41e
     }
+    return new_widget;
 }
 
 
@@ -151,7 +125,7 @@ void ei_widget_destroy(ei_widget_t* widget)
 
 ei_widget_t* ei_widget_pick(ei_point_t*	where)
 {
-
+    return NULL;
 }
 
 

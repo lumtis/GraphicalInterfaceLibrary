@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "debug.h"
 #include "ei_widget_frame.h"
 
 void* frameAllocfunc()
@@ -20,8 +21,8 @@ void frameReleasefunc(struct ei_widget_t* widget)
         free(wf->text);
     if(wf->img_rect != NULL)
         free(wf->img_rect);
-    if(wf->img != NULL)
-        free(wf->img);
+    //if(wf->img != NULL)
+        //free(wf->img);
 }
 
 void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -36,6 +37,7 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     ei_color_t pickColor;
     //ei_color_t grey  = {0x70, 0x70, 0x70, 0xFF};
 
+    /*
     // On dessine un relief si le bord est supérieur à 0
     if (wf->border_width > 0)
     {
@@ -60,13 +62,14 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
         // Libération liste
         freeLinkedPoint(bordure);
     }
+    */
 
     // Dessin du cadre
     ei_draw_polygon(surface, cadre, wf->color, clipper);
     //ei_draw_polyline(surface, cadre, gris, clipper);
     // Offsreen
-    pickColor = *(widget->pick_color);
-    ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
+    pickColor = *(widget->pick_color); // Segmentation
+    //ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
 
     freeLinkedPoint(cadre);
 

@@ -19,6 +19,7 @@ ei_surface_t window;
 ei_surface_t windowpick;
 
 
+
 void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick)
 {
     if(widget == NULL)
@@ -31,29 +32,26 @@ void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windo
 
 
 void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
-{
+{ 
     hw_init();
-
+    
     ei_frame_register_class();
-
     racine = frameAllocfunc();
     frameSetdefaultsfunc(racine);
 
     window = hw_create_window(main_window_size,fullscreen);
     windowpick = hw_create_window(main_window_size,fullscreen);
-
-    // Boucle principale d'entrée
-    ei_app_run();
-
-    // On termine le widget principale
-    hw_quit();
-
-    ei_app_free();
 }
 
 
 void ei_app_free()
 {
+    ei_widget_destroy(racine);
+    hw_surface_free(window);
+    
+    // On termine le widget principale
+    hw_quit();
+  
     return;
 }
 
@@ -76,10 +74,10 @@ void ei_app_quit_request()
 
 ei_widget_t* ei_app_root_widget()
 {
-    return NULL;
+    return racine;
 }
 
 ei_surface_t ei_app_root_surface()
 {
-    return NULL;
+    return window;
 }
