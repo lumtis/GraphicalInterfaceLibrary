@@ -17,6 +17,7 @@
 
 uint32_t vgpick_id = 0;
 
+
 /**
  * @name ei_widget_destroy_rec
  */
@@ -42,20 +43,21 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 {
   ei_widget_t* new_widget ;
   ei_widgetclass_t * classe_new_widget = ei_widgetclass_from_name(class_name);
-
   if ( classe_new_widget == NULL)
     return NULL;
   else
-  {
-      new_widget = (ei_widget_t*)classe_new_widget->allocfunc();
+    {
+      
+      new_widget = (ei_widget*)classe_new_widget->allocfunc();
       classe_new_widget->setdefaultsfunc(new_widget);
       new_widget->wclass = classe_new_widget;
-      new_widget->pick_id = vgpick_id;
-
+      new_widget->pick_id = vgpick_id ;
+      
       new_widget->pick_color = calloc(1, sizeof(ei_color_t));
-      new_widget->pick_color->red = (unsigned char)vgpick_id;	// Segmentation fault
+      new_widget->pick_color->red=vgpick_id;
       new_widget->pick_color->alpha = 255 ;
       
+      widget_tab[vg_pick_id]=new_widget;
       vgpick_id++; 
       new_widget->parent = parent;
 
@@ -125,7 +127,17 @@ void ei_widget_destroy(ei_widget_t* widget)
 
 ei_widget_t* ei_widget_pick(ei_point_t*	where)
 {
-    return NULL;
+  uint8_t * buffer;
+  int * rouge;
+  int* vert;
+  int * bleu;
+  int* alpha;
+  uint32_t id ;
+  int width=(hw_surface_get_size(const ei_surface_t surface)).width
+  buffer=hw_surface_get_buffer(windowpick);
+  hw_surface_get_channel_indices(windowpick, rouge, vert, bleu, alpha);
+  id=*( buffer+ 4* (((where->y))*width + (where->x)) + *rouge);
+  return widget_tab[id];
 }
 
 
