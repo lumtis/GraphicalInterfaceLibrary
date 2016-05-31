@@ -49,19 +49,19 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
   else
     {
       
-      new_widget = (ei_widget_t*)classe_new_widget->allocfunc();
-      classe_new_widget->setdefaultsfunc(new_widget);
+      new_widget = (ei_widget*)classe_new_widget->allocfunc();
       new_widget->wclass = classe_new_widget;
       new_widget->pick_id = vgpick_id ;
-      
       new_widget->pick_color = calloc(1, sizeof(ei_color_t));
       new_widget->pick_color->red=vgpick_id;
       new_widget->pick_color->alpha = 255 ;
-      
-      tab_widget[vgpick_id]=new_widget;
-      vgpick_id++; 
+      new_widget->pick_color->blue =0;	
+      new_widget->pick_color->green=0;
+      // précondition : le parent n'est pas NULL
+      new_widget->screen_location=parent->screen_location;
       new_widget->parent = parent;
-
+      new_widget->geom_params= NULL;
+      classe_new_widget->setdefaultsfunc(new_widget);
       // précondition : le parent lui même n'est jamais NULL
       if (parent->children_head == NULL )
 	{
@@ -74,6 +74,9 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 	  parent->children_head = new_widget;
 	}
     }
+    // mise à jour du tableau de widget
+    widget_tab[vg_pick_id]=new_widget;
+    vgpick_id++; 
     return new_widget;
 }
 
