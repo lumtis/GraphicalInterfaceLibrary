@@ -49,7 +49,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
   else
     {
       
-      new_widget = (ei_widget*)classe_new_widget->allocfunc();
+      new_widget = (ei_widget_t*)classe_new_widget->allocfunc();
       new_widget->wclass = classe_new_widget;
       new_widget->pick_id = vgpick_id ;
       new_widget->pick_color = calloc(1, sizeof(ei_color_t));
@@ -75,7 +75,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 	}
     }
     // mise à jour du tableau de widget
-    widget_tab[vg_pick_id]=new_widget;
+    tab_widget[vgpick_id]=new_widget;
     vgpick_id++; 
     return new_widget;
 }
