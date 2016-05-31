@@ -5,8 +5,14 @@
  *
  */
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "ei_widget.h"
 #include "debug.h"
+#include "ei_widget_frame.h"
+#include "ei_widget_button.h"
+#include "ei_widget_toplevel.h"
 
 
 uint32_t vgpick_id = 0;
@@ -34,13 +40,13 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 			      ei_widget_t* parent)
 {
     ei_widget_t* new_widget ;
-    ei_widgetclasse_t * classe_new_widget = ei_widgetclass_from_name(class_name);
+    ei_widgetclass_t * classe_new_widget = ei_widgetclass_from_name(class_name);
 
     if ( classe_new_widget == NULL)
         return NULL;
     else
     {
-        new_widget = (ei_widget*)classe_new_widget->allocfunc();
+        new_widget = (ei_widget_t*)classe_new_widget->allocfunc();
         classe_new_widget->setdefaultsfunc(new_widget);
         new_widget->wclass = classe_new_widget;
         new_widget->pick_id = vgpick_id ;
@@ -64,7 +70,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 
 void ei_widget_destroy(ei_widget_t* widget)
 {
-    ei_widget *p;
+    ei_widget_t* p;
     if (widget == NULL )
         return;
     else
@@ -77,10 +83,10 @@ void ei_widget_destroy(ei_widget_t* widget)
         }
         else
         {
-            p=widget->parent->children_head;
+            p= widget->parent->children_head;
             if ( p == widget)
             {
-              	if (p==widget->parent_children_tail)
+              	if (p==widget->parent->children_tail)
               	{
                   	  widget->parent->children_head = NULL;
                   	  widget->parent->children_tail= NULL;
@@ -90,7 +96,7 @@ void ei_widget_destroy(ei_widget_t* widget)
               	}
               	 else
               	 {
-                  	  widget->parent->children_head= p.next_sibling;
+                  	  widget->parent->children_head= p->next_sibling;
                   	  ei_widget_destroy_rec(widget->children_head);
                   	  widget->wclass->releasefunc(widget);
                   	  free(widget);
@@ -98,9 +104,9 @@ void ei_widget_destroy(ei_widget_t* widget)
       	    }
       	    else
       	    {
-          	    while ( p.next_sibling != widget )
-          	        p=p.next_sibling;
-          	    p.next_sibling=widget.next_sibling;
+          	    while ( p->next_sibling != widget )
+          	        p=p->next_sibling;
+          	    p->next_sibling=widget->next_sibling;
           	    ei_widget_destroy_rec(widget->children_head);
                 widget->wclass->releasefunc(widget);
           	    free(widget);
@@ -114,6 +120,7 @@ ei_widget_t* ei_widget_pick(ei_point_t*	where)
 {
 
 }
+
 
 
 void			ei_frame_configure		(ei_widget_t*		widget,
@@ -169,6 +176,7 @@ void			ei_frame_configure		(ei_widget_t*		widget,
 }
 
 
+
 void			ei_button_configure		(ei_widget_t*		widget,
 							 ei_size_t*		requested_size,
 							 const ei_color_t*	color,
@@ -203,6 +211,7 @@ void			ei_button_configure		(ei_widget_t*		widget,
 
     ei_frame_configure(widget, requested_size, color, border_width, relief, text, text_font, text_color, text_anchor, img, img_rect, img_anchor);
 }
+
 
 
 void			ei_toplevel_configure		(ei_widget_t*		widget,

@@ -2,8 +2,8 @@
 #define EI_WIDGET_TOPLEVEL_H
 
 #include "ei_widget.h"
-#include "ei_widgetclass.h"
 #include "ei_draw_util.h"
+
 
 typedef struct ei_widget_toplevel_t
 {

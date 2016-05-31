@@ -10,9 +10,11 @@
 
 void placerRunfunc(struct ei_widget_t*	widget) //recalcule la position du widget dans son parent
 {
+  /*
+  
      struct ei_widget_t* parent = widget->parent;      
      struct ei_anchor_t* anc = parent->geom_params->anchor;
-     int* x = parent->geom_params->x;
+     int* x = parent->geom_params->manager->x;
      int* y = parent->geom_params->y;
      int* w = parent->geom_params->width;
      int* h = parent->geom_params->height;
@@ -23,6 +25,7 @@ void placerRunfunc(struct ei_widget_t*	widget) //recalcule la position du widget
 
      ei_place(widget,anc,&x,&y,&w,&h,&rx,&ry,&rw,&rh);
 
+  */
 }
 
 

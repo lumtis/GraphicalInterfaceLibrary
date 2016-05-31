@@ -6,6 +6,9 @@
  *
  */
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "ei_geometrymanager.h"
 #include "debug.h"
 #include "ei_geometry_placer.h"
@@ -52,8 +55,9 @@ void ei_geometrymanager_unmap(ei_widget_t* widget)
 {
     widget->screen_location.top_left.x = 0; //place le widget a la position (0,0)
     widget->screen_location.top_left.y = 0;
-    widget->screen_location.size = 0; // la taille du widget est reduite a 0
-    widget->geom_params->releasefunc(); //on appelle la fonction release du gestionnaire de geometrie qui gere le widget
+    widget->screen_location.size.height = 0; // la taille du widget est reduite a 0
+    widget->screen_location.size.width = 0;
+    widget->geom_params->manager->releasefunc(widget); //on appelle la fonction release du gestionnaire de geometrie qui gere le widget
     free(widget->geom_params); //on libere les parametres geometriques du widget
 }
 
@@ -61,14 +65,15 @@ void ei_geometrymanager_unmap(ei_widget_t* widget)
 
 void ei_register_placer_manager()
 {
-    ei_geometrymanager_t* placer = malloc(sizeof(struct(ei_geometrymanager_t));
+    ei_geometrymanager_t* placer = malloc(sizeof(struct ei_geometrymanager_t));
     strcpy(placer->name, "placer");
-    placer->runfunc=placerRunfunc;
-  	placer->releasefunc=placerReleasefunc;
-  	placer->next=NULL;
+    placer->runfunc = placerRunfunc;
+    placer->releasefunc = placerReleasefunc;
+    placer->next = NULL;
 
     ei_geometrymanager_register(placer);
 }
+
 
 void	ei_place	(ei_widget_t*		widget,
 			 ei_anchor_t*		anchor,
@@ -81,7 +86,8 @@ void	ei_place	(ei_widget_t*		widget,
 			 float*			rel_width,
 			 float*			rel_height)
 {
-    ei_geometry_placer_t* pl = (ei_geometry_placer_t*) manager;
+  /*
+    ei_geometry_placer_t* pl = (ei_geometry_placer_t*)widget->geom_params->manager;
 
     if (widget->geom_params != ei_geometry_placer_t)
         widget->geom_params = NULL;
@@ -114,4 +120,5 @@ void	ei_place	(ei_widget_t*		widget,
         pl->rel_height = *rel_height;
 
     widget->geom_params = pl;
+    */
 }

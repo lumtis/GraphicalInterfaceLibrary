@@ -14,7 +14,6 @@
 #include "ei_widgetclass.h"
 
 
-
 struct ei_geometry_param_t;
 
 /**

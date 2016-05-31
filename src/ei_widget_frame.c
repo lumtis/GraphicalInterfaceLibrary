@@ -1,4 +1,7 @@
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "ei_widget_frame.h"
 
 void* frameAllocfunc()
@@ -36,7 +39,7 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     // On dessine un relief si le bord est supérieur à 0
     if (wf->border_width > 0)
     {
-    bordure = getBordure(widget, widget->border_width);
+    bordure = getBordure(widget, wf->border_width);
 
         // Différents cas de bordure
         switch (wf->relief)

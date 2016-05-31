@@ -6,7 +6,13 @@
  *
  */
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "ei_widgetclass.h"
+#include "ei_widget_frame.h"
+#include "ei_widget_button.h"
+#include "ei_widget_toplevel.h"
 #include "debug.h"
 
 
@@ -39,7 +45,7 @@ ei_widgetclass_t* ei_widgetclass_from_name(ei_widgetclass_name_t name)
 
     for(tmp = wc; tmp != NULL; tmp = tmp->next)
     {
-      	if(!strcmp(tmp->name, name))
+      	if(!strcmp(ei_widgetclass_stringname(tmp->name), ei_widgetclass_stringname(name)))
       	    return tmp;
     }
 

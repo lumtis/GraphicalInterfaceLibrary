@@ -7,12 +7,12 @@
  *
  */
 
+#include <stdio.h>
 #include "ei_application.h"
 #include "debug.h"
 #include "ei_widgetclass.h"
 #include "ei_widget_frame.h"
 
-#define NULL 0
 
 ei_widget_t * racine;
 ei_surface_t window;

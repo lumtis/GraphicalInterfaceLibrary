@@ -1,8 +1,15 @@
 
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "ei_draw_util.h"
+#include "ei_widget_frame.h"
+#include "ei_widget_button.h"
+#include "ei_widget_toplevel.h"
 
 
-ei_linked_point_t* getCadre(ei_widget_t* widget)
+struct ei_linked_point_t* getCadre(struct ei_widget_t* widget)
 {
     ei_linked_point_t* ret = NULL;
     ei_point_t tmp;
@@ -31,7 +38,7 @@ ei_linked_point_t* getCadre(ei_widget_t* widget)
 }
 
 
-ei_linked_point_t* getBordure(ei_widget_t* widget, int bord)
+struct ei_linked_point_t* getBordure(struct ei_widget_t* widget, int bord)
 {
     ei_linked_point_t* ret = NULL;
     ei_point_t tmp;
@@ -89,7 +96,7 @@ ei_linked_point_t* getBordure(ei_widget_t* widget, int bord)
 }
 
 
-void freeLinkedPoint(ei_linked_point_t* l)
+void freeLinkedPoint(struct ei_linked_point_t* l)
 {
     ei_linked_point_t* tmp1 = l;
     ei_linked_point_t* tmp2;
@@ -107,7 +114,7 @@ void freeLinkedPoint(ei_linked_point_t* l)
     }
 }
 
-ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p)
+struct ei_linked_point_t* addLinkedPoint(struct ei_linked_point_t* l, ei_point_t p)
 {
     ei_linked_point_t* tmp = calloc(1, sizeof(ei_linked_point_t));
 
@@ -120,7 +127,7 @@ ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p)
 
 
 
-void drawTextWidget(ei_surface_t surface, ei_widget_t* widget, ei_widget_frame_t* wf, ei_rect_t* clipper)
+void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf, struct ei_rect_t* clipper)
 {
     ei_point_t where;
 
@@ -128,19 +135,14 @@ void drawTextWidget(ei_surface_t surface, ei_widget_t* widget, ei_widget_frame_t
 
     where.x = widget->screen_location.top_left.x;
     where.y = widget->screen_location.top_left.y;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, wf->text_color, clipper);
+    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
 }
 
 
-void drawImgWidget(ei_surface_t surface, ei_widget_t* widget, ei_widget_frame_t* wf)
+void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf)
 {
     // TODO : Gerer les ancrage
 
     ei_copy_surface(surface, NULL, wf->img, wf->img_rect, EI_FALSE);
 }
 
-
-void arc(ei_point_t centre, int rayon, int angleDebut, int angleFin)
-{
-    
-}
