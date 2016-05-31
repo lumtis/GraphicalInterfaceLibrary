@@ -2,14 +2,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-//#include "ei_widget_frame.h"
-//#include "ei_widget_button.h"
-//#include "ei_widget_toplevel.h"
+#include "ei_widget_frame.h"
+#include "ei_widget_button.h"
+#include "ei_widget_toplevel.h"
 #include "ei_draw_util.h"
 #include "math.h"
-
+#include "ei_types.h"
 #include"ei_widget.h"
-#include "ei_widget_class.h"x
+#include "ei_widgetclass.h"
+#include "hw_interface.h"
 
 ei_linked_point_t* getCadre(struct ei_widget_t* widget)
 {
@@ -154,13 +155,13 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_w
 ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleDebut, int angleFin, int nbPoints)
 {
   ei_linked_point_t* dernierPoint;
-  ei_point_t premierPoint;
+  ei_linked_point_t* premierPoint;
   int pasAngle = (angleFin-angleDebut)/nbPoints;
   ei_point_t newPoint;
-
-  premierPoint.x=rayon*cos(angleDebut); //on initialise le point du debut
-  premierPoint.y=rayon*sin(angleDebut);
-  dernierPoint=addLinkedPoint(dernierPoint,premierPoint); //on initialise dernierPoint au premier point
+  
+  premierPoint->point.x = rayon*cos(angleDebut); //on initialise le point du debut
+  premierPoint->point.y = rayon*sin(angleDebut);
+  dernierPoint = premierPoint; //on initialise dernierPoint au premier point
 
   for(int i=0; i<nbPoints+1;i++)
     {
@@ -197,11 +198,11 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
 
   //pts Interieurs : pts pour former le relief a l'interieur du bouton 
 
-  pointInterieur1.x = rect.topleft.x + h;
-  pointInterieur1.y = rect.topleft.y + rect.size.width - h;
+  pointInterieur1->point.x = rect.top_left.x + h;
+  pointInterieur1->point.y = rect.top_left.y + rect.size.width - h;
   
-  pointInterieur2.x = rect.topleft.x +rect.size.height -  h;
-  pointInterieur2.y = pointInterieur1.y;
+  pointInterieur2->point.x = rect.top_left.x +rect.size.height -  h;
+  pointInterieur2->point.y = pointInterieur1->point.y;
 
   centre1.x = rect.top_left.x + rayon/sqrt(2);
   centre1.y = rect.top_left.y + rayon/sqrt(2); //calcule le centre de l arc qui former le coin arrondi
@@ -255,7 +256,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
 
   if(partieHaute == EI_FALSE && partieBasse == EI_FALSE)
     {
-      return;
+      return  NULL;
     }
  
   if (partieHaute == EI_TRUE && partieBasse == EI_TRUE)
@@ -273,7 +274,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
 
 ei_linked_point_t* lastPoint(ei_linked_point_t* l) //retourne le dernier point d une liste chainee
 {
-  ei_linked_point_t tmp = l;
+  ei_linked_point_t* tmp = l;
   while(tmp->next != NULL)
     {
       tmp = tmp->next;
@@ -295,7 +296,7 @@ int min(int a, int b)
 
 void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
 {
-  ei_size_t* s;
+  ei_size_t s;
   ei_surface_t surface;
   ei_color_t fonce;
   ei_color_t clair;
@@ -303,7 +304,7 @@ void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
   s.width = 400;
   s.height = 800;
 
-  surface = hw_surface_create(hw_create_window(s,EI_FALSE),s,EI_FALSE)
+  surface = hw_surface_create(hw_create_window(&s,EI_FALSE),&s,EI_FALSE);
   fonce.red = 50;
   fonce.blue = 50;
   fonce.green = 50;
@@ -327,13 +328,3 @@ void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
     }
 }
 
-
-void main()
-{
-  ei_rect_t rect;
-  rect.topleft.x = 5.0;
-  rect.topleft.y = 5.0;
-  rect.size.width = 80;
-  rect.size.height = 100;
-  draw_button(rect,20,false);
-}
