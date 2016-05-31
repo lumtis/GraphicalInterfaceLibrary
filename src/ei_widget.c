@@ -45,8 +45,12 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
       classe_new_widget->setdefaultsfunc(new_widget);
       new_widget->wclass = classe_new_widget;
       new_widget->pick_id = vgpick_id ;
+      new_widget->pick_color->red=vgpick_id;
+      new_widget->pick_color->alpha = 255 ;
       vgpick_id=vgpick_id +1; 
       new_widget->parent =parent;
+      
+      
 
       // précondition : le parent lui même n'est jamais NULL
       if (parent->children_head == NULL )
