@@ -292,7 +292,7 @@ int min(int a, int b)
     }
 }
 
-void draw_button(ei_rect_t rect,int rayon,bool enfonce)
+void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
 {
   ei_size_t* s;
   ei_surface_t surface;
@@ -302,7 +302,7 @@ void draw_button(ei_rect_t rect,int rayon,bool enfonce)
   s.width = 400;
   s.height = 800;
 
-  surface = hw_surface_create(hw_create_window(s,false),s,false)
+  surface = hw_surface_create(hw_create_window(s,EI_FALSE),s,EI_FALSE)
   fonce.red = 50;
   fonce.blue = 50;
   fonce.green = 50;
@@ -315,14 +315,14 @@ void draw_button(ei_rect_t rect,int rayon,bool enfonce)
   
   if(enfonce)
     {
-      draw_polygon(surface,rounded_frame(rect,rayon,true,false),fonce,NULL,&rect);
-      draw_polygon(surface,rounded_frame(rect,rayon,false,true),clair,NULL,&rect);
+      draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),fonce,NULL,&rect);
+      draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),clair,NULL,&rect);
   
     }
   else
     {
-      draw_polygon(surface,rounded_frame(rect,rayon,true,false),fonce,NULL,&rect);
-      draw_polygon(surface,rounded_frame(rect,rayon,false,true),clair,NULL,&rect);
+      draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),fonce,NULL,&rect);
+      draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),clair,NULL,&rect);
     }
 }
 
