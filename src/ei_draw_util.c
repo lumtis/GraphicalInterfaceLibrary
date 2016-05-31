@@ -2,13 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+//#include "ei_widget_frame.h"
+//#include "ei_widget_button.h"
+//#include "ei_widget_toplevel.h"
 #include "ei_draw_util.h"
-#include "ei_widget_frame.h"
-#include "ei_widget_button.h"
-#include "ei_widget_toplevel.h"
-
-//#include "ei_draw_util.h"
 #include "math.h"
+
+#include"ei_widget.h"
+#include "ei_widget_class.h"x
 
 ei_linked_point_t* getCadre(struct ei_widget_t* widget)
 {

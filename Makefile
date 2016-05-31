@@ -79,6 +79,15 @@ minimal : ${OBJDIR}/minimal.o ${LIBEIBASE}
 ${OBJDIR}/minimal.o : ${TESTS}/minimal.c
 	${CC} ${CCFLAGS} ${INCFLAGS} ${TESTS}/minimal.c -o ${OBJDIR}/minimal.o
 
+# test
+
+test : ${OBJDIR}/test.o ${LIBEIBASE}
+	${LINK} -o test ${OBJDIR}/test.o ${LIBS}
+
+${OBJDIR}/test.o : ${TESTS}/test.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${TESTS}/test.c -o ${OBJDIR}/test.o
+
+
 # frame
 
 frame : ${OBJDIR}/frame.o ${LIBEIBASE} ${LIBEI}
