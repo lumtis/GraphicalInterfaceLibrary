@@ -132,6 +132,18 @@ ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p)
 }
 
 
+void printLinkedPoint(ei_linked_point_t* l)
+{
+    int i = 0;
+  
+    while(l != NULL)
+    {
+	printf("%d: %d %d\n", i, l->point.x, l->point.y);
+	l = l->next;
+	i++;
+    }
+}
+
 
 void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf, ei_rect_t* clipper)
 {

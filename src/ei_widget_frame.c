@@ -30,13 +30,13 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
     ei_linked_point_t* cadre = getCadre(widget);
     ei_linked_point_t* bordure;
-
+      
     // Couleurs  de relief avec alpha au milieu
     ei_color_t white = {0xF0, 0xF0, 0xF0, 0x70};
     ei_color_t black  = {0x10, 0x10, 0x10, 0x70};
     ei_color_t pickColor;
     //ei_color_t grey  = {0x70, 0x70, 0x70, 0xFF};
-
+    
     /*
     // On dessine un relief si le bord est supérieur à 0
     if (wf->border_width > 0)
@@ -65,10 +65,14 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     */
 
     // Dessin du cadre
+    hw_surface_lock(surface);    
     ei_draw_polygon(surface, cadre, wf->color, clipper);
+    hw_surface_unlock(surface);
+    hw_surface_update_rects(surface, NULL);
+    
     //ei_draw_polyline(surface, cadre, gris, clipper);
     // Offsreen
-    //pickColor = *(widget->pick_color); // Segmentation
+    //pickColor = *(widget->pick_color);
     //ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
 
     freeLinkedPoint(cadre);
@@ -100,7 +104,7 @@ void frameSetdefaultsfunc(struct ei_widget_t* widget)
     wf->img_anchor = ei_anc_center;
     
     // Pour un frame le content_rect est egal au screen_location
-    widget->content_rect = widget->screen_location;
+    widget->content_rect = &(widget->screen_location);
 }
 
 

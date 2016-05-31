@@ -20,6 +20,7 @@ void freeLinkedPoint(ei_linked_point_t* l);
 ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p);
 ei_linked_point_t* lastPoint(ei_linked_point_t* l);
 
+void printLinkedPoint(ei_linked_point_t* l);
 
 // Fonctions dessin
 void drawTextWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_widget_frame_t* wf,ei_rect_t* clipper);

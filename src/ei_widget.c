@@ -58,7 +58,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
       new_widget->pick_color->blue =0;	
       new_widget->pick_color->green=0;
       
-      new_widget->screen_location=parent->screen_location;
+      new_widget->screen_location.top_left = parent->screen_location.top_left;
       new_widget->parent = parent;
       new_widget->geom_params= NULL;
       classe_new_widget->setdefaultsfunc(new_widget);
@@ -168,8 +168,10 @@ void			ei_frame_configure		(ei_widget_t*		widget,
     if(requested_size != NULL)
     {
         widget->requested_size = *requested_size;
-	if(widget->requested_size > widget->screen_location.size)
-	    widget->screen_location.size = widget->requested_size;
+	if(widget->requested_size.width > widget->screen_location.size.width)
+	    widget->screen_location.size.width = widget->requested_size.width;
+	if(widget->requested_size.height > widget->screen_location.size.height)
+	    widget->screen_location.size.height = widget->requested_size.height;
     }
 
     if(color != NULL)

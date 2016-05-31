@@ -27,8 +27,8 @@ void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windo
         return;
 
     widget->wclass->drawfunc(widget ,window, windowpick, widget->parent->content_rect);
-    ei_app_run_rec(widget->next_sibling, window,windowpick);
-    ei_app_run_rec(widget->children_head,window,windowpick);
+    ei_app_run_rec(widget->next_sibling, window, windowpick);
+    ei_app_run_rec(widget->children_head, window, windowpick);
 }
 
 
@@ -66,7 +66,7 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
       tab_widget[i]=NULL;
 
     window = hw_create_window(main_window_size,fullscreen);
-    windowpick = hw_create_window(main_window_size,fullscreen);
+    //windowpick = hw_create_window(main_window_size,fullscreen);
 }
 
 
