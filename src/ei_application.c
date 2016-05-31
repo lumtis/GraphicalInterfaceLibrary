@@ -7,18 +7,19 @@
  *
  */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include "ei_application.h"
 #include "debug.h"
 #include "ei_widgetclass.h"
 #include "ei_widget_frame.h"
-
+#include "ei_global.h"
 
 ei_widget_t * racine;
 ei_surface_t window;
 ei_surface_t windowpick;
-ei_widget* tab_widget[256];
-ei_color_t * coloracine;
+ei_widget_t* tab_widget[256];
+
 
 void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick)
 {
@@ -33,19 +34,25 @@ void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windo
 
 void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
 { 
+    ei_color_t * coloracine;
+  
     hw_init();
     // initialisation de la racine frame 
     ei_frame_register_class();
     racine = frameAllocfunc();
     frameSetdefaultsfunc(racine);
+    
     coloracine=malloc(sizeof(ei_color_t));
-    coloracine->red  = 255;
-    coloracine->green=0;
-    coloracine->blue=0;
-    coloracine->alpha=255;
+    coloracine->red = 255;
+    coloracine->green = 0;
+    coloracine->blue = 0;
+    coloracine->alpha = 255;
+    racine->pick_color = coloracine;
+    
     // initialisation du tableau de widget 
     for ( int i =0 ; i <256 ; i++)
       tab_widget[i]=NULL;
+
     window = hw_create_window(main_window_size,fullscreen);
     windowpick = hw_create_window(main_window_size,fullscreen);
 }

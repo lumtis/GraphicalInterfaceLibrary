@@ -8,12 +8,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "ei_application.h"
 #include "ei_widget.h"
 #include "debug.h"
 #include "ei_widget_frame.h"
 #include "ei_widget_button.h"
 #include "ei_widget_toplevel.h"
-
+#include "ei_global.h"
 
 uint32_t vgpick_id = 0;
 
@@ -48,7 +49,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
   else
     {
       
-      new_widget = (ei_widget*)classe_new_widget->allocfunc();
+      new_widget = (ei_widget_t*)classe_new_widget->allocfunc();
       classe_new_widget->setdefaultsfunc(new_widget);
       new_widget->wclass = classe_new_widget;
       new_widget->pick_id = vgpick_id ;
@@ -57,7 +58,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
       new_widget->pick_color->red=vgpick_id;
       new_widget->pick_color->alpha = 255 ;
       
-      widget_tab[vg_pick_id]=new_widget;
+      tab_widget[vgpick_id]=new_widget;
       vgpick_id++; 
       new_widget->parent = parent;
 
@@ -88,6 +89,7 @@ void ei_widget_destroy(ei_widget_t* widget)
         {
             ei_widget_destroy_rec(widget->children_head);
             widget->wclass->releasefunc(widget);
+	    free(widget->pick_color);
             free(widget);
         }
         else
@@ -101,6 +103,7 @@ void ei_widget_destroy(ei_widget_t* widget)
                   	  widget->parent->children_tail= NULL;
                   	  ei_widget_destroy_rec(widget->children_head);
                   	  widget->wclass->releasefunc(widget);
+			  free(widget->pick_color);
                   	  free(widget);
               	}
               	 else
@@ -108,6 +111,7 @@ void ei_widget_destroy(ei_widget_t* widget)
                   	  widget->parent->children_head= p->next_sibling;
                   	  ei_widget_destroy_rec(widget->children_head);
                   	  widget->wclass->releasefunc(widget);
+			  free(widget->pick_color);
                   	  free(widget);
               	  }
       	    }
@@ -118,6 +122,7 @@ void ei_widget_destroy(ei_widget_t* widget)
           	    p->next_sibling=widget->next_sibling;
           	    ei_widget_destroy_rec(widget->children_head);
                 widget->wclass->releasefunc(widget);
+		free(widget->pick_color);
           	    free(widget);
       	    }
         }
@@ -128,16 +133,16 @@ void ei_widget_destroy(ei_widget_t* widget)
 ei_widget_t* ei_widget_pick(ei_point_t*	where)
 {
   uint8_t * buffer;
-  int * rouge;
-  int* vert;
-  int * bleu;
-  int* alpha;
+  int rouge;
+  int vert;
+  int bleu;
+  int alpha;
   uint32_t id ;
-  int width=(hw_surface_get_size(const ei_surface_t surface)).width
-  buffer=hw_surface_get_buffer(windowpick);
-  hw_surface_get_channel_indices(windowpick, rouge, vert, bleu, alpha);
-  id=*( buffer+ 4* (((where->y))*width + (where->x)) + *rouge);
-  return widget_tab[id];
+  int width=(hw_surface_get_size(ei_app_root_surface())).width;
+  buffer= hw_surface_get_buffer(windowpick);
+  hw_surface_get_channel_indices(windowpick, &rouge, &vert, &bleu, &alpha);
+  id=*( buffer + 4 * (((where->y))*width + (where->x)) + rouge);
+  return tab_widget[id];
 }
 
 
