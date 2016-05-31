@@ -17,7 +17,7 @@
 ei_widget_t * racine;
 ei_surface_t window;
 ei_surface_t windowpick;
-
+ei_widget* tab_widget[256];
 
 void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick)
 {
@@ -38,10 +38,11 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
 
     racine = frameAllocfunc();
     frameSetdefaultsfunc(racine);
-
+    // initialisation du tableau de widget 
+    for ( int i =0 ; i <256 ; i++)
+      tab_widget[i]=NULL;
     window = hw_create_window(main_window_size,fullscreen);
     windowpick = hw_create_window(main_window_size,fullscreen);
-
     // Boucle principale d'entrée
     ei_app_run();
 
