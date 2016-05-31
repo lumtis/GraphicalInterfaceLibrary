@@ -10,7 +10,7 @@
 //#include "ei_draw_util.h"
 #include "math.h"
 
-struct ei_linked_point_t* getCadre(struct ei_widget_t* widget)
+ei_linked_point_t* getCadre(struct ei_widget_t* widget)
 {
     ei_linked_point_t* ret = NULL;
     ei_point_t tmp;
@@ -39,7 +39,7 @@ struct ei_linked_point_t* getCadre(struct ei_widget_t* widget)
 }
 
 
-struct ei_linked_point_t* getBordure(struct ei_widget_t* widget, int bord)
+ei_linked_point_t* getBordure(struct ei_widget_t* widget, int bord)
 {
     ei_linked_point_t* ret = NULL;
     ei_point_t tmp;
@@ -97,7 +97,7 @@ struct ei_linked_point_t* getBordure(struct ei_widget_t* widget, int bord)
 }
 
 
-void freeLinkedPoint(struct ei_linked_point_t* l)
+void freeLinkedPoint(ei_linked_point_t* l)
 {
     ei_linked_point_t* tmp1 = l;
     ei_linked_point_t* tmp2;
@@ -115,7 +115,7 @@ void freeLinkedPoint(struct ei_linked_point_t* l)
     }
 }
 
-struct ei_linked_point_t* addLinkedPoint(struct ei_linked_point_t* l, ei_point_t p)
+ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p)
 {
     ei_linked_point_t* tmp = calloc(1, sizeof(ei_linked_point_t));
 
@@ -128,7 +128,7 @@ struct ei_linked_point_t* addLinkedPoint(struct ei_linked_point_t* l, ei_point_t
 
 
 
-void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf, struct ei_rect_t* clipper)
+void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf, ei_rect_t* clipper)
 {
     ei_point_t where;
 
@@ -150,7 +150,7 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_w
 
 /*Arc prend en argument le centre, le rayon, l'angle de depart par rapport a l axe des abscisses, et l angle de fin par rapport a l axe des abscisses. Retourne le premier point de l arc et cree la liste de points de cet arc*/
 
-struct ei_linked_point* arc(ei_point_t centre, int rayon, int angleDebut, int angleFin, int nbPoints)
+ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleDebut, int angleFin, int nbPoints)
 {
   ei_linked_point_t* dernierPoint;
   ei_point_t premierPoint;
@@ -170,7 +170,7 @@ struct ei_linked_point* arc(ei_point_t centre, int rayon, int angleDebut, int an
   return premierPoint;
 }
 
-struct ei_linked_point* rounded_frame(ei_rect_t rect, int rayon,bool partieHaute,bool partieBasse)
+ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse)
 {
   ei_point_t centre1;
   ei_linked_point_t* debutArc1;
@@ -229,7 +229,7 @@ struct ei_linked_point* rounded_frame(ei_rect_t rect, int rayon,bool partieHaute
   //a ce stade on a cree toutes les listes de pts des arcs
   //ci dessous on chaine chaque arc au suivant
   
-  if (partieHaute == true && partieBasse == false)
+  if (partieHaute == EI_TRUE && partieBasse == EI_FALSE)
   
     {
       finArc1->next = debutArc2; 
@@ -241,7 +241,7 @@ struct ei_linked_point* rounded_frame(ei_rect_t rect, int rayon,bool partieHaute
       return(debutArc1);
     }
 
-  if(partieHaute == false && partieBasse == true)
+  if(partieHaute == EI_FALSE && partieBasse == EI_TRUE)
     {
       finArc3->next = debutArc4;
       finArc4->next = pointInterieur2;
@@ -252,12 +252,12 @@ struct ei_linked_point* rounded_frame(ei_rect_t rect, int rayon,bool partieHaute
       return(debutArc3);
     }
 
-  if(partieHaute == false && partieBasse == false)
+  if(partieHaute == EI_FALSE && partieBasse == EI_FALSE)
     {
       return;
     }
  
-  if (partieHaute == true && partieBasse == true)
+  if (partieHaute == EI_TRUE && partieBasse == EI_TRUE)
     { 
       finArc1->next = debutArc2;
       finArc2->next = debutArc2bis;
@@ -270,7 +270,7 @@ struct ei_linked_point* rounded_frame(ei_rect_t rect, int rayon,bool partieHaute
     }
 }
 
-struct ei_linked_point_t* lastPoint(struct ei_linked_point_t* l) //retourne le dernier point d une liste chainee
+ei_linked_point_t* lastPoint(ei_linked_point_t* l) //retourne le dernier point d une liste chainee
 {
   ei_linked_point_t tmp = l;
   while(tmp->next != NULL)
