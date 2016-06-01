@@ -66,7 +66,7 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
       tab_widget[i]=NULL;
 
     window = hw_create_window(main_window_size,fullscreen);
-    //windowpick = hw_create_window(main_window_size,fullscreen);
+    windowpick = hw_create_window(main_window_size,fullscreen);
 }
 
 
