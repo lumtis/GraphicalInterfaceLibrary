@@ -1,16 +1,6 @@
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "ei_widget_frame.h"
-#include "ei_widget_button.h"
-#include "ei_widget_toplevel.h"
+
 #include "ei_draw_util.h"
-#include "math.h"
-#include "ei_types.h"
-#include"ei_widget.h"
-#include "ei_widgetclass.h"
-#include "hw_interface.h"
 
 ei_linked_point_t* getCadre(struct ei_widget_t* widget)
 {
@@ -169,14 +159,15 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_w
 
 ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleDebut, int angleFin, int nbPoints)
 {
-  /*
+  
   ei_linked_point_t* dernierPoint;
-  ei_linked_point_t* premierPoint;
+  ei_linked_point_t* premierPoint = NULL;
   int pasAngle = (angleFin-angleDebut)/nbPoints;
   ei_point_t newPoint;
   
   premierPoint->point.x = rayon*cos(angleDebut); //on initialise le point du debut
   premierPoint->point.y = rayon*sin(angleDebut);
+  premierPoint->next = NULL;
   dernierPoint = premierPoint; //on initialise dernierPoint au premier point
 
   for(int i=0; i<nbPoints+1;i++)
@@ -186,14 +177,14 @@ ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleDebut, int angleFi
       dernierPoint=addLinkedPoint(dernierPoint,newPoint); //on chaine ce nouveau point au dernier point
     }
   return premierPoint;
-  */
+  
   
   return NULL;
 }
 
 ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse)
 {
-  /*
+  
   ei_point_t centre1;
   ei_linked_point_t* debutArc1;
   ei_linked_point_t* finArc1;
@@ -211,8 +202,8 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
   ei_linked_point_t* debutArc4bis;  
   ei_linked_point_t* finArc4bis;
 
-  ei_linked_point_t* pointInterieur1;
-  ei_linked_point_t* pointInterieur2;
+  ei_linked_point_t* pointInterieur1 = NULL;
+  ei_linked_point_t* pointInterieur2 = NULL;
 
   int h = min(rect.size.width,rect.size.height)/2;
 
@@ -290,21 +281,21 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
      
       return(debutArc1);
     }
-   */
+   
   
   return NULL;
 }
 
 ei_linked_point_t* lastPoint(ei_linked_point_t* l) //retourne le dernier point d une liste chainee
 {
-  /*
+  
   ei_linked_point_t* tmp = l;
   while(tmp->next != NULL)
     {
       tmp = tmp->next;
     }
   return tmp;
-  */
+  
 }
 
 int min(int a, int b)
@@ -321,7 +312,7 @@ int min(int a, int b)
 
 void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
 {
-  /*
+  
   ei_size_t s;
   ei_surface_t surface;
   ei_color_t fonce;
@@ -343,15 +334,15 @@ void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
   
   if(enfonce)
     {
-      draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),fonce,NULL,&rect);
-      draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),clair,NULL,&rect);
+      ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),fonce,NULL);
+      ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),clair,NULL);
   
     }
   else
     {
-      draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),fonce,NULL,&rect);
-      draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),clair,NULL,&rect);
+      ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),fonce,NULL);
+      ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),clair,NULL);
     }
-    */
+    
 }
 
