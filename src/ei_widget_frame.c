@@ -87,7 +87,7 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
         //drawImgWidget(surface, widget, wf);
     
     hw_surface_unlock(surface);
-    hw_surface_unlock(pick_surface)
+    hw_surface_unlock(pick_surface);
     hw_surface_update_rects(surface, NULL);
 }
 
