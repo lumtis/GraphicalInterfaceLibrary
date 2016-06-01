@@ -84,7 +84,7 @@ ${OBJDIR}/minimal.o : ${TESTS}/minimal.c
 test : ${OBJDIR}/test.o ${LIBEIBASE}
 	${LINK} -o test ${OBJDIR}/test.o ${LIBS}
 
-${OBJDIR}/test.o : ${TESTS}/test.c
+${OBJDIR}/test.o : ${TESTS}/test.c 
 	${CC} ${CCFLAGS} ${INCFLAGS} ${TESTS}/test.c -o ${OBJDIR}/test.o
 
 

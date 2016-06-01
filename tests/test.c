@@ -8,6 +8,7 @@
 int ei_main(int argc, char* argv[])
 {
   ei_rect_t rect;
+  
   rect.top_left.x = 5.0;
   rect.top_left.y = 5.0;
   rect.size.width = 80;

@@ -14,9 +14,22 @@
 #include "ei_widget_frame.h"
 #include "ei_widget_button.h"
 #include "ei_widget_toplevel.h"
+#include "ei_geometrymanager.h"
 #include "ei_global.h"
 
 uint32_t vgpick_id = 0;
+
+
+// Libere un widget
+void freeWidget(ei_widget_t * widget)
+{
+    widget->wclass->releasefunc(widget);
+    if(widget->pick_color != NULL)
+	free(widget->pick_color);
+    if(widget->geom_params != NULL)
+	free(widget->geom_params);
+    free(widget);
+}
 
 
 /**
@@ -32,10 +45,8 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
             ei_widget_destroy_rec(widget->children_head);
         if (widget->next_sibling != NULL )
             ei_widget_destroy_rec(widget->next_sibling);
-
-        widget->wclass->releasefunc(widget);
-	free(widget->pick_color);
-        free(widget);
+	
+        freeWidget(widget);
     }
 }
 
@@ -48,9 +59,11 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
     return NULL;
   else
     {
-      
       new_widget = (ei_widget_t*)classe_new_widget->allocfunc();
       new_widget->wclass = classe_new_widget;
+      classe_new_widget->setdefaultsfunc(new_widget);
+      
+      // identifiant
       new_widget->pick_id = vgpick_id ;
       new_widget->pick_color = calloc(1, sizeof(ei_color_t));
       new_widget->pick_color->red = vgpick_id;
@@ -58,11 +71,8 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
       new_widget->pick_color->blue =0;	
       new_widget->pick_color->green=0;
       
-      new_widget->screen_location.top_left = parent->screen_location.top_left;
+      // Arborescence
       new_widget->parent = parent;
-      new_widget->geom_params= NULL;
-      classe_new_widget->setdefaultsfunc(new_widget);
-      
       if (parent->children_head == NULL )
 	{
 	  parent->children_head=new_widget;
@@ -74,6 +84,11 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 	  parent->children_head = new_widget;
 	}
     }
+    
+    // Localistation, geometrie
+    new_widget->screen_location.top_left = parent->screen_location.top_left;
+    new_widget->geom_params = calloc(1, sizeof(ei_geometry_param_t));
+    
     // mise à jour du tableau de widget
     tab_widget[vgpick_id]=new_widget;
     vgpick_id++; 
@@ -91,9 +106,7 @@ void ei_widget_destroy(ei_widget_t* widget)
         if (widget->parent== NULL)
         {
             ei_widget_destroy_rec(widget->children_head);
-            widget->wclass->releasefunc(widget);
-	    free(widget->pick_color);
-            free(widget);
+            freeWidget(widget);
         }
         else
         {
@@ -105,17 +118,15 @@ void ei_widget_destroy(ei_widget_t* widget)
                   	  widget->parent->children_head = NULL;
                   	  widget->parent->children_tail= NULL;
                   	  ei_widget_destroy_rec(widget->children_head);
-                  	  widget->wclass->releasefunc(widget);
-			  free(widget->pick_color);
-                  	  free(widget);
+                  	  
+			  freeWidget(widget);
               	}
               	 else
               	 {
                   	  widget->parent->children_head= p->next_sibling;
                   	  ei_widget_destroy_rec(widget->children_head);
-                  	  widget->wclass->releasefunc(widget);
-			  free(widget->pick_color);
-                  	  free(widget);
+                  	  
+			  freeWidget(widget);
               	  }
       	    }
       	    else
@@ -124,9 +135,8 @@ void ei_widget_destroy(ei_widget_t* widget)
           	        p=p->next_sibling;
           	    p->next_sibling=widget->next_sibling;
           	    ei_widget_destroy_rec(widget->children_head);
-                widget->wclass->releasefunc(widget);
-		free(widget->pick_color);
-          	    free(widget);
+		    
+		    freeWidget(widget);
       	    }
         }
     }

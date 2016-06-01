@@ -14,6 +14,7 @@
 #include "ei_widgetclass.h"
 #include "ei_widget_frame.h"
 #include "ei_global.h"
+#include "ei_geometrymanager.h"
 
 ei_widget_t * racine;
 ei_surface_t window;
@@ -39,6 +40,7 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
   
     hw_init();
 
+    ei_register_placer_manager();
     ei_frame_register_class();
     
     racine = frameAllocfunc();
@@ -50,10 +52,12 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     coloracine->blue = 0;
     coloracine->alpha = 255;
     
-    // Initialisation de la racine
+    // Identifiant
     racine->pick_color = coloracine;
     racine->wclass = ei_widgetclass_from_name("frame");
     racine->pick_id = 255;
+    
+    // Taille
     racine->requested_size = *main_window_size;
     racine->screen_location.top_left.x = 0;
     racine->screen_location.top_left.y = 0;
@@ -61,10 +65,12 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     racine->content_rect = malloc(sizeof(ei_rect_t));
     *(racine->content_rect) = racine->screen_location;
     
-    // initialisation du tableau de widget 
+    // Initialisation du tableau de widget 
     for ( int i =0 ; i <256 ; i++)
       tab_widget[i]=NULL;
 
+    racine->geom_params = calloc(1, sizeof(ei_geometry_param_t));
+    
     window = hw_create_window(main_window_size,fullscreen);
     windowpick = hw_create_window(main_window_size,fullscreen);
 }

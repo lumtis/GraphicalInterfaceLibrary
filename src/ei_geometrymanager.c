@@ -12,6 +12,8 @@
 #include "ei_geometrymanager.h"
 #include "debug.h"
 #include "ei_geometry_placer.h"
+#include "ei_types.h"
+
 /**
  *  @var	gm
  *  @brief	Variable globale contenant un chainage de tous les gm
@@ -30,7 +32,7 @@ void ei_geometrymanager_register(ei_geometrymanager_t* geometrymanager)
     {
       	tmp = gm;
       	for(tmp = gm; tmp->next != NULL; tmp = tmp->next);
-      	tmp->next = geometrymanager;
+	  tmp->next = geometrymanager;
     }
 }
 
@@ -38,10 +40,10 @@ ei_geometrymanager_t* ei_geometrymanager_from_name(ei_geometrymanager_name_t nam
 {
     ei_geometrymanager_t* tmp;
 
-    for(tmp = gm; tmp != NULL; tmp = tmp->next)
+    for(tmp=gm; tmp != NULL; tmp = tmp->next)
     {
-	      if(!strcmp(tmp->name, name))
-            return tmp;
+	if(!strcmp(tmp->name, name))
+	    return tmp;
     }
 
     PRINT_DEBUG("ei_geometrymanager_from_name : classe non trouvee");
@@ -65,7 +67,7 @@ void ei_geometrymanager_unmap(ei_widget_t* widget)
 
 void ei_register_placer_manager()
 {
-    ei_geometrymanager_t* placer = malloc(sizeof(struct ei_geometrymanager_t));
+    ei_geometrymanager_t* placer = calloc(1, sizeof(ei_geometrymanager_t));
     strcpy(placer->name, "placer");
     placer->runfunc = placerRunfunc;
     placer->releasefunc = placerReleasefunc;
@@ -86,39 +88,55 @@ void	ei_place	(ei_widget_t*		widget,
 			 float*			rel_width,
 			 float*			rel_height)
 {
-  /*
-    ei_geometry_placer_t* pl = (ei_geometry_placer_t*)widget->geom_params->manager;
-
-    if (widget->geom_params != ei_geometry_placer_t)
-        widget->geom_params = NULL;
-
+    ei_geometrymanager_t* placeur = ei_geometrymanager_from_name("placer");
+    ei_geometry_placer_t* manager;
+    ei_bool_t redef = EI_FALSE;
+    
+    // widget n'a pas forcement de manager placeur
+    if(widget->geom_params->manager == NULL)
+	redef = EI_TRUE;
+    else if(strcmp(widget->geom_params->manager->name, "placer") != 0)
+    {
+	widget->geom_params->manager->releasefunc(widget);
+	redef = EI_TRUE;
+    }
+    
+    // Le manager de geometrie est à redefinir
+    if(redef == EI_TRUE)
+    {
+	widget->geom_params->manager = calloc(1, sizeof(ei_geometry_placer_t));
+	*(widget->geom_params->manager) = *placeur;
+	
+	manager = (ei_geometry_placer_t*)widget->geom_params->manager;
+	manager->x = widget->screen_location.top_left.x;
+	manager->y = widget->screen_location.top_left.y;
+	manager->width = widget->screen_location.size.width;
+	manager->height = widget->screen_location.size.height;
+    }
+    else
+	manager = (ei_geometry_placer_t*)widget->geom_params->manager;
+    
+    //Mis à jour des membres du placeur
     if (anchor != NULL)
-        pl->anchor = *anchor;
-
+        manager->anchor = *anchor;
     if (x != NULL)
-        pl->x = *x;
-
+        manager->x = *x;
     if (y != NULL)
-        pl->y = *y;
-
+        manager->y = *y;
     if (width != NULL)
-        pl->width = *width;
-
+        manager->width = *width;
     if (height != NULL)
-        pl->height = *height;
-
+        manager->height = *height;
     if (rel_x != NULL)
-        pl->rel_x = *rel_x;
-
+        manager->rel_x = *rel_x;
     if (rel_y != NULL)
-        pl->rel_y = *rel_y;
-
+        manager->rel_y = *rel_y;
     if (rel_width != NULL)
-        pl->rel_width = *rel_width;
-
+        manager->rel_width = *rel_width;
     if (rel_height != NULL)
-        pl->rel_height = *rel_height;
+        manager->rel_height = *rel_height;
 
-    widget->geom_params = pl;
-    */
+    // Met à jour les modifs
+    //placeur->runfunc(widget);
+    widget->geom_params->manager->runfunc(widget);
 }

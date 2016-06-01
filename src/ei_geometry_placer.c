@@ -6,31 +6,95 @@
  *
  */
 
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "ei_geometry_placer.h"
+#include "ei_application.h"
+#include "ei_utils.h"
 
-void placerRunfunc(struct ei_widget_t*	widget) //recalcule la position du widget dans son parent
+
+void placerRunfunc(struct ei_widget_t*	widget)
 {
-  /*
-  
-     struct ei_widget_t* parent = widget->parent;      
-     struct ei_anchor_t* anc = parent->geom_params->anchor;
-     int* x = parent->geom_params->manager->x;
-     int* y = parent->geom_params->y;
-     int* w = parent->geom_params->width;
-     int* h = parent->geom_params->height;
-     float* rx = parent->geom_params->rel_x;
-     float* ry = parent->geom_params->rel_y;
-     float*	rw = parent->geom_params->rel_width;
-     float*	rh = parent->geom_params->rel_height;
-
-     ei_place(widget,anc,&x,&y,&w,&h,&rx,&ry,&rw,&rh);
-
-  */
+    ei_geometry_placer_t* pl;
+    ei_rect_t parentRect;
+    
+    // Il faut que le widget possède un manager de geometrie de type placer
+    if(widget->geom_params == NULL)
+	return;
+    if(widget->geom_params->manager == NULL)
+	return;
+    if(strcmp(widget->geom_params->manager->name, "placer") != 0)
+	return;
+    
+    pl = (ei_geometry_placer_t*)widget->geom_params->manager;
+    
+    // Si c'est la fenetre racine ses coordonnées reste toujours à (0,0)
+    if(widget == ei_app_root_widget())
+	return;
+    else
+	parentRect = widget->parent->screen_location;
+	
+    // On modifie la taille du widget
+    widget->screen_location.size.width = pl->rel_width * parentRect.size.width + pl->width;
+    widget->screen_location.size.height = pl->rel_height * parentRect.size.height + pl->height;
+    
+    // On modifie sa position en fonction de son anchor
+    switch(pl->anchor)
+    {
+	case ei_anc_none:	// Pas d'ancrage -> nord ouest
+	case ei_anc_northwest:
+	    widget->screen_location.top_left.x = pl->rel_x * parentRect.top_left.x + pl->x;
+	    widget->screen_location.top_left.y = pl->rel_y * parentRect.top_left.y + pl->y;
+	    break;
+	case ei_anc_north:
+	    widget->screen_location.top_left.x = pl->rel_x * parentRect.top_left.x + pl->x - (widget->screen_location.size.width)/2;
+	    widget->screen_location.top_left.y = pl->rel_y * parentRect.top_left.y + pl->y;
+	    break;
+	case ei_anc_northeast:
+	    widget->screen_location.top_left.x = pl->rel_x * parentRect.top_left.x + pl->x - widget->screen_location.size.width;
+	    widget->screen_location.top_left.y = pl->rel_y * parentRect.top_left.y + pl->y;
+	    break;
+	case ei_anc_east:
+	    widget->screen_location.top_left.x = pl->rel_x * parentRect.top_left.x + pl->x - widget->screen_location.size.width;
+	    widget->screen_location.top_left.y = pl->rel_y * parentRect.top_left.y + pl->y - (widget->screen_location.size.height)/2;
+	    break;
+	case ei_anc_southeast:
+	    widget->screen_location.top_left.x = pl->rel_x * parentRect.top_left.x + pl->x - widget->screen_location.size.width;
+	    widget->screen_location.top_left.y = pl->rel_y * parentRect.top_left.y + pl->y - widget->screen_location.size.height;
+	    break;
+	case ei_anc_south:
+	    widget->screen_location.top_left.x = pl->rel_x * parentRect.top_left.x + pl->x - (widget->screen_location.size.width)/2;
+	    widget->screen_location.top_left.y = pl->rel_y * parentRect.top_left.y + pl->y - widget->screen_location.size.height;
+	    break;
+	case ei_anc_southwest:
+	    widget->screen_location.top_left.x = pl->rel_x * parentRect.top_left.x + pl->x;
+	    widget->screen_location.top_left.y = pl->rel_y * parentRect.top_left.y + pl->y - widget->screen_location.size.height;
+	    break;
+	case ei_anc_west:
+	    widget->screen_location.top_left.x = pl->rel_x * parentRect.top_left.x + pl->x;
+	    widget->screen_location.top_left.y = pl->rel_y * parentRect.top_left.y + pl->y - (widget->screen_location.size.height)/2;
+	    break;
+	case ei_anc_center:
+	    widget->screen_location.top_left.x = pl->rel_x * parentRect.top_left.x + pl->x - (widget->screen_location.size.width)/2;
+	    widget->screen_location.top_left.y = pl->rel_y * parentRect.top_left.y + pl->y - (widget->screen_location.size.height)/2;
+	    break;
+    }
 }
 
 
 
 void placerReleasefunc(struct ei_widget_t* widget)
 {
-
+    if(widget != NULL)
+    {
+	if(widget->geom_params != NULL)
+	{
+	    if(widget->geom_params->manager != NULL)
+	    {
+		free(widget->geom_params->manager);
+		widget->geom_params->manager = NULL;
+	    }
+	}
+    }
 }
