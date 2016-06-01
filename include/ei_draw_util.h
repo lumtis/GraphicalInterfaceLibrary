@@ -28,6 +28,7 @@ void drawImgWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_wid
 ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleDebut, int angleFin,int nbPoints);
 ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse);
 ei_linked_point_t* lastPoint(ei_linked_point_t* l);
+void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce);
 
 int min(int a, int b);
 
