@@ -21,8 +21,8 @@ void frameReleasefunc(struct ei_widget_t* widget)
         free(wf->text);
     if(wf->img_rect != NULL)
         free(wf->img_rect);
-    //if(wf->img != NULL)
-        //free(wf->img);
+    if(wf->img != NULL)
+         free(wf->img);
 }
 
 void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -36,6 +36,9 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     ei_color_t black  = {0x10, 0x10, 0x10, 0x70};
     ei_color_t pickColor;
     //ei_color_t grey  = {0x70, 0x70, 0x70, 0xFF};
+    
+    hw_surface_lock(surface);
+    hw_surface_lock(pick_surface);
     
     /*
     // On dessine un relief si le bord est supérieur à 0
@@ -65,25 +68,27 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     */
 
     // Dessin du cadre
-    hw_surface_lock(surface);    
     ei_draw_polygon(surface, cadre, wf->color, clipper);
-    hw_surface_unlock(surface);
-    hw_surface_update_rects(surface, NULL);
+    
     
     //ei_draw_polyline(surface, cadre, gris, clipper);
     // Offsreen
-    //pickColor = *(widget->pick_color);
-    //ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
+    pickColor = *(widget->pick_color);
+    ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
 
     freeLinkedPoint(cadre);
 
     // Texte
     if(wf->text != NULL)
-        drawTextWidget(surface, widget, wf, clipper);
+        //drawTextWidget(surface, widget, wf, clipper);
 
     // Image
     if(wf->img != NULL)
-        drawImgWidget(surface, widget, wf);
+        //drawImgWidget(surface, widget, wf);
+    
+    hw_surface_unlock(surface);
+    hw_surface_unlock(pick_surface)
+    hw_surface_update_rects(surface, NULL);
 }
 
 
