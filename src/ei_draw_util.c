@@ -331,6 +331,7 @@ void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
 
   s.width = 400;
   s.height = 800;
+  
 
   surface = hw_surface_create(hw_create_window(&s,EI_FALSE),&s,EI_FALSE);
   fonce.red = 50;
