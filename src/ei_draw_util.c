@@ -321,19 +321,22 @@ int min(int a, int b)
 }
 
 
-void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
+void draw_button(ei_rect_t rect, int rayon, ei_bool_t enfonce)
 {
   
   ei_size_t s;
   ei_surface_t surface;
   ei_color_t fonce;
   ei_color_t clair;
-
+  
   s.width = 400;
   s.height = 800;
   
 
   surface = hw_surface_create(hw_create_window(&s,EI_FALSE),&s,EI_FALSE);
+  
+  hw_surface_lock(surface);
+  
   fonce.red = 50;
   fonce.blue = 50;
   fonce.green = 50;
@@ -355,6 +358,8 @@ void draw_button(ei_rect_t rect,int rayon,ei_bool_t enfonce)
       ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),fonce,NULL);
       ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),clair,NULL);
     }
-    
+     
+    hw_surface_unlock(surface);
+    hw_surface_update_rects(surface, NULL);
 }
 
