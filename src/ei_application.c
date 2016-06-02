@@ -22,7 +22,7 @@ ei_surface_t windowpick;
 ei_widget_t* tab_widget[256];
 ei_linked_rect_t*  liste_rect = NULL;
 
-void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick, ei_rect* clipper )
+void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick, ei_rect_t* clipper )
 {
     if(widget == NULL)
         return;
@@ -95,7 +95,7 @@ void ei_app_run()
 {
     
     frameDrawfunc(racine, window, windowpick, racine->content_rect);
-    ei_app_run_rec(racine->children_head, window, windowpick);
+    ei_app_run_rec(racine->children_head, window, windowpick,NULL);
     getchar();
 }
 
