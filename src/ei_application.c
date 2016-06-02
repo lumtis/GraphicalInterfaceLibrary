@@ -96,7 +96,11 @@ void ei_app_run()
     
     frameDrawfunc(racine, window, windowpick, racine->content_rect);
     ei_app_run_rec(racine->children_head, window, windowpick,NULL);
+    hw_event_wait_next(event);
+    while ( courant != NULL)
+      
     getchar();
+    
 }
 
 void ei_app_invalidate_rect(ei_rect_t* rect)
