@@ -272,12 +272,13 @@ void printLinkedPoint(ei_linked_point_t* l)
     }
 }
 
+
 void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf, ei_rect_t* clipper)
 {
     ei_point_t where;
-    int* width_text = malloc(sizeof(int));
-    int* height_text = malloc(sizeof(int));
-    hw_text_compute_size(wf->text,wf->text_font,width_text,height_text); //stocke la largeur et la hauteur du texte dans width_text et height_text
+    int* text_width = malloc(sizeof(int));
+    int* text_height = malloc(sizeof(int));
+    hw_text_compute_size(wf->text,wf->text_font,text_width,text_height); //stocke la largeur et la hauteur du texte dans width_text et height_text
     
     if(wf->text_anchor == ei_anc_none)
     
@@ -591,4 +592,3 @@ void draw_button(ei_rect_t rect, int rayon, ei_bool_t enfonce,ei_surface_t surfa
     hw_surface_unlock(surface);
     hw_surface_update_rects(surface, NULL);
 }
-

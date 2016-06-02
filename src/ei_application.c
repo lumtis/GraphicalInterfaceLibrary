@@ -97,19 +97,21 @@ void ei_app_run()
 void ei_app_invalidate_rect(ei_rect_t* rect)
 {
     
-    ei_linked_rect * new_rect = calloc(1, sizeof(ei_linked_rect));
+    ei_linked_rect_t * new_rect = calloc(1, sizeof(ei_linked_rect_t));
     new_rect->rect = *rect;
-    ei_linked_rect * tmp;
-    
+    ei_linked_rect_t * tmp;
+    ei_linked_rect_t * liste_rect = malloc(sizeof(ei_linked_rect_t));
   
-    if ( listerect = NULL )
+    if (liste_rect == NULL)
       liste_rect=new_rect;
     
     else
     {
-      tmp=listerect
-      for(tmp=listerect ;tmp->next =! NULL; tmp =tmp->next);
-      tmp->next= new_rect;
+      tmp=liste_rect;
+      for(tmp=liste_rect ;tmp->next =! NULL; tmp =tmp->next)
+	{
+	  tmp->next= new_rect;
+	}
     }
       
 }
