@@ -302,7 +302,7 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {	
 	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - *text_width/2;
-	where.y = widget->screen_location.top_left.y;
+	where.y = widget->screen_location.top_left.y+wf->border_width;
 	ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
     
@@ -310,8 +310,8 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {
 	
-    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width - *text_width;
-    where.y = widget->screen_location.top_left.y;
+    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width - *text_width-wf->border_width;
+    where.y = widget->screen_location.top_left.y-wf->border_width;
     ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
 
@@ -319,7 +319,7 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {
 	
-    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width;
+    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width-wf->border_width;
     where.y = widget->screen_location.top_left.y +widget->screen_location.size.height/2 - *text_height/2;
     ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
@@ -328,8 +328,8 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {
 	
-    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width;;
-    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height - *text_height;
+    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width-wf->border_width;
+    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height - *text_height - wf->border_width;
     ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
 
@@ -338,7 +338,7 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
       {
 	
     where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - *text_width/2;
-    where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - *text_height;
+    where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - *text_height - wf->border_width;
     ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
     
@@ -346,8 +346,8 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {
 	
-    where.x = widget->screen_location.top_left.x;
-    where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height - *text_height;
+    where.x = widget->screen_location.top_left.x + wf->border_width;
+    where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height - *text_height - wf->border_width;
     ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
 
@@ -356,7 +356,7 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {
 	
-    where.x = widget->screen_location.top_left.x;
+    where.x = widget->screen_location.top_left.x + wf->border_width;
     where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - *text_height/2;
     ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
@@ -367,8 +367,8 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {
 	
-    where.x = widget->screen_location.top_left.x;
-    where.y = widget->screen_location.top_left.y;
+    where.x = widget->screen_location.top_left.x+wf->border_width;
+    where.y = widget->screen_location.top_left.y+wf->border_width;
     ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
 
@@ -384,8 +384,70 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
 void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf)
 {
     // TODO : Gerer les ancrage
-
     ei_copy_surface(surface, NULL, wf->img, wf->img_rect, EI_FALSE);
+
+  if(wf->text_anchor == ei_anc_none)
+    
+      {
+ 
+      }
+    
+    if(wf->text_anchor == ei_anc_center)
+    
+      {
+
+      }
+   
+
+ if(wf->text_anchor == ei_anc_north)
+    
+      {	
+
+      }
+    
+    if(wf->text_anchor == ei_anc_northeast)
+    
+      {
+      
+      }
+
+ if(wf->text_anchor == ei_anc_east)
+    
+      {
+
+      }
+    
+    if(wf->text_anchor == ei_anc_southeast)
+    
+      {
+
+      }
+
+ if(wf->text_anchor == ei_anc_south)
+    
+      {
+
+      }
+    
+    if(wf->text_anchor == ei_anc_southwest)
+    
+      {
+	
+   
+      }
+
+
+  if(wf->text_anchor == ei_anc_west)
+    
+      {
+      }
+
+
+
+  if(wf->text_anchor == ei_anc_northwest)
+    
+      {	
+      }
 }
 
 
