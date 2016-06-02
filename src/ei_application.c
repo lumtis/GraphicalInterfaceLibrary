@@ -15,6 +15,7 @@
 #include "ei_widget_frame.h"
 #include "ei_global.h"
 #include "ei_geometrymanager.h"
+#include "ei_types.h"
 
 ei_widget_t * racine;
 ei_surface_t window;
@@ -93,12 +94,19 @@ void ei_app_free()
 
 void ei_app_run()
 {
-    
+    ei_linked_rect_t * courant = liste_rect;
+    struct ei_event_t * event ;
     frameDrawfunc(racine, window, windowpick, racine->content_rect);
     ei_app_run_rec(racine->children_head, window, windowpick,NULL);
+//     while ( 1 )
+//     {
     hw_event_wait_next(event);
     while ( courant != NULL)
-      
+    {
+      ei_app_run_rec(racine->children_head, window, windowpick,&(courant->rect));
+      courant=courant->next;
+    }  
+//     }  
     getchar();
     
 }
