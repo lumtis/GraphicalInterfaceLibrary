@@ -50,11 +50,11 @@ void buttonDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface
 
     // Texte
     if(wb->text != NULL)
-        //drawTextWidget(surface, widget, wf, clipper);
+        drawTextWidget(surface, widget, wb, clipper);
 
     // Image
     if(wb->img != NULL)
-        //drawImgWidget(surface, widget, wf);
+        //drawImgWidget(surface, widget, wb);
     
     hw_surface_unlock(surface);
     //hw_surface_unlock(pick_surface);
