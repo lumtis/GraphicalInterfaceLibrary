@@ -15,12 +15,15 @@
 #include "ei_widget_frame.h"
 #include "ei_global.h"
 #include "ei_geometrymanager.h"
+#include "ei_types.h"
+#include "ei_event.h"
 
 ei_widget_t * racine;
 ei_surface_t window;
 ei_surface_t windowpick;
 ei_widget_t* tab_widget[256];
 ei_linked_rect_t*  liste_rect = NULL;
+
 
 void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick, ei_rect_t* clipper)
 {
@@ -95,12 +98,22 @@ void ei_app_free()
 
 void ei_app_run()
 {
+    ei_linked_rect_t * courant = liste_rect;
+    ei_event_t event;
     
     frameDrawfunc(racine, window, windowpick, racine->content_rect);
-    ei_app_run_rec(racine->children_head, window, windowpick, NULL);
+    ei_app_run_rec(racine->children_head, window, windowpick,NULL);
+    
+//     while ( 1 )
+//     {
+    hw_event_wait_next(&event);
+    while ( courant != NULL)
+    {
+      ei_app_run_rec(racine->children_head, window, windowpick,&(courant->rect));
+      courant=courant->next;
+    }  
+//     }  
     getchar();
-    
-    
 }
 
 void ei_app_invalidate_rect(ei_rect_t* rect)

@@ -49,14 +49,14 @@ int ei_main(int argc, char** argv)
 	ei_size_t	button_size		= {300,200};
 	int		button_x		= 150;
 	int		button_y		= 200;
-	ei_color_t	button_color		= {0x88, 0x88, 0x88, 0xff};
-	char*		button_title		= "Mon premier Bouton !";
-	ei_color_t	button_text_color	= {0x00, 0x00, 0x00, 0xff};
+	ei_color_t	button_color		= {0x88, 0x10, 0x10, 0xff};
+	char*		button_title		= "Besahtek";
+	ei_color_t	button_text_color	= {0x00, 0x00, 0x90, 0xff};
 	int		button_corner_radius	= 20;
 	ei_relief_t	button_relief		= ei_relief_sunken;
 	int		button_border_width	= 12;
 	ei_callback_t	button_callback 	= button_press;
-	ei_anchor_t a = ei_anc_southeast;
+	ei_anchor_t a = ei_anc_center;
 	
 	/* Create the application and change the color of the background. */
 	ei_app_create(&screen_size, EI_FALSE);
