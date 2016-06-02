@@ -20,7 +20,7 @@ ei_widget_t * racine;
 ei_surface_t window;
 ei_surface_t windowpick;
 ei_widget_t* tab_widget[256];
-
+ei_linked_rect_t*  liste_rect = NULL;
 
 void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick)
 {
@@ -96,7 +96,22 @@ void ei_app_run()
 
 void ei_app_invalidate_rect(ei_rect_t* rect)
 {
-    return;
+    
+    ei_linked_rect * new_rect = calloc(1, sizeof(ei_linked_rect));
+    new_rect->rect = *rect;
+    ei_linked_rect * tmp;
+    
+  
+    if ( listerect = NULL )
+      liste_rect=new_rect;
+    
+    else
+    {
+      tmp=listerect
+      for(tmp=listerect ;tmp->next =! NULL; tmp =tmp->next);
+      tmp->next= new_rect;
+    }
+      
 }
 
 void ei_app_quit_request()
