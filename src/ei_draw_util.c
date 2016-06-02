@@ -12,7 +12,7 @@
 #include "ei_widgetclass.h"
 #include "hw_interface.h"
 
-
+/*Libere un  point*/
 void freeLinkedPoint(ei_linked_point_t* l)
 {
     ei_linked_point_t* tmp1 = l;
@@ -31,6 +31,9 @@ void freeLinkedPoint(ei_linked_point_t* l)
     }
 }
 
+
+
+/*ajoute un point a une liste chainee*/
 ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p)
 {
     ei_linked_point_t* tmp = calloc(1, sizeof(ei_linked_point_t));
@@ -43,6 +46,7 @@ ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p)
 }
 
 
+/*affiche l->point*/
 void printLinkedPoint(ei_linked_point_t* l)
 {
     int i = 0;
@@ -55,7 +59,9 @@ void printLinkedPoint(ei_linked_point_t* l)
     }
 }
 
-ei_linked_point_t* lastPoint(ei_linked_point_t* l) //retourne le dernier point d une liste chainee
+
+/*renvoie le dernier point d'une liste chainee*/
+ei_linked_point_t* lastPoint(ei_linked_point_t* l)
 {
   
   ei_linked_point_t* tmp = l;
@@ -66,7 +72,7 @@ ei_linked_point_t* lastPoint(ei_linked_point_t* l) //retourne le dernier point d
   return tmp;
 }
 
-
+/*retourne le min entre deux entiers*/
 int min(int a, int b)
 {
   if(a<b)
@@ -79,7 +85,7 @@ int min(int a, int b)
     }
 }
 
-
+/*chaine les sommets d'un rect pour former soit la partie haute, soit la partie basse, soit les deux, d'un frame*/
 ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_bool_t partieBasse)
 {
   
@@ -92,7 +98,8 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
   ei_linked_point_t* s2 = malloc(sizeof(struct ei_linked_point_t));
   ei_linked_point_t* s3 = malloc(sizeof(struct ei_linked_point_t));
   ei_linked_point_t* s4 = malloc(sizeof(struct ei_linked_point_t));
- 
+  ei_linked_point_t* fin = malloc(sizeof(struct ei_linked_point_t));
+  
   ei_linked_point_t* pointInterieur1 = malloc(sizeof(struct ei_linked_point_t)) ;
   ei_linked_point_t* pointInterieur2 = malloc(sizeof(struct ei_linked_point_t)) ;
 
@@ -132,6 +139,9 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       s2->next = pointInterieur1;
       pointInterieur1->next = pointInterieur2;
       pointInterieur2->next = s4;
+      s4->next = fin;
+      fin->point = s1->point;
+      fin->next = NULL;
 
       return(s1);
     }
@@ -142,7 +152,10 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       s4->next = pointInterieur2;
       pointInterieur2->next = pointInterieur1;
       pointInterieur1->next = s2;
-      
+      s2->next = fin;
+      fin->point = s3->point;
+      fin->next = NULL;
+
       return(s3);
     }
 
@@ -156,12 +169,15 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       s1->next = s2;
       s2->next = s3;
       s3->next = s4;
-      
+      s4->next = fin;
+      fin->point = s1->point;
+      fin->next = NULL;
+
       return(s1);
     }
 }
 
-
+/*renvoie non(b)*/
 ei_bool_t inverseBool(ei_bool_t b)
 {
     if(b == EI_FALSE)
@@ -173,7 +189,7 @@ ei_bool_t inverseBool(ei_bool_t b)
 
 
 
-
+/*affiche le texte d'un bouton en prenant en compte l'ancrage*/
 void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf, ei_rect_t* clipper)
 {
     ei_point_t where;
@@ -275,80 +291,92 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
 
 
 
-
 }
 
 
 
 
-
+/*affiche une image dans un widget en tenant compte de l'ancrage*/
 void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf)
 {
-    // TODO : Gerer les ancrage
-    ei_copy_surface(surface, NULL, wf->img, wf->img_rect, EI_FALSE);
-
-  if(wf->text_anchor == ei_anc_none)
+     ei_point_t where;
+  
+    if(wf->img_anchor == ei_anc_none)
     
       {
- 
+	where.x = widget->screen_location.top_left.x;
+	where.y = widget->screen_location.top_left.y;
       }
     
-    if(wf->text_anchor == ei_anc_center)
+    if(wf->img_anchor == ei_anc_center)
     
-      {
-
+      {	
+	where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width/2 - wf->img_rect->size.width/2;
+	where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 -wf->img_rect->size.height/2;
       }
    
 
- if(wf->text_anchor == ei_anc_north)
+    if(wf->img_anchor == ei_anc_north)
     
       {	
-
+	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 -wf->img_rect->size.width/2;
+	where.y = widget->screen_location.top_left.y+wf->border_width;
       }
     
-    if(wf->text_anchor == ei_anc_northeast)
-    
-      {
-      
-      }
-
- if(wf->text_anchor == ei_anc_east)
-    
-      {
-
-      }
-    
-    if(wf->text_anchor == ei_anc_southeast)
-    
-      {
-
-      }
-
- if(wf->text_anchor == ei_anc_south)
-    
-      {
-
-      }
-    
-    if(wf->text_anchor == ei_anc_southwest)
-    
-      {
-	
-   
-      }
-
-
-  if(wf->text_anchor == ei_anc_west)
-    
-      {
-      }
-
-
-
-  if(wf->text_anchor == ei_anc_northwest)
+    if(wf->img_anchor == ei_anc_northeast)
     
       {	
+	where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width -wf->img_rect->size.width-wf->border_width;
+	where.y = widget->screen_location.top_left.y-wf->border_width;
       }
+    
+    if(wf->img_anchor == ei_anc_east)
+    
+      {	
+	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width -wf->img_rect->size.width -wf->border_width;
+	where.y = widget->screen_location.top_left.y +widget->screen_location.size.height/2 -wf->img_rect->size.height/2;
+      }
+    
+    if(wf->img_anchor == ei_anc_southeast)
+    
+      {	
+	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - wf->img_rect->size.width-wf->border_width;
+	where.y = widget->screen_location.top_left.y+widget->screen_location.size.height -wf->img_rect->size.height - wf->border_width;
+      }
+
+ if(wf->img_anchor == ei_anc_south)
+    
+      {	
+	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - wf->img_rect->size.width/2;
+	where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - wf->img_rect->size.height - wf->border_width;
+      }
+    
+    if(wf->img_anchor == ei_anc_southwest)
+    
+      {	
+	where.x = widget->screen_location.top_left.x + wf->border_width;
+	where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height -wf->img_rect->size.height - wf->border_width;
+      }
+
+
+  if(wf->img_anchor == ei_anc_west)
+    
+      {	
+	where.x = widget->screen_location.top_left.x + wf->border_width;
+	where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - wf->img_rect->size.height/2;
+      }
+
+
+
+  if(wf->img_anchor == ei_anc_northwest)
+    
+      {
+	where.x = widget->screen_location.top_left.x+wf->border_width;
+	where.y = widget->screen_location.top_left.y+wf->border_width;
+      }
+  wf->img_rect->top_left = where;
+  ei_copy_surface(surface, NULL, wf->img, wf->img_rect, EI_FALSE);
+
 }
 
 
@@ -379,7 +407,7 @@ ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleD, int angleF, int
   return premierPoint; 
 }
 
-
+/*chaine les sommets d'un rect pour former soit la partie haute, soit la partie basse, soit les deux, d'un rounded frame ( c a d d'un bouton)*/
 ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse)
 {
   
@@ -402,7 +430,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
   ei_linked_point_t* finArc4 = malloc(sizeof(struct ei_linked_point_t)) ;
   ei_linked_point_t* debutArc4bis = malloc(sizeof(struct ei_linked_point_t)) ;  
   ei_linked_point_t* finArc4bis = malloc(sizeof(struct ei_linked_point_t)) ;
-
+  ei_linked_point_t* fin = malloc(sizeof(struct ei_linked_point_t));
   ei_linked_point_t* pointInterieur1 = malloc(sizeof(struct ei_linked_point_t)) ;
   ei_linked_point_t* pointInterieur2 =malloc(sizeof(struct ei_linked_point_t)) ;
 
@@ -451,7 +479,9 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
       finArc2->next = pointInterieur1;
       pointInterieur1->next = pointInterieur2;
       pointInterieur2->next = debutArc4bis;
-      finArc4bis->next = NULL;
+      finArc4bis->next = fin;
+      fin->point = debutArc1->point;
+      fin->next = NULL;
 
       return(debutArc1);
     }
@@ -462,7 +492,9 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
       finArc4->next = pointInterieur2;
       pointInterieur2->next = pointInterieur1;
       pointInterieur1->next = debutArc2bis;
-      finArc2bis->next = NULL;
+      finArc2bis->next = fin;
+      fin->point = debutArc3->point;
+      fin->next = NULL;
       
       return(debutArc3);
     }
@@ -479,7 +511,9 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
       finArc2bis->next = debutArc3;
       finArc3->next = debutArc4;
       finArc4->next = debutArc4bis;
-      finArc4bis->next = NULL;
+      finArc4bis->next = fin;
+      fin->point = debutArc1->point;
+      fin->next = NULL;
      
       return(debutArc1);
     }
@@ -489,7 +523,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
 
 
 
-//TODO : Ajouter ligne noire au dessue
+/*dessine le frame ou le bouton a partir de la liste chainee generee par rounded frame ou rectangular frame*/
 void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper, ei_bool_t enfoncer, ei_bool_t isFrame)
 {
   ei_widget_frame_t* frame = (ei_widget_frame_t*) widget;
