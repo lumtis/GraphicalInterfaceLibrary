@@ -173,17 +173,112 @@ ei_bool_t inverseBool(ei_bool_t b)
 
 
 
-
 void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf, ei_rect_t* clipper)
 {
     ei_point_t where;
-
-    // TODO : Gerer les ancrage
-
+    int* width_text = malloc(sizeof(int));
+    int* height_text = malloc(sizeof(int));
+    hw_text_compute_size(wf->text,wf->text_font,width_text,height_text); //stocke la largeur et la hauteur du texte dans width_text et height_text
+    
+    if(wf->text_anchor == ei_anc_none)
+    
+      {
     where.x = widget->screen_location.top_left.x;
     where.y = widget->screen_location.top_left.y;
     ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+    
+    if(wf->text_anchor == ei_anc_center)
+    
+      {
+	
+    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width/2 - *text_width/2;
+    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - *text_height/2;
+    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+   
+
+ if(wf->text_anchor == ei_anc_north)
+    
+      {	
+	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - *text_width/2;
+	where.y = widget->screen_location.top_left.y;
+	ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+    
+    if(wf->text_anchor == ei_anc_northeast)
+    
+      {
+	
+    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width - *text_width;
+    where.y = widget->screen_location.top_left.y;
+    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+
+ if(wf->text_anchor == ei_anc_east)
+    
+      {
+	
+    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width;
+    where.y = widget->screen_location.top_left.y +widget->screen_location.size.height/2 - *text_height/2;
+    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+    
+    if(wf->text_anchor == ei_anc_southeast)
+    
+      {
+	
+    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width;;
+    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height - *text_height;
+    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+
+ if(wf->text_anchor == ei_anc_south)
+    
+      {
+	
+    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - *text_width/2;
+    where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - *text_height;
+    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+    
+    if(wf->text_anchor == ei_anc_southwest)
+    
+      {
+	
+    where.x = widget->screen_location.top_left.x;
+    where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height - *text_height;
+    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+
+
+  if(wf->text_anchor == ei_anc_west)
+    
+      {
+	
+    where.x = widget->screen_location.top_left.x;
+    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - *text_height/2;
+    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+
+
+
+  if(wf->text_anchor == ei_anc_northwest)
+    
+      {
+	
+    where.x = widget->screen_location.top_left.x;
+    where.y = widget->screen_location.top_left.y;
+    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+      }
+
+
+
+
 }
+
+
+
 
 
 void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf)
