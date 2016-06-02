@@ -61,6 +61,7 @@ void ei_geometrymanager_unmap(ei_widget_t* widget)
     widget->screen_location.size.width = 0;
     widget->geom_params->manager->releasefunc(widget); //on appelle la fonction release du gestionnaire de geometrie qui gere le widget
     free(widget->geom_params); //on libere les parametres geometriques du widget
+    widget->geom_params = NULL;
 }
 
 
@@ -91,6 +92,9 @@ void	ei_place	(ei_widget_t*		widget,
     ei_geometrymanager_t* placeur = ei_geometrymanager_from_name("placer");
     ei_geometry_placer_t* manager;
     ei_bool_t redef = EI_FALSE;
+    
+    if(widget->geom_params == NULL)
+	widget->geom_params = calloc(1, sizeof(ei_geometry_param_t));
     
     // widget n'a pas forcement de manager placeur
     if(widget->geom_params->manager == NULL)
@@ -137,6 +141,5 @@ void	ei_place	(ei_widget_t*		widget,
         manager->rel_height = *rel_height;
 
     // Met à jour les modifs
-    //placeur->runfunc(widget);
     widget->geom_params->manager->runfunc(widget);
 }

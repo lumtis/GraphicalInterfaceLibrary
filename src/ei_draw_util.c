@@ -13,9 +13,74 @@
 #include "hw_interface.h"
 
 
+void freeLinkedPoint(ei_linked_point_t* l)
+{
+    ei_linked_point_t* tmp1 = l;
+    ei_linked_point_t* tmp2;
+
+    if(tmp1 == NULL)
+        return;
+
+    tmp2 = tmp1->next;
+
+    while(tmp2 != NULL)
+    {
+        free(tmp1);
+        tmp1 = tmp2;
+        tmp2 = tmp1->next;
+    }
+}
+
+ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p)
+{
+    ei_linked_point_t* tmp = calloc(1, sizeof(ei_linked_point_t));
+
+    tmp->point = p;
+    if(l != NULL)
+        l->next = tmp;
+
+    return tmp;
+}
+
+
+void printLinkedPoint(ei_linked_point_t* l)
+{
+    int i = 0;
+  
+    while(l != NULL)
+    {
+	printf("%d: %d %d\n", i, l->point.x, l->point.y);
+	l = l->next;
+	i++;
+    }
+}
+
+ei_linked_point_t* lastPoint(ei_linked_point_t* l) //retourne le dernier point d une liste chainee
+{
+  
+  ei_linked_point_t* tmp = l;
+  while(tmp->next != NULL)
+    {
+      tmp = tmp->next;
+    }
+  return tmp;
+}
+
+
+int min(int a, int b)
+{
+  if(a<b)
+    {
+      return a;
+    }
+  else
+    {
+      return b;
+    }
+}
+
 
 ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_bool_t partieBasse)
-
 {
   
   ei_point_t sommet1 = rect.top_left;
@@ -51,8 +116,6 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
   s2->next = NULL;
   s3->next = NULL;
   s4->next = NULL;
-
-  printLinkedPoint(s1);printLinkedPoint(s2);printLinkedPoint(s3);printLinkedPoint(s4);
   
  //pts Interieurs : pts pour former le relief a l'interieur du bouton 
 
@@ -96,181 +159,19 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       
       return(s1);
     }
-   
 }
 
 
-void draw_frame(ei_widget_t* widget, ei_surface_t surface)
+ei_bool_t inverseBool(ei_bool_t b)
 {
-  ei_widget_frame_t* frame = (ei_widget_frame_t*) widget;
-  
-  ei_rect_t rect = frame->w.screen_location;
-  int bordurewidth = frame->border_width;
-  ei_rect_t rectint;
-  rectint.top_left.x = rect.top_left.x + bordurewidth;
-  rectint.top_left.y = rect.top_left.y + bordurewidth;
-  rectint.size.width = rect.size.width - 2*bordurewidth;
-  rectint.size.height = rect.size.height - 2*bordurewidth;
-  ei_color_t* fonce = malloc(sizeof(struct ei_color_t*)); 
-  fonce->red = 140;
-  fonce->green = 140;
-  fonce->blue = 140;
-  fonce->alpha = 255;
-  
-  ei_color_t* clair = malloc(sizeof(struct ei_color_t*));
-  clair->red = 210;
-  clair->green = 210;
-  clair->blue = 210;
-  clair->alpha = 255;
-
-  ei_color_t* color = malloc(sizeof(struct ei_color_t*)); 
-  color->red = 170;
-  color->green = 170;
-  color->blue = 170;
-  color->alpha = 255;
-  
-  ei_draw_polygon(surface,rectangular_frame(rect,EI_TRUE,EI_FALSE),*fonce,NULL);
-  ei_draw_polygon(surface,rectangular_frame(rect,EI_FALSE,EI_TRUE),*clair,NULL);
-  ei_draw_polygon(surface,rectangular_frame(rectint,EI_TRUE,EI_TRUE),*color,NULL);
- 
-     
-  hw_surface_unlock(surface);
-  hw_surface_update_rects(surface, NULL);
+    if(b == EI_FALSE)
+	return EI_TRUE;
+    else
+	return EI_FALSE;
 }
 
 
 
-ei_linked_point_t* getCadre(struct ei_widget_t* widget)
-{
-    ei_linked_point_t* ret = NULL;
-    ei_linked_point_t* tmpL;
-    ei_point_t tmp;
-
-    // Premier point
-    tmp.x = widget->screen_location.top_left.x;
-    tmp.y = widget->screen_location.top_left.y;
-    ret = addLinkedPoint(ret, tmp);
-
-    // Deuxieme point
-    tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
-    tmp.y = widget->screen_location.top_left.y;
-    tmpL = addLinkedPoint(ret, tmp);
-
-    // Troisieme point
-    tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
-    tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    // Quatrieme point
-    tmp.x = widget->screen_location.top_left.x;
-    tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    return ret;
-}
-
-
-ei_linked_point_t* getBordure(struct ei_widget_t* widget, int bord)
-{
-    ei_linked_point_t* ret = NULL;
-    ei_linked_point_t* tmpL;
-    ei_point_t tmp;
-
-    // Premier point
-    ret->point.x = widget->screen_location.top_left.x;
-    ret->point.y = widget->screen_location.top_left.y;
-    ret = addLinkedPoint(ret, tmp);
-    
-    // Deuxieme point
-    tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
-    tmp.y = widget->screen_location.top_left.y;
-    tmpL = addLinkedPoint(ret, tmp);
-
-    // Troisieme point
-    tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width;
-    tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    // Quatrieme point
-    tmp.x = widget->screen_location.top_left.x;
-    tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    // Cinquieme point
-    tmp.x = widget->screen_location.top_left.x;
-    tmp.y = widget->screen_location.top_left.y;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    // Sixieme point
-    tmp.x = widget->screen_location.top_left.x - bord;
-    tmp.y = widget->screen_location.top_left.y - bord;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    // Septieme point
-    tmp.x = widget->screen_location.top_left.x - bord;
-    tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height + bord;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    // Huitieme point
-    tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width + bord;
-    tmp.y = widget->screen_location.top_left.y + widget->screen_location.size.height + bord;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    // Neuvieme point
-    tmp.x = widget->screen_location.top_left.x + widget->screen_location.size.width + bord;
-    tmp.y = widget->screen_location.top_left.y - bord;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    // Dixieme point
-    tmp.x = widget->screen_location.top_left.x - bord;
-    tmp.y = widget->screen_location.top_left.y - bord;
-    tmpL = addLinkedPoint(tmpL, tmp);
-
-    return ret;
-}
-
-
-void freeLinkedPoint(ei_linked_point_t* l)
-{
-    ei_linked_point_t* tmp1 = l;
-    ei_linked_point_t* tmp2;
-
-    if(tmp1 == NULL)
-        return;
-
-    tmp2 = tmp1->next;
-
-    while(tmp2 != NULL)
-    {
-        free(tmp1);
-        tmp1 = tmp2;
-        tmp2 = tmp1->next;
-    }
-}
-
-ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p)
-{
-    ei_linked_point_t* tmp = calloc(1, sizeof(ei_linked_point_t));
-
-    tmp->point = p;
-    if(l != NULL)
-        l->next = tmp;
-
-    return tmp;
-}
-
-
-void printLinkedPoint(ei_linked_point_t* l)
-{
-    int i = 0;
-  
-    while(l != NULL)
-    {
-	printf("%d: %d %d\n", i, l->point.x, l->point.y);
-	l = l->next;
-	i++;
-    }
-}
 
 
 void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf, ei_rect_t* clipper)
@@ -317,14 +218,11 @@ ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleD, int angleF, int
       dernierPoint = addLinkedPoint(dernierPoint,newPoint->point);//on chaine ce nouveau point au dernier point
       }
   
-  return premierPoint;
-  
-  
-  
+  return premierPoint; 
 }
 
-ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse)
 
+ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse)
 {
   
   ei_point_t centre1;
@@ -430,70 +328,82 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
    
 }
 
-ei_linked_point_t* lastPoint(ei_linked_point_t* l) //retourne le dernier point d une liste chainee
+
+
+
+//TODO : Ajouter ligne noire au dessue
+void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper, ei_bool_t enfoncer, ei_bool_t isFrame)
 {
+  ei_widget_frame_t* frame = (ei_widget_frame_t*) widget;
   
-  ei_linked_point_t* tmp = l;
-  while(tmp->next != NULL)
-    {
-      tmp = tmp->next;
-    }
-  return tmp;
+  ei_rect_t rect = frame->w.screen_location;
+  int bordurewidth = frame->border_width;
   
-}
-
-int min(int a, int b)
-{
-  if(a<b)
-    {
-      return a;
-    }
-  else
-    {
-      return b;
-    }
-}
-
-
-void draw_button(ei_rect_t rect, int rayon, ei_bool_t enfonce,ei_surface_t surface,int bordurewidth)
-{
   ei_rect_t rectint;
-  rectint.top_left.x = rect.top_left.x+bordurewidth;
-  rectint.top_left.y = rect.top_left.y+bordurewidth;
+  rectint.top_left.x = rect.top_left.x + bordurewidth;
+  rectint.top_left.y = rect.top_left.y + bordurewidth;
   rectint.size.width = rect.size.width - 2*bordurewidth;
   rectint.size.height = rect.size.height - 2*bordurewidth;
-  ei_color_t* fonce = malloc(sizeof(struct ei_color_t*)); 
-  fonce->red = 140;
-  fonce->green = 140;
-  fonce->blue = 140;
-  fonce->alpha = 255;
   
-  ei_color_t* clair = malloc(sizeof(struct ei_color_t*));
-  clair->red = 210;
-  clair->green = 210;
-  clair->blue = 210;
-  clair->alpha = 255;
-
-  ei_color_t* color = malloc(sizeof(struct ei_color_t*)); 
-  color->red = 170;
-  color->green = 170;
-  color->blue = 170;
-  color->alpha = 255;
+  ei_linked_point_t* partieAvecBordure;
+  ei_linked_point_t* partieFonce;
+  ei_linked_point_t* partieClaire;
+  ei_linked_point_t* partieSansBordure;
   
-  if(enfonce)
-    {
-      ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),*fonce,NULL);
-      ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),*clair,NULL);
-      ei_draw_polygon(surface,rounded_frame(rectint,rayon,EI_TRUE,EI_TRUE),*color,NULL);
-    }
+  if(isFrame)
+  {
+      partieAvecBordure = rectangular_frame(rect,EI_TRUE,EI_TRUE);
+      partieFonce = rectangular_frame(rect,enfoncer,inverseBool(enfoncer));
+      partieClaire = rectangular_frame(rect,inverseBool(enfoncer),enfoncer);
+      partieSansBordure = rectangular_frame(rectint,EI_TRUE,EI_TRUE);
+  }
   else
-    {
-      ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_FALSE,EI_TRUE),*fonce,NULL);
-      ei_draw_polygon(surface,rounded_frame(rect,rayon,EI_TRUE,EI_FALSE),*clair,NULL);
-      ei_draw_polygon(surface,rounded_frame(rectint,rayon,EI_TRUE,EI_TRUE),*color,NULL);
-    }
-     
-    hw_surface_unlock(surface);
-    hw_surface_update_rects(surface, NULL);
+  {
+      partieAvecBordure = rounded_frame(rect, 20,EI_TRUE,EI_TRUE);
+      partieFonce = rounded_frame(rect, 20,enfoncer,inverseBool(enfoncer));
+      partieClaire = rounded_frame(rect, 20,inverseBool(enfoncer),enfoncer);
+      partieSansBordure = rounded_frame(rectint, 20,EI_TRUE,EI_TRUE);
+  }
+  
+  // couleurs pour les bordures
+  ei_color_t fonce; 
+  ei_color_t clair;
+  ei_color_t color = frame->color; 
+  
+  fonce.red = 10;
+  fonce.green = 10;
+  fonce.blue = 10;
+  fonce.alpha = 127;
+  
+  clair.red = 245;
+  clair.green = 245;
+  clair.blue = 245;
+  clair.alpha = 127;
+  
+  if(bordurewidth > 0)
+  {
+      // Premier dessin
+      ei_draw_polygon(surface,partieAvecBordure, color,clipper);
+      
+      // Partie fonce de la bordure
+      ei_draw_polygon(surface, partieFonce,fonce,clipper);
+      
+      // Partie claire de la bordure
+      ei_draw_polygon(surface, partieClaire, clair,clipper);
+  }
+      
+  // Dessin du bouton
+  ei_draw_polygon(surface, partieSansBordure, color,clipper);
+  
+  // Creation des lignes entres les bords
+  fonce.alpha = 255;
+  ei_draw_polyline(surface,partieSansBordure, fonce, clipper);
+  if(bordurewidth > 0)
+      ei_draw_polyline(surface,partieAvecBordure, fonce, clipper);
+  
+  freeLinkedPoint(partieAvecBordure);
+  freeLinkedPoint(partieFonce);
+  freeLinkedPoint(partieClaire);
+  freeLinkedPoint(partieSansBordure);
 }
 

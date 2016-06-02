@@ -14,27 +14,19 @@ struct ei_widget_t;
 
 
 // Fonctions points chainées
-ei_linked_point_t* getCadre(struct ei_widget_t* widget);
-ei_linked_point_t* getBordure(struct ei_widget_t* widget, int bord);
 void freeLinkedPoint(ei_linked_point_t* l);
 ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p);
 ei_linked_point_t* lastPoint(ei_linked_point_t* l);
 
 void printLinkedPoint(ei_linked_point_t* l);
 
-// Fonctions dessin
-
-ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_bool_t partieBasse);
-void draw_frame(struct ei_widget_t* widget, ei_surface_t surface);
-
+// Texte et image
 void drawTextWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_widget_frame_t* wf,ei_rect_t* clipper);
 void drawImgWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_widget_frame_t* wf);
-ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleDebut, int angleFin,int nbPoints);
-ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse);
-ei_linked_point_t* lastPoint(ei_linked_point_t* l);
-void draw_button(ei_rect_t rect, int rayon, ei_bool_t enfonce,ei_surface_t surface, int bordurewidth);
 
-int min(int a, int b);
+// Frame
+void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper, ei_bool_t enfoncer, ei_bool_t isFrame);
+
 
 
 

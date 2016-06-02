@@ -28,55 +28,27 @@ void frameReleasefunc(struct ei_widget_t* widget)
 void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
 {
     ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
-    ei_linked_point_t* cadre = getCadre(widget);
-    ei_linked_point_t* bordure;
       
-    // Couleurs  de relief avec alpha au milieu
-    ei_color_t white = {0xF0, 0xF0, 0xF0, 0x70};
-    ei_color_t black  = {0x10, 0x10, 0x10, 0x70};
     ei_color_t pickColor;
-    //ei_color_t grey  = {0x70, 0x70, 0x70, 0xFF};
     
     hw_surface_lock(surface);
     //hw_surface_lock(pick_surface);
     
-    /*
-    // On dessine un relief si le bord est supérieur à 0
-    if (wf->border_width > 0)
+    switch (wf->relief)
     {
-    bordure = getBordure(widget, wf->border_width);
-
-        // Différents cas de bordure
-        switch (wf->relief)
-        {
-  	        case (ei_relief_none): // Pas de bordure
-      	        break;
-  	        case (ei_relief_raised): // Bordure plus claire
-            	  ei_draw_polygon(surface, bordure, white, clipper);
-            	  ei_draw_polygon(surface, bordure, wf->color, clipper);
-            	  //ei_draw_polyline(surface, cadre_bg, grey, clipper);
-            	  break;
-        	  case (ei_relief_sunken): // Bordure plus foncée
-            	  ei_draw_polygon(surface, bordure, black, clipper);
-            	  ei_draw_polygon(surface, bordure, wf->color, clipper);
-            	  //ei_draw_polyline(surface, cadre_bg, grey, clipper);
-            	  break;
-        }
-        // Libération liste
-        freeLinkedPoint(bordure);
+	case (ei_relief_none): // Pas de bordure
+	case (ei_relief_raised): // Bordure plus claire
+	    draw_frameButton(widget, surface, clipper, EI_FALSE, EI_TRUE);
+	    break;
+	case (ei_relief_sunken): // Bordure plus foncée
+	    draw_frameButton(widget, surface, clipper, EI_TRUE, EI_TRUE);
+	    break;
     }
-    */
-
-    // Dessin du cadre
-    ei_draw_polygon(surface, cadre, wf->color, clipper);
-    
     
     //ei_draw_polyline(surface, cadre, gris, clipper);
     // Offsreen
     pickColor = *(widget->pick_color);
     //ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
-
-    freeLinkedPoint(cadre);
 
     // Texte
     if(wf->text != NULL)

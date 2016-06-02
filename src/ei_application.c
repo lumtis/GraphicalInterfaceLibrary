@@ -40,8 +40,10 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
   
     hw_init();
 
-    ei_register_placer_manager();
     ei_frame_register_class();
+    ei_button_register_class();
+    ei_toplevel_register_class();
+    ei_register_placer_manager();
     
     racine = frameAllocfunc();
     frameSetdefaultsfunc(racine);

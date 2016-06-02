@@ -25,7 +25,40 @@ void buttonReleasefunc(struct ei_widget_t* widget)
 
 void buttonDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
 {
+    ei_widget_button_t* wb = (ei_widget_button_t*)widget;
+      
+    ei_color_t pickColor;
+    
+    hw_surface_lock(surface);
+    //hw_surface_lock(pick_surface);
+    
+    switch (wb->relief)
+    {
+	case (ei_relief_none): // Pas de bordure
+	case (ei_relief_raised): // Bordure plus claire
+	    draw_frameButton(widget, surface, clipper, EI_FALSE, EI_FALSE);
+	    break;
+	case (ei_relief_sunken): // Bordure plus foncée
+	    draw_frameButton(widget, surface, clipper, EI_TRUE, EI_FALSE);
+	    break;
+    }
+    
+    //ei_draw_polyline(surface, cadre, gris, clipper);
+    // Offsreen
+    pickColor = *(widget->pick_color);
+    //ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
 
+    // Texte
+    if(wb->text != NULL)
+        //drawTextWidget(surface, widget, wf, clipper);
+
+    // Image
+    if(wb->img != NULL)
+        //drawImgWidget(surface, widget, wf);
+    
+    hw_surface_unlock(surface);
+    //hw_surface_unlock(pick_surface);
+    hw_surface_update_rects(surface, NULL);
 }
 
 
