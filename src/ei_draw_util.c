@@ -12,7 +12,7 @@
 #include "ei_widgetclass.h"
 #include "hw_interface.h"
 
-/*Libere un  point*/
+/*Libere une liste de point*/
 void freeLinkedPoint(ei_linked_point_t* l)
 {
     ei_linked_point_t* tmp1 = l;
@@ -521,6 +521,61 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
 }
 
 
+//chaine les sommets d'un rect pour former un toplevel : coins arrondis en haut et angles droits en bas
+ei_linked_point_t* round_and_rectangular_frame(ei_rect_t rect, int rayon)
+{
+  
+  ei_point_t centre1;
+  ei_linked_point_t* debutArc1 = malloc(sizeof(struct ei_linked_point_t));
+  ei_linked_point_t* finArc1 = malloc(sizeof(struct ei_linked_point_t));
+  
+  
+  ei_point_t centre4;
+  ei_linked_point_t* debutArc4 = malloc(sizeof(struct ei_linked_point_t));  
+  ei_linked_point_t* finArc4 = malloc(sizeof(struct ei_linked_point_t)) ;
+  ei_linked_point_t* debutArc4bis = malloc(sizeof(struct ei_linked_point_t)) ;  
+  ei_linked_point_t* finArc4bis = malloc(sizeof(struct ei_linked_point_t)) ;
+  ei_linked_point_t* fin = malloc(sizeof(struct ei_linked_point_t));
+
+  ei_linked_point_t* s2 = malloc(sizeof(struct ei_linked_point_t));
+  ei_linked_point_t* s3 = malloc(sizeof(struct ei_linked_point_t));
+
+  int h = min(rect.size.width,rect.size.height)/2;
+
+  ei_point_t sommet2, sommet3;
+  
+  sommet2.x = rect.top_left.x;
+  sommet2.y = rect.top_left.y + rect.size.height;
+  
+  sommet3.x = rect.top_left.x + rect.size.width;
+  sommet3.y = rect.top_left.y + rect.size.height;
+
+  centre1.x = rect.top_left.x + rayon;
+  centre1.y = rect.top_left.y + rayon;
+  //calcule le centre de l arc qui former le coin arrondi
+  debutArc1 = arc(centre1,rayon,90,180,1000); //retourne le 1er pt de l arc
+  finArc1 = lastPoint(debutArc1); // retourne le dernier pt de l arc
+  
+  centre4.x = rect.top_left.x + rect.size.width - rayon-1;
+  centre4.y = rect.top_left.y + rayon;
+  debutArc4 = arc(centre4,rayon,0,90,1000); 
+  finArc4 = lastPoint(debutArc4);
+ 
+  s2->point = sommet2;
+  s2->next = NULL;
+  s3->point = sommet3;
+  s3->next = NULL;
+  //a ce stade on a cree toutes les listes de pts des arcs
+  //ci dessous on chaine chaque arc au suivant
+  
+  finArc1->next = s2; 
+  s2->next = s3;
+  s3->next = debutArc4;
+  finArc4->next = fin;
+  fin->point = debutArc1->point;
+  fin->next = NULL;  
+}
+
 
 
 /*dessine le frame ou le bouton a partir de la liste chainee generee par rounded frame ou rectangular frame*/
@@ -562,15 +617,21 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
   ei_color_t clair;
   ei_color_t color = frame->color; 
   
-  fonce.red = 10;
-  fonce.green = 10;
-  fonce.blue = 10;
-  fonce.alpha = 127;
+  fonce.red = 30;
+  fonce.green = 30;
+  fonce.blue = 30;
+  if(frame->relief == ei_relief_none)
+     fonce.alpha = 0;
+  else
+     fonce.alpha = 127;
   
-  clair.red = 245;
-  clair.green = 245;
-  clair.blue = 245;
-  clair.alpha = 127;
+  clair.red = 225;
+  clair.green = 225;
+  clair.blue = 225;
+  if(frame->relief == ei_relief_none)
+     clair.alpha = 0;
+  else
+     clair.alpha = 127;
   
   if(bordurewidth > 0)
   {
@@ -597,4 +658,59 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
   freeLinkedPoint(partieFonce);
   freeLinkedPoint(partieClaire);
   freeLinkedPoint(partieSansBordure);
+}
+
+
+void draw_toplevel(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper)
+{
+  /*
+  ei_widget_frame_t* frame = (ei_widget_frame_t*) widget;
+  
+  ei_rect_t rect = frame->w.screen_location;
+  int bordurewidth = frame->border_width;
+  
+  ei_rect_t rectint;
+  rectint.top_left.x = rect.top_left.x;
+  rectint.top_left.y = rect.top_left.y + bordurewidth;
+  rectint.size.width = rect.size.width;
+  rectint.size.height = rect.size.height - bordurewidth;
+  
+  ei_linked_point_t* cadre_arriere;
+  ei_linked_point_t* cadre_avant;
+
+  cadre_arriere = round_and_rectangular_frame(rect,15);
+  cadre_avant = rectangular_frame(rectint,EI_TRUE,EI_TRUE);
+
+  }
+  
+  // couleurs pour les bordures
+  ei_color_t fonce; 
+  ei_color_t clair;
+  ei_color_t color = frame->color; 
+  
+  fonce.red = 10;
+  fonce.green = 10;
+  fonce.blue = 10;
+  fonce.alpha = 127;
+  
+  clair.red = 245;
+  clair.green = 245;
+  clair.blue = 245;
+  clair.alpha = 127;
+  
+  if(bordurewidth > 0)
+  {
+  
+    ei_draw_polygon(surface,cadre_arriere, fonce,clipper);  
+    ei_draw_polygon(surface,cadre_avant,color,clipper);
+      
+  }
+      
+  
+  
+  freeLinkedPoint(partieAvecBordure);
+  freeLinkedPoint(partieFonce);
+  freeLinkedPoint(partieClaire);
+  freeLinkedPoint(partieSansBordure);
+  */
 }

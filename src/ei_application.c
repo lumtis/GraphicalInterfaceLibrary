@@ -16,6 +16,8 @@
 #include "ei_global.h"
 #include "ei_geometrymanager.h"
 #include "ei_types.h"
+#include "ei_event.h"
+#include "ei_traiteur_liste.h"
 
 ei_widget_t * racine;
 ei_surface_t window;
@@ -23,14 +25,39 @@ ei_surface_t windowpick;
 ei_widget_t* tab_widget[256];
 ei_linked_rect_t*  liste_rect = NULL;
 
-void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick, ei_rect_t* clipper )
+
+
+/*Libere une liste de res*/
+void freeLinkedRect(ei_linked_rect_t* l)
+{
+    ei_linked_rect_t* tmp1 = l;
+    ei_linked_rect_t* tmp2;
+
+    if(tmp1 == NULL)
+        return;
+
+    tmp2 = tmp1->next;
+
+    while(tmp2 != NULL)
+    {
+        free(tmp1);
+        tmp1 = tmp2;
+        tmp2 = tmp1->next;
+    }
+}
+
+
+
+void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick, ei_rect_t* clipper)
 {
     if(widget == NULL)
         return;
+    
     if (clipper == NULL)
       widget->wclass->drawfunc(widget ,window, windowpick, widget->parent->content_rect);
     else 
-      widget->wclass->drawfunc(widget ,window, windowpick, widget->parent->content_rect);
+      widget->wclass->drawfunc(widget ,window, windowpick, clipper);
+    
     ei_app_run_rec(widget->next_sibling, window, windowpick,clipper);
     ei_app_run_rec(widget->children_head, window, windowpick,clipper);
 }
@@ -94,22 +121,27 @@ void ei_app_free()
 
 void ei_app_run()
 {
-    ei_linked_rect_t * courant = liste_rect;
-    struct ei_event_t * event ;
+    ei_linked_rect_t * courant;
+    ei_event_t event;
+    
+    // Premier dessin de la fenere entiere
     frameDrawfunc(racine, window, windowpick, racine->content_rect);
     ei_app_run_rec(racine->children_head, window, windowpick,NULL);
+    
 //     while ( 1 )
 //     {
-    hw_event_wait_next(event);
+    courant = liste_rect;
+    hw_event_wait_next(&event);
     while ( courant != NULL)
     {
       ei_app_run_rec(racine->children_head, window, windowpick,&(courant->rect));
       courant=courant->next;
     }  
+    freeLinkedRect(liste_rect);
 //     }  
     getchar();
-    
 }
+
 
 void ei_app_invalidate_rect(ei_rect_t* rect)
 {
@@ -117,20 +149,15 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
     ei_linked_rect_t * new_rect = calloc(1, sizeof(ei_linked_rect_t));
     new_rect->rect = *rect;
     ei_linked_rect_t * tmp;
-    ei_linked_rect_t * liste_rect = malloc(sizeof(ei_linked_rect_t));
   
     if (liste_rect == NULL)
-      liste_rect=new_rect;
-    
+      liste_rect = new_rect;
     else
     {
       tmp=liste_rect;
-      for(tmp=liste_rect ;tmp->next =! NULL; tmp =tmp->next)
-	{
-	  tmp->next= new_rect;
-	}
+      for(tmp=liste_rect;tmp->next =! NULL; tmp =tmp->next);
+      tmp->next= new_rect;
     }
-      
 }
 
 void ei_app_quit_request()

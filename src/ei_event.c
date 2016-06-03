@@ -8,6 +8,7 @@
 
 #include "ei_event.h"
 #include "debug.h"
+
 #include <stdlib.h>
 typedef struct traitant {
   ei_widget_t*      widget ;
@@ -18,6 +19,7 @@ typedef struct traitant {
 }traitant ;
 
 traitant* tab_event[ei_ev_last] = {NULL};
+
 
 
 void		ei_bind			(ei_eventtype_t		eventtype,
