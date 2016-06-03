@@ -3,7 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ei_widget_button.h"
+#include "ei_widget_frame.h"
 #include "ei_application.h"
+#include "ei_event.h"
 
 
 void* buttonAllocfunc()
@@ -51,7 +53,7 @@ void buttonDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface
 
     // Texte
     if(wb->text != NULL)
-        drawTextWidget(surface, widget, wb, clipper);
+        drawTextWidget(surface, widget, (ei_widget_frame_t*)wb, clipper);
 
     // Image
     if(wb->img != NULL)
@@ -81,6 +83,21 @@ void buttonGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 }
 
 
+// Obtient le relief inverse du boutton lorsqu'il est pressé
+ei_relief_t reliefInvese(ei_relief_t r)
+{
+    switch(r)
+    {
+      case ei_relief_none :
+	    return ei_relief_none;
+      case ei_relief_raised :
+	    return ei_relief_sunken;
+      case ei_relief_sunken :
+	    return ei_relief_raised;
+    }
+}
+
+
 /**********************************************************************
 ***************** Events **********************************************
 **********************************************************************/
@@ -88,11 +105,60 @@ void buttonGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 
 ei_bool_t pushButton(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
-  
+    ei_widget_button_t* wb = (ei_widget_button_t*)widget;
+    
+    // On change le relief lorsqu'il est pressé
+    wb->relief = reliefInvese(wb->relief);
+    
+    // On creer des evenements pour detecer quand est ce qu'on change le relief
+    ei_bind(ei_ev_mouse_move , NULL, "all", isOutButton, widget);
+    ei_bind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, widget);
+    
+    // on devra redessiner la partie
+    ei_app_invalidate_rect(widget->screen_location);
+    
+    return EI_TRUE;
 }
 
 
 ei_bool_t releaseButton(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
+    ei_widget_button_t* wb = (ei_widget_button_t*)user_param;
+    ei_widget_t* widget = (ei_widget_t*)user_param;
   
+    // Si le curseur est actuellement dans le button on change son relief
+    if(isIn(getCurrent(), widget->screen_location) == EI_TRUE)
+    {
+	wb->relief = reliefInvese(wb->relief);
+	
+	// on devra redessiner la partie
+	ei_app_invalidate_rect(widget->screen_location);
+    }
+    
+    // On retire mes evenements precedents
+    ei_unbind(ei_ev_mouse_move , NULL, "all", isOutButton, widget);
+    ei_unbind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, widget);
+}
+
+
+ei_bool_t isOutButton(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+    ei_widget_button_t* wb = (ei_widget_button_t*)user_param;
+    ei_widget_t* widget = (ei_widget_t*)user_param;
+  
+    // Si on sort du bouton on inverse le relief et inversement
+    if(isIn(getCurrent(), widget->screen_location) == EI_TRUE && isIn(getLast(), widget->screen_location) == EI_FALSE)
+    {
+	wb->relief = reliefInvese(wb->relief);
+	
+	// on devra redessiner la partie
+	ei_app_invalidate_rect(widget->screen_location);
+    }
+    else if(isIn(getCurrent(), widget->screen_location) == EI_FALSE && isIn(getLast(), widget->screen_location) == EI_TRUE)
+    {
+	wb->relief = reliefInvese(wb->relief);
+	
+	// on devra redessiner la partie
+	ei_app_invalidate_rect(widget->screen_location);
+    }
 }
