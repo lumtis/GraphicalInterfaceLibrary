@@ -17,13 +17,43 @@
 #include "ei_geometrymanager.h"
 #include "ei_types.h"
 #include "ei_event.h"
-#include "ei_traiteur_liste.h"
+#include <string.h>
+
+
+
 
 ei_widget_t * racine;
 ei_surface_t window;
 ei_surface_t windowpick;
 ei_widget_t* tab_widget[256];
 ei_linked_rect_t*  liste_rect = NULL;
+ei_widget_t * poussoir ;
+
+
+
+
+
+void traitement(ei_event_t event ,  ei_widget_t* widget )
+{
+  traitant* tmp = tab_event[event.type];
+  while ( tmp != NULL )
+  {
+    if (tmp->widget== NULL)
+    { 
+      if( strcmp(tmp->tag ,"all" )==0)
+	tmp->callback( widget , &(event) , tmp->user_param);
+      if ( strcmp( tmp->tag , widget->wclass->name ) == 0 )
+	tmp->callback(widget, &(event),tmp->user_param);
+    }
+    else 
+    {
+      if ( tmp->widget ==widget )
+	tmp->callback(widget , &(event),tmp->user_param);
+    }
+    tmp=tmp->next;
+  }
+}
+
 
 
 
@@ -69,7 +99,8 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     ei_color_t * coloracine;
   
     hw_init();
-
+    for ( ei_eventtype_t i = ei_ev_none ; i < ei_ev_last ; i++)
+      tab_event[i]=NULL;
     ei_frame_register_class();
     ei_button_register_class();
     ei_toplevel_register_class();
@@ -77,7 +108,7 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     
     racine = frameAllocfunc();
     frameSetdefaultsfunc(racine);
-    
+    poussoir = ei_app_root_widget();
     coloracine=malloc(sizeof(ei_color_t));
     coloracine->red = 255;
     coloracine->green = 0;
@@ -128,18 +159,30 @@ void ei_app_run()
     frameDrawfunc(racine, window, windowpick, racine->content_rect);
     ei_app_run_rec(racine->children_head, window, windowpick,NULL);
     
-//     while ( 1 )
-//     {
+   while ( 1 )
+   {
     courant = liste_rect;
     hw_event_wait_next(&event);
+    switch ( event.type )
+    {
+      case ei_ev_none:
+      case ei_ev_app:
+      case ei_ev_last : break;
+      case ei_ev_keydown :
+      case ei_ev_keyup :traitement( event, poussoir);break;
+      case ei_ev_mouse_buttondown : poussoir = ei_widget_pick(&(event.param.mouse.where)); traitement(event, poussoir) ;break;
+      case ei_ev_mouse_buttonup : 
+      case ei_ev_mouse_move : traitement(event, ei_widget_pick(&(event.param.mouse.where)));
+      
+    }
+    
     while ( courant != NULL)
     {
       ei_app_run_rec(racine->children_head, window, windowpick,&(courant->rect));
       courant=courant->next;
     }  
     freeLinkedRect(liste_rect);
-//     }  
-    getchar();
+  }  
 }
 
 
@@ -155,7 +198,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
     else
     {
       tmp=liste_rect;
-      for(tmp=liste_rect;tmp->next =! NULL; tmp =tmp->next);
+      for (tmp=liste_rect; tmp->next =! NULL; tmp =tmp->next);
       tmp->next= new_rect;
     }
 }

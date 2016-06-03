@@ -10,15 +10,7 @@
 #include "debug.h"
 
 #include <stdlib.h>
-typedef struct traitant {
-  ei_widget_t*      widget ;
-  ei_tag_t          tag;
-  ei_callback_t     callback;
-  void * user_param;
-  struct traitant*         next;
-}traitant ;
-
-traitant* tab_event[ei_ev_last] = {NULL};
+#include "ei_global.h"
 
 
 
