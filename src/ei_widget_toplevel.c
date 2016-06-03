@@ -51,3 +51,53 @@ void toplevelGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 {
 
 }
+
+
+
+/**********************************************************************
+***************** Events **********************************************
+**********************************************************************/
+
+
+
+ei_bool_t moveToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
+}
+
+ei_bool_t pushMoveToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
+}
+
+ei_bool_t releaseMoveToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
+}
+
+
+ei_bool_t pushCloseToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
+}
+
+ei_bool_t releaseCloseToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
+}
+
+
+ei_bool_t pushResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
+}
+
+ei_bool_t releaseResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
+}
+
+ei_bool_t resizeToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
+}

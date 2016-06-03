@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ei_widget_button.h"
+#include "ei_application.h"
 
 
 void* buttonAllocfunc()
@@ -77,4 +78,21 @@ void buttonSetdefaultsfunc(struct ei_widget_t* widget)
 void buttonGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 {
 
+}
+
+
+/**********************************************************************
+***************** Events **********************************************
+**********************************************************************/
+
+
+ei_bool_t pushButton(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
+}
+
+
+ei_bool_t releaseButton(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+  
 }

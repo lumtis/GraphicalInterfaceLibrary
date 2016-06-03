@@ -12,7 +12,7 @@
 #include "ei_widgetclass.h"
 #include "hw_interface.h"
 
-/*Libere un  point*/
+/*Libere une liste de point*/
 void freeLinkedPoint(ei_linked_point_t* l)
 {
     ei_linked_point_t* tmp1 = l;
@@ -521,7 +521,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
 }
 
 
-/*chaine les sommets d'un rect pour former un toplevel : coins arrondis en haut et angles droits en bas*/
+//chaine les sommets d'un rect pour former un toplevel : coins arrondis en haut et angles droits en bas
 ei_linked_point_t* round_and_rectangular_frame(ei_rect_t rect, int rayon)
 {
   
@@ -542,7 +542,8 @@ ei_linked_point_t* round_and_rectangular_frame(ei_rect_t rect, int rayon)
 
   int h = min(rect.size.width,rect.size.height)/2;
 
-
+  ei_point_t sommet2, sommet3;
+  
   sommet2.x = rect.top_left.x;
   sommet2.y = rect.top_left.y + rect.size.height;
   
@@ -662,6 +663,7 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
 
 void draw_toplevel(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper)
 {
+  /*
   ei_widget_frame_t* frame = (ei_widget_frame_t*) widget;
   
   ei_rect_t rect = frame->w.screen_location;
@@ -710,4 +712,5 @@ void draw_toplevel(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* 
   freeLinkedPoint(partieFonce);
   freeLinkedPoint(partieClaire);
   freeLinkedPoint(partieSansBordure);
+  */
 }

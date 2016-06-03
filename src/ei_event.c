@@ -8,6 +8,7 @@
 
 #include "ei_event.h"
 #include "debug.h"
+#include "ei_traiteur_liste.h"
 
 
 void		ei_bind			(ei_eventtype_t		eventtype,
