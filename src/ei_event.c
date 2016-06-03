@@ -13,7 +13,6 @@
 #include "ei_global.h"
 
 
-
 void		ei_bind			(ei_eventtype_t		eventtype,
 					 ei_widget_t*		widget,
 					 ei_tag_t		tag,

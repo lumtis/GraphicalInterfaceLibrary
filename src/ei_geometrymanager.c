@@ -15,6 +15,7 @@
 #include "ei_types.h"
 #include "ei_application.h"
 
+
 /**
  *  @var	gm
  *  @brief	Variable globale contenant un chainage de tous les gm
@@ -56,7 +57,7 @@ ei_geometrymanager_t* ei_geometrymanager_from_name(ei_geometrymanager_name_t nam
 
 void ei_geometrymanager_unmap(ei_widget_t* widget)
 {
-    ei_app_invalidate_rect(&(widget->screen_location)):
+    ei_app_invalidate_rect(&(widget->screen_location));
     widget->screen_location.top_left.x = 0; //place le widget a la position (0,0)
     widget->screen_location.top_left.y = 0;
     widget->screen_location.size.height = 0; // la taille du widget est reduite a 0

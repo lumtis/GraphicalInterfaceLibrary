@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "ei_application.h"
 #include "debug.h"
 #include "ei_widgetclass.h"
@@ -17,9 +18,7 @@
 #include "ei_geometrymanager.h"
 #include "ei_types.h"
 #include "ei_event.h"
-#include <string.h>
-
-
+#include "ei_utils.h"
 
 
 ei_widget_t * racine;
@@ -55,6 +54,12 @@ void traitement(ei_event_t event ,  ei_widget_t* widget )
 }
 
 
+// Definie quand faut il quitter l'application
+ei_bool_t quit = EI_FALSE;
+
+// Curseur position
+ei_point_t currentP;
+ei_point_t lastP;
 
 
 /*Libere une liste de res*/
@@ -198,13 +203,24 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
     else
     {
       tmp=liste_rect;
-      for (tmp=liste_rect; tmp->next =! NULL; tmp =tmp->next);
+      for(tmp=liste_rect;tmp->next != NULL; tmp =tmp->next);
       tmp->next= new_rect;
     }
 }
 
+
+ei_bool_t quitEchap(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+    if(event->param.key.key_sym == SDLK_RETURN)
+	ei_app_quit_request();
+    return EI_TRUE;
+}
+
+
+
 void ei_app_quit_request()
 {
+    quit = EI_TRUE;
     return;
 }
 
@@ -216,4 +232,23 @@ ei_widget_t* ei_app_root_widget()
 ei_surface_t ei_app_root_surface()
 {
     return window;
+}
+
+
+ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+    lastP = currentP;
+    currentP = event->param.mouse.where;
+    
+    return EI_TRUE;
+}
+
+ei_point_t getCurrent()
+{
+    return currentP;
+}
+
+ei_point_t getLast()
+{
+    return lastP;
 }
