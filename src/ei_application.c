@@ -17,7 +17,7 @@
 #include "ei_geometrymanager.h"
 #include "ei_types.h"
 #include "ei_event.h"
-#include "ei_traiteur_liste.h"
+//#include "ei_traiteur_liste.h"
 
 ei_widget_t * racine;
 ei_surface_t window;

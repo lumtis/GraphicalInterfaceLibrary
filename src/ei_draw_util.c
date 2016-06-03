@@ -533,8 +533,6 @@ ei_linked_point_t* round_and_rectangular_frame(ei_rect_t rect, int rayon)
   ei_point_t centre4;
   ei_linked_point_t* debutArc4 = malloc(sizeof(struct ei_linked_point_t));  
   ei_linked_point_t* finArc4 = malloc(sizeof(struct ei_linked_point_t)) ;
-  ei_linked_point_t* debutArc4bis = malloc(sizeof(struct ei_linked_point_t)) ;  
-  ei_linked_point_t* finArc4bis = malloc(sizeof(struct ei_linked_point_t)) ;
   ei_linked_point_t* fin = malloc(sizeof(struct ei_linked_point_t));
 
   ei_linked_point_t* s2 = malloc(sizeof(struct ei_linked_point_t));
@@ -556,7 +554,7 @@ ei_linked_point_t* round_and_rectangular_frame(ei_rect_t rect, int rayon)
   debutArc1 = arc(centre1,rayon,90,180,1000); //retourne le 1er pt de l arc
   finArc1 = lastPoint(debutArc1); // retourne le dernier pt de l arc
   
-  centre4.x = rect.top_left.x + rect.size.width - rayon-1;
+  centre4.x = rect.top_left.x + rect.size.width - rayon;
   centre4.y = rect.top_left.y + rayon;
   debutArc4 = arc(centre4,rayon,0,90,1000); 
   finArc4 = lastPoint(debutArc4);
@@ -574,6 +572,7 @@ ei_linked_point_t* round_and_rectangular_frame(ei_rect_t rect, int rayon)
   finArc4->next = fin;
   fin->point = debutArc1->point;
   fin->next = NULL;  
+  return(debutArc1);
 }
 
 
@@ -661,56 +660,132 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
 }
 
 
-void draw_toplevel(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper)
-{
-  /*
-  ei_widget_frame_t* frame = (ei_widget_frame_t*) widget;
-  
-  ei_rect_t rect = frame->w.screen_location;
-  int bordurewidth = frame->border_width;
-  
-  ei_rect_t rectint;
-  rectint.top_left.x = rect.top_left.x;
-  rectint.top_left.y = rect.top_left.y + bordurewidth;
-  rectint.size.width = rect.size.width;
-  rectint.size.height = rect.size.height - bordurewidth;
-  
-  ei_linked_point_t* cadre_arriere;
-  ei_linked_point_t* cadre_avant;
 
+/*dessine un toplevel*/
+void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* clipper)
+{
+  ei_widget_toplevel_t* tpl = (ei_widget_toplevel_t*)widget;
+  ei_rect_t rect = tpl->w.screen_location;
+  int bordurewidth = tpl->border_width;
+  int entete = 20;
+  ei_rect_t rectint,rectresize;
+  ei_point_t centre;
+  int rayon = 8;
+  ei_point_t where;
+
+ tpl = toplevelAllocfunc();
+  toplevelSetdefaultsfunc(&(tpl->w));
+
+  centre.x = rect.top_left.x + 1.5*rayon;
+  centre.y = rect.top_left.y +1.5*rayon;
+
+  where.x = rect.top_left.x + 3*rayon;
+  where.y =  rect.top_left.y -1 ;
+
+  rectint.top_left.x = rect.top_left.x+1 + bordurewidth;
+  rectint.top_left.y = rect.top_left.y+1 + bordurewidth+entete;
+  rectint.size.width = rect.size.width-2 - 2*bordurewidth;
+  rectint.size.height = rect.size.height-2 - 2*bordurewidth - entete;
+
+  rectresize.size.height = 10;
+  rectresize.size.width = 10;
+  rectresize.top_left.x = rect.top_left.x + rect.size.width-rectresize.size.width;
+  rectresize.top_left.y = rect.top_left.y + rect.size.height-rectresize.size.height;
+  
+  ei_linked_point_t* cadre_arriere = malloc(sizeof(struct ei_linked_point_t));
+  ei_linked_point_t* cadre_avant = malloc(sizeof(struct ei_linked_point_t));
+  ei_linked_point_t* bouton_close = malloc(sizeof(struct ei_linked_point_t));
+  ei_linked_point_t* bouton_close2 = malloc(sizeof(struct ei_linked_point_t));
+  ei_linked_point_t* bouton_close3 = malloc(sizeof(struct ei_linked_point_t));
+  ei_linked_point_t* bouton_resize = malloc(sizeof(struct ei_linked_point_t));
+  
   cadre_arriere = round_and_rectangular_frame(rect,15);
   cadre_avant = rectangular_frame(rectint,EI_TRUE,EI_TRUE);
+  
 
-  }
-  
-  // couleurs pour les bordures
+  // couleurs
   ei_color_t fonce; 
-  ei_color_t clair;
-  ei_color_t color = frame->color; 
+  ei_color_t clair = tpl->color;
+  ei_color_t color,color2,color3;
+  ei_color_t white; 
+  ei_color_t black;
   
-  fonce.red = 10;
-  fonce.green = 10;
-  fonce.blue = 10;
-  fonce.alpha = 127;
+  fonce.red = 100;
+  fonce.green = 100;
+  fonce.blue = 100;
+  fonce.alpha = 255;
   
-  clair.red = 245;
-  clair.green = 245;
-  clair.blue = 245;
-  clair.alpha = 127;
+  clair.red = 215;
+  clair.green = 215;
+  clair.blue = 215;
+  clair.alpha = 255;
   
-  if(bordurewidth > 0)
-  {
+  color.red = 140;
+  color.green = 240;
+  color.blue = 198;
+  color.alpha = 255;
+
+  color2.red = 110;
+  color2.green = 210;
+  color2.blue = 158;
+  color2.alpha = 255;
+
+  color3.red = 170;
+  color3.green = 255;
+  color3.blue = 230;
+  color3.alpha = 255;
+
+ 
+  white.red = 255;
+  white.green = 255;
+  white.blue = 255;
+  white.alpha = 255;
   
-    ei_draw_polygon(surface,cadre_arriere, fonce,clipper);  
-    ei_draw_polygon(surface,cadre_avant,color,clipper);
-      
-  }
-      
+  black.red = 0;
+  black.green = 0;
+  black.blue = 0;
+  black.alpha = 255;
+
+  bouton_close = arc(centre,rayon-4,0,360,1000); 
+  bouton_close2 = arc(centre,rayon,45,225,1000);
+  bouton_close3 = arc(centre,rayon,-135,45,1000);
+  bouton_resize = rectangular_frame(rectresize,EI_TRUE,EI_TRUE);
   
+  ei_draw_polygon(surface,cadre_arriere,fonce,clipper);  
+  ei_draw_polyline(surface,cadre_arriere,black,clipper);  
   
-  freeLinkedPoint(partieAvecBordure);
-  freeLinkedPoint(partieFonce);
-  freeLinkedPoint(partieClaire);
-  freeLinkedPoint(partieSansBordure);
-  */
+   
+  ei_draw_polygon(surface,cadre_avant,clair,clipper);
+  ei_draw_polyline(surface,cadre_avant,black,clipper);
+
+  if(tpl->closable)
+
+    {
+      ei_draw_polygon(surface,bouton_close2,color2,clipper);
+      ei_draw_polygon(surface,bouton_close3,color3,clipper); 
+      ei_draw_polyline(surface,bouton_close2,black,clipper);
+      ei_draw_polyline(surface,bouton_close3,black,clipper);
+      ei_draw_polygon(surface,bouton_close,color,clipper);
+    
+     
+    }
+ if(tpl->resizable)
+
+    {
+  ei_draw_polygon(surface,bouton_resize,fonce,clipper);
+  ei_draw_polyline(surface,bouton_resize,black,clipper);
+    }
+  //hw_text_create_surface(tpl->title,tpl->text_font,white);
+  
+
+ if(tpl->title !=NULL)
+   {
+  ei_draw_text(surface,&where,tpl->title,NULL,&white, clipper);
+   }
+
+ 
+  freeLinkedPoint(cadre_arriere);
+  freeLinkedPoint(cadre_avant);
+  freeLinkedPoint(bouton_resize);
+  freeLinkedPoint(bouton_close);
 }
