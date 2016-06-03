@@ -32,7 +32,7 @@ void ei_widgetclass_register(ei_widgetclass_t* widgetclass)
       	wc = widgetclass;
     else
     {
-      	tmp = wc;
+    
       	for(tmp = wc; tmp->next != NULL; tmp = tmp->next);
       	tmp->next = widgetclass;
     }
