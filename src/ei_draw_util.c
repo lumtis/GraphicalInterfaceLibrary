@@ -407,6 +407,12 @@ ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleD, int angleF, int
   return premierPoint; 
 }
 
+
+
+
+
+
+
 /*chaine les sommets d'un rect pour former soit la partie haute, soit la partie basse, soit les deux, d'un rounded frame ( c a d d'un bouton)*/
 ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse)
 {
