@@ -25,6 +25,7 @@ ei_widget_t * racine;
 ei_surface_t window;
 ei_surface_t windowpick;
 ei_widget_t* tab_widget[256];
+traitant* tab_event[ei_ev_last];
 ei_linked_rect_t*  liste_rect = NULL;
 ei_widget_t * focus ;
 

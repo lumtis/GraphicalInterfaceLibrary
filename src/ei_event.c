@@ -8,9 +8,9 @@
 
 #include "ei_event.h"
 #include "debug.h"
-
-#include <stdlib.h>
 #include "ei_global.h"
+#include <stdlib.h>
+
 
 
 void		ei_bind			(ei_eventtype_t		eventtype,

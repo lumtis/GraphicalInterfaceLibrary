@@ -20,6 +20,7 @@ typedef struct traitant {
 	struct traitant*            next;
 } traitant;
 
-extern traitant* tab_event[ei_ev_last] ;
+extern traitant* tab_event[ei_ev_last];
+
 #endif
 
