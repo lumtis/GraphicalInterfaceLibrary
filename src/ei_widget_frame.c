@@ -32,7 +32,7 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     ei_color_t pickColor;
     
     hw_surface_lock(surface);
-    //hw_surface_lock(pick_surface);
+    hw_surface_lock(pick_surface);
     
     switch (wf->relief)
     {
@@ -45,10 +45,9 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
 	    break;
     }
     
-    //ei_draw_polyline(surface, cadre, gris, clipper);
     // Offsreen
     pickColor = *(widget->pick_color);
-    //ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
+    ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
 
     // Texte
     if(wf->text != NULL)
@@ -59,7 +58,7 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
         //drawImgWidget(surface, widget, wf);
     
     hw_surface_unlock(surface);
-    //hw_surface_unlock(pick_surface);
+    hw_surface_unlock(pick_surface);
     hw_surface_update_rects(surface, NULL);
 }
 

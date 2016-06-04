@@ -29,11 +29,10 @@ traitant* tab_event[ei_ev_last];
 ei_linked_rect_t*  liste_rect = NULL;
 ei_widget_t * focus ;
 
+ei_bool_t quitEchap(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param);
 
 
-
-
-void traitement(ei_event_t event ,  ei_widget_t* widget )
+void traitement(ei_event_t event ,  ei_widget_t* widget)
 {
   traitant* tmp = tab_event[event.type];
   while ( tmp != NULL )
@@ -142,6 +141,9 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     
     window = hw_create_window(main_window_size,fullscreen);
     windowpick = hw_surface_create(window,main_window_size, EI_TRUE);;
+    
+    // Quitter lors ce qu'on appuis sur echap
+    ei_bind(ei_ev_keydown, NULL, "all", quitEchap, NULL);
 }
 
 
@@ -167,7 +169,6 @@ void ei_app_run()
     
    while ( quit == EI_FALSE)
    {
-    courant = liste_rect;
     hw_event_wait_next(&event);
     switch ( event.type )
     {
@@ -182,6 +183,7 @@ void ei_app_run()
       
     }
     
+    courant = liste_rect;
     while ( courant != NULL)
     {
       ei_app_run_rec(racine->children_head, window, windowpick,&(courant->rect));
