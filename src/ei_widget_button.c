@@ -156,6 +156,8 @@ ei_bool_t isOutButton(struct ei_widget_t* widget, struct ei_event_t* event, void
     ei_widget_button_t* wb = (ei_widget_button_t*)user_param;
     ei_widget_t* w = (ei_widget_t*)user_param;
   
+    printf("actuel:%d %d\nprecedent:%d %d\n", getCurrent(), getLast());
+    
     // Si on sort du bouton on inverse le relief et inversement
     if(isIn(getCurrent(), w->screen_location) == EI_TRUE && isIn(getLast(), w->screen_location) == EI_FALSE)
     {
