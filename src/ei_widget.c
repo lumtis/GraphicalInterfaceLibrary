@@ -16,6 +16,10 @@
 #include "ei_widget_toplevel.h"
 #include "ei_geometrymanager.h"
 #include "ei_global.h"
+#include "ei_interncallback.h"
+#include "ei_event.h"
+
+
 
 uint32_t vgpick_id = 0;
 
@@ -53,6 +57,19 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
         freeWidget(widget);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 			      ei_widget_t* parent)
@@ -96,8 +113,37 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
     // mise à jour du tableau de widget
     tab_widget[vgpick_id]=new_widget;
     vgpick_id++; 
+    if ( strcmp ( class_name ,"button" ) == 0 )
+      ei_bind(ei_ev_mouse_buttondown,new_widget,NULL,pushButton, NULL);
+    if ( strcmp( class_name, "toplevel" ) == 0 )
+      ei_bind(ei_ev_mouse_buttondown,new_widget,NULL,pushToplevel, NULL);
     return new_widget;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void ei_widget_destroy(ei_widget_t* widget)
