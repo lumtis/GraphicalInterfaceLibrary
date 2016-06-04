@@ -173,7 +173,7 @@ void ei_app_run()
     switch ( event.type )
     {
       case ei_ev_none:
-      case ei_ev_app:
+      case ei_ev_app: 
       case ei_ev_last : break;
       case ei_ev_keydown :
       case ei_ev_keyup :traitement( event, focus);break;
