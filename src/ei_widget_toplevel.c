@@ -4,7 +4,13 @@
 #include <stdlib.h>
 #include <math.h>
 #include "ei_widget_toplevel.h"
-
+#include "ei_draw_util.h"
+#include "ei_interncallback.h"
+#include "ei_types.h"
+#include "ei_utils.h"
+#include "ei_event.h"
+#include "ei_application.h"
+#include "ei_geometrymanager.h"
 
 #define POS_BOUTON 10
 #define TAILLE_BOUTON 8
@@ -38,7 +44,7 @@ void toplevelDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surfa
   
   hw_surface_lock(surface);
   
-  draw_toplevel(tpl,surface,clipper);
+  draw_toplevel(widget,surface,clipper);
    hw_surface_unlock(surface);
     //hw_surface_unlock(pick_surface);
    hw_surface_update_rects(surface, NULL);
@@ -69,23 +75,6 @@ void toplevelGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 }
 
 
-// Obtient la distance entre deux points
-inline int distPoint(ei_point_t t1, ei_point_t t2)
-{
-    return (int)sqrt((t1.x-t2.x)*(t1.x-t2.x)+(t1.y-t2.y)*(t1.y-t2.y))
-}
-
-inline int min(int a, int b)
-{
-    return a < b ? a : b;
-}
-
-inline int max(int a, int b)
-{
-    return a > b ? a : b;
-}
-
-
 /**********************************************************************
 ***************** Events **********************************************
 **********************************************************************/
@@ -95,13 +84,13 @@ ei_bool_t pushToplevel(struct ei_widget_t* widget, struct ei_event_t* event, voi
 {
     ei_widget_toplevel_t* wtl = (ei_widget_toplevel_t*)widget;
     ei_point_t cur = getCurrent();
-    ei_point_t bPos = ei_point(widget->top_left.x + POS_BOUTON, widget->top_left.y + POS_BOUTON); // Position du bouton
-    ei_rect_t recadr = ei_rect(ei_point(widget->top_left.x + widget->size.width - TAILLE_RECADR, widget->top_left.y + widget->size.height - TAILLE_RECADR), ei_rect(TAILLE_RECADR,TAILLE_RECADR));
+    ei_point_t bPos = ei_point(widget->screen_location.top_left.x + POS_BOUTON, widget->screen_location.top_left.y + POS_BOUTON); // Position du bouton
+    ei_rect_t recadr = ei_rect(ei_point(widget->screen_location.top_left.x + widget->screen_location.size.width - TAILLE_RECADR, widget->screen_location.top_left.y + widget->screen_location.size.height - TAILLE_RECADR), ei_size(TAILLE_RECADR,TAILLE_RECADR));
     
     // On regarde si nous sommes sur le boutton
     if(distPoint(cur, bPos) < 8 && wtl->closable == EI_TRUE)
 	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, widget);
-    else if(cur < widget->top_left.y + TAILLE_ENTETE)// On regarde si nous sommes sur l'en-tête
+    else if(cur.y < widget->screen_location.top_left.y + TAILLE_ENTETE)// On regarde si nous sommes sur l'en-tête
     {
 	ei_bind(ei_ev_mouse_move, NULL, "all", moveToplevel, widget);
 	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseMoveToplevel, widget);
@@ -111,90 +100,111 @@ ei_bool_t pushToplevel(struct ei_widget_t* widget, struct ei_event_t* event, voi
 	ei_bind(ei_ev_mouse_move, NULL, "all", moveResizeToplevel, widget);
 	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, widget);
     }
+    
+    return EI_TRUE;
 }
 
 
 ei_bool_t releaseCloseToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
     ei_widget_toplevel_t* wtl = (ei_widget_toplevel_t*)user_param;
-    ei_widget_t* widget = (ei_widget_t*)user_param;
-    ei_point_t bPos = ei_point(widget->top_left.x + POS_BOUTON, widget->top_left.y + POS_BOUTON);
+    ei_point_t cur = getCurrent();
+    ei_widget_t* w = (ei_widget_t*)user_param;
+    ei_point_t bPos = ei_point(w->screen_location.top_left.x + POS_BOUTON, w->screen_location.top_left.y + POS_BOUTON);
     
     // Si le curseur est actuellement dans le button on change coupe la fenetre
     if(distPoint(cur, bPos) < 8 && wtl->closable == EI_TRUE)
     {
 	// On retire l'evenement
-	ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, widget);
-	ei_app_invalidate_rect(widget->screen_location);
-	ei_widget_destroy(widget);
+	ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, w);
+	ei_app_invalidate_rect(&(w->screen_location));
+	ei_widget_destroy(w);
     }
     
     // On retire juste l'evenement
-    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, widget);
+    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, w);
+    
+    return EI_TRUE;
 }
 
 
 ei_bool_t moveToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
-    ei_widget_t* widget = (ei_widget_t*)user_param;
+    ei_widget_t* w = (ei_widget_t*)user_param;
     ei_point_t mov = ei_point_sub(getCurrent(), getLast()); // Mouvement entre la derniere et actuelle position
     ei_rect_t update;
+    int newX = w->screen_location.top_left.x + mov.x;
+    int newY = w->screen_location.top_left.y + mov.y;
     
     // Rectangle à mettre a jour
-    update.top_left.x = min(widget->screen_location.top_left.x, widget->screen_location.top_left.x + mov.x);
-    update.top_left.y = min(widget->screen_location.top_left.y, widget->screen_location.top_left.y + mov.y);
-    update.size.width = max(widget->screen_location.size.width, widget->screen_location.size.width + mov.x);
-    update.size.height = max(widget->screen_location.size.height, widget->screen_location.size.height + mov.y);
+    update.top_left.x = min(w->screen_location.top_left.x, w->screen_location.top_left.x + mov.x);
+    update.top_left.y = min(w->screen_location.top_left.y, w->screen_location.top_left.y + mov.y);
+    update.size.width = max(w->screen_location.size.width, w->screen_location.size.width + mov.x);
+    update.size.height = max(w->screen_location.size.height, w->screen_location.size.height + mov.y);
     
     // Met à jour sa position
-    ei_place(widget, NULL, widget->screen_location.top_left.x + mov.x, widget->screen_location.top_left.y + mov.y, NULL, NULL, NULL, NULL, NULL, NULL);
+    ei_place(w, NULL, &newX, &newY, NULL, NULL, NULL, NULL, NULL, NULL);
     ei_app_invalidate_rect(&update);
+    
+    return EI_TRUE;
 }
 
 ei_bool_t releaseMoveToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
-    ei_widget_t* widget = (ei_widget_t*)user_param;
+    ei_widget_t* w = (ei_widget_t*)user_param;
     
     // On retire les evenements
-    ei_unbind(ei_ev_mouse_move, NULL, "all", moveToplevel, widget);
-    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseMoveToplevel, widget);
+    ei_unbind(ei_ev_mouse_move, NULL, "all", moveToplevel, w);
+    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseMoveToplevel, w);
+    
+    return EI_TRUE;
 }
 
 
 ei_bool_t moveResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
     ei_widget_toplevel_t* wtl = (ei_widget_toplevel_t*)user_param;
-    ei_widget_t* widget = (ei_widget_t*)user_param;
+    ei_widget_t* w = (ei_widget_t*)user_param;
+    ei_point_t mov = ei_point_sub(getCurrent(), getLast());
+    ei_rect_t update;
+    int newWidth = w->screen_location.size.width + mov.x;
+    int newHeight = w->screen_location.size.height + mov.y;
     
     // Rectangle à mettre a jour
-    update.top_left.x = min(widget->screen_location.top_left.x, widget->screen_location.top_left.x + mov.x);
-    update.top_left.y = min(widget->screen_location.top_left.y, widget->screen_location.top_left.y + mov.y);
-    update.size.width = max(widget->screen_location.size.width, widget->screen_location.size.width + mov.x);
-    update.size.height = max(widget->screen_location.size.height, widget->screen_location.size.height + mov.y);
+    update.top_left.x = min(w->screen_location.top_left.x, w->screen_location.top_left.x + mov.x);
+    update.top_left.y = min(w->screen_location.top_left.y, w->screen_location.top_left.y + mov.y);
+    update.size.width = max(w->screen_location.size.width, w->screen_location.size.width + mov.x);
+    update.size.height = max(w->screen_location.size.height, w->screen_location.size.height + mov.y);
     
     // Met à jour sa position
     switch(wtl->resizable)
     {
       case ei_axis_both :
-	ei_place(widget, NULL, NULL, NULL, widget->screen_location.size.width + mov.x, widget->screen_location.size.height + mov.y, NULL, NULL, NULL, NULL);
+	ei_place(w, NULL, NULL, NULL, &newWidth, &newHeight, NULL, NULL, NULL, NULL);
 	break;
       case ei_axis_x :
-	ei_place(widget, NULL, NULL, NULL, widget->screen_location.size.width + mov.x, NULL, NULL, NULL, NULL, NULL);
+	ei_place(w, NULL, NULL, NULL, &newWidth, NULL, NULL, NULL, NULL, NULL);
 	break;
       case ei_axis_y :
-	ei_place(widget, NULL, NULL, NULL, NULL, widget->screen_location.size.height + mov.y, NULL, NULL, NULL, NULL);
+	ei_place(w, NULL, NULL, NULL, NULL, &newHeight, NULL, NULL, NULL, NULL);
+	break;
+      default:
 	break;
     }
     
     ei_app_invalidate_rect(&update);
+    
+    return EI_TRUE;
 }
 
 ei_bool_t releaseResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
-    ei_widget_t* widget = (ei_widget_t*)user_param;
+    ei_widget_t* w = (ei_widget_t*)user_param;
     
     // On retire les evenements
-    ei_unbind(ei_ev_mouse_move, NULL, "all", moveResizeToplevel, widget);
-    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, widget);
+    ei_unbind(ei_ev_mouse_move, NULL, "all", moveResizeToplevel, w);
+    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, w);
+    
+    return EI_TRUE;
 }
 

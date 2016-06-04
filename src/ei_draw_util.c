@@ -2,15 +2,33 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "ei_widget_frame.h"
 #include "ei_widget_button.h"
 #include "ei_widget_toplevel.h"
 #include "ei_draw_util.h"
-#include "math.h"
 #include "ei_types.h"
 #include"ei_widget.h"
 #include "ei_widgetclass.h"
 #include "hw_interface.h"
+
+
+// Obtient la distance entre deux points
+int distPoint(ei_point_t t1, ei_point_t t2)
+{
+    return (int)sqrt((t1.x-t2.x)*(t1.x-t2.x)+(t1.y-t2.y)*(t1.y-t2.y));
+}
+
+int min(int a, int b)
+{
+    return a < b ? a : b;
+}
+
+int max(int a, int b)
+{
+    return a > b ? a : b;
+}
+
 
 /*Libere une liste de point*/
 void freeLinkedPoint(ei_linked_point_t* l)
@@ -70,19 +88,6 @@ ei_linked_point_t* lastPoint(ei_linked_point_t* l)
       tmp = tmp->next;
     }
   return tmp;
-}
-
-/*retourne le min entre deux entiers*/
-int min(int a, int b)
-{
-  if(a<b)
-    {
-      return a;
-    }
-  else
-    {
-      return b;
-    }
 }
 
 /*chaine les sommets d'un rect pour former soit la partie haute, soit la partie basse, soit les deux, d'un frame*/
@@ -175,6 +180,8 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
 
       return(s1);
     }
+    
+    return NULL;
 }
 
 /*renvoie non(b)*/
@@ -184,6 +191,8 @@ ei_bool_t inverseBool(ei_bool_t b)
 	return EI_TRUE;
     else
 	return EI_FALSE;
+    
+    return EI_FALSE;
 }
 
 
@@ -524,6 +533,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
       return(debutArc1);
     }
    
+   return NULL;
 }
 
 

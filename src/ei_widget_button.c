@@ -6,6 +6,7 @@
 #include "ei_widget_frame.h"
 #include "ei_application.h"
 #include "ei_event.h"
+#include "ei_interncallback.h"
 
 
 void* buttonAllocfunc()
@@ -95,6 +96,18 @@ ei_relief_t reliefInvese(ei_relief_t r)
       case ei_relief_sunken :
 	    return ei_relief_raised;
     }
+    
+    return ei_relief_none;
+}
+
+
+// Defini si un point est dans un rectangle
+ei_bool_t isIn(ei_point_t p, ei_rect_t r)
+{
+    if(p.x >= r.top_left.x && p.x <= r.top_left.x + r.size.width && p.y >= r.top_left.y && p.y <= r.top_left.y + r.size.height)
+	return EI_TRUE;
+    else
+	return EI_FALSE;
 }
 
 
@@ -115,7 +128,7 @@ ei_bool_t pushButton(struct ei_widget_t* widget, struct ei_event_t* event, void*
     ei_bind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, widget);
     
     // on devra redessiner la partie
-    ei_app_invalidate_rect(widget->screen_location);
+    ei_app_invalidate_rect(&(widget->screen_location));
     
     return EI_TRUE;
 }
@@ -124,41 +137,45 @@ ei_bool_t pushButton(struct ei_widget_t* widget, struct ei_event_t* event, void*
 ei_bool_t releaseButton(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
     ei_widget_button_t* wb = (ei_widget_button_t*)user_param;
-    ei_widget_t* widget = (ei_widget_t*)user_param;
+    ei_widget_t* w = (ei_widget_t*)user_param;
   
     // Si le curseur est actuellement dans le button on change son relief
-    if(isIn(getCurrent(), widget->screen_location) == EI_TRUE)
+    if(isIn(getCurrent(), w->screen_location) == EI_TRUE)
     {
 	wb->relief = reliefInvese(wb->relief);
 	
 	// on devra redessiner la partie
-	ei_app_invalidate_rect(widget->screen_location);
+	ei_app_invalidate_rect(&(widget->screen_location));
     }
     
     // On retire mes evenements precedents
-    ei_unbind(ei_ev_mouse_move , NULL, "all", isOutButton, widget);
-    ei_unbind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, widget);
+    ei_unbind(ei_ev_mouse_move , NULL, "all", isOutButton, w);
+    ei_unbind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, w);
+    
+    return EI_TRUE;
 }
 
 
 ei_bool_t isOutButton(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
     ei_widget_button_t* wb = (ei_widget_button_t*)user_param;
-    ei_widget_t* widget = (ei_widget_t*)user_param;
+    ei_widget_t* w = (ei_widget_t*)user_param;
   
     // Si on sort du bouton on inverse le relief et inversement
-    if(isIn(getCurrent(), widget->screen_location) == EI_TRUE && isIn(getLast(), widget->screen_location) == EI_FALSE)
+    if(isIn(getCurrent(), w->screen_location) == EI_TRUE && isIn(getLast(), w->screen_location) == EI_FALSE)
     {
 	wb->relief = reliefInvese(wb->relief);
 	
 	// on devra redessiner la partie
-	ei_app_invalidate_rect(widget->screen_location);
+	ei_app_invalidate_rect(&(w->screen_location));
     }
-    else if(isIn(getCurrent(), widget->screen_location) == EI_FALSE && isIn(getLast(), widget->screen_location) == EI_TRUE)
+    else if(isIn(getCurrent(), w->screen_location) == EI_FALSE && isIn(getLast(), w->screen_location) == EI_TRUE)
     {
 	wb->relief = reliefInvese(wb->relief);
 	
 	// on devra redessiner la partie
-	ei_app_invalidate_rect(widget->screen_location);
+	ei_app_invalidate_rect(&(w->screen_location));
     }
+    
+    return EI_TRUE;
 }
