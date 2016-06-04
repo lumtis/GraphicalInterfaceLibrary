@@ -29,7 +29,7 @@ void drawTextWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_wi
 void drawImgWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_widget_frame_t* wf);
 
 // Frame
-void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper, ei_bool_t enfoncer, ei_bool_t isFrame);
+void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper, ei_bool_t enfoncer, ei_bool_t isFrame, ei_surface_t pick_surface);
 
 // Toplevel
 void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* clipper);

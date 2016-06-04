@@ -594,12 +594,13 @@ ei_linked_point_t* round_and_rectangular_frame(ei_rect_t rect, int rayon)
 
 
 /*dessine le frame ou le bouton a partir de la liste chainee generee par rounded frame ou rectangular frame*/
-void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper, ei_bool_t enfoncer, ei_bool_t isFrame)
+void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper, ei_bool_t enfoncer, ei_bool_t isFrame, ei_surface_t pick_surface)
 {
   ei_widget_frame_t* frame = (ei_widget_frame_t*) widget;
   
   ei_rect_t rect = frame->w.screen_location;
   int bordurewidth = frame->border_width;
+  ei_color_t pickColor;
   
   ei_rect_t rectint;
   rectint.top_left.x = rect.top_left.x + bordurewidth;
@@ -648,6 +649,10 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
   else
      clair.alpha = 127;
   
+  // Offsreen
+  pickColor = *(widget->pick_color);
+  ei_draw_polygon(pick_surface, partieAvecBordure, pickColor, clipper);
+  
   if(bordurewidth > 0)
   {
       // Premier dessin
@@ -688,6 +693,7 @@ void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* c
   ei_point_t centre;
   int rayon = 8;
   ei_point_t where;
+  ei_color_t pickColor;
 
  tpl = toplevelAllocfunc();
   toplevelSetdefaultsfunc(&(tpl->w));
@@ -799,6 +805,9 @@ void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* c
   ei_draw_text(surface,&where,tpl->title,NULL,&white, clipper);
    }
 
+  // Offsreen
+  pickColor = *(widget->pick_color);
+  //ei_draw_polygon(pick_surface, partieAvecBordure, pickColor, clipper);
  
   freeLinkedPoint(cadre_arriere);
   freeLinkedPoint(cadre_avant);

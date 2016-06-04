@@ -28,8 +28,6 @@ void frameReleasefunc(struct ei_widget_t* widget)
 void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
 {
     ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
-      
-    ei_color_t pickColor;
     
     hw_surface_lock(surface);
     hw_surface_lock(pick_surface);
@@ -38,24 +36,20 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     {
 	case (ei_relief_none): // Pas de bordure
 	case (ei_relief_raised): // Bordure plus claire
-	    draw_frameButton(widget, surface, clipper, EI_FALSE, EI_TRUE);
+	    draw_frameButton(widget, surface, clipper, EI_FALSE, EI_TRUE, pick_surface);
 	    break;
 	case (ei_relief_sunken): // Bordure plus foncée
-	    draw_frameButton(widget, surface, clipper, EI_TRUE, EI_TRUE);
+	    draw_frameButton(widget, surface, clipper, EI_TRUE, EI_TRUE, pick_surface);
 	    break;
     }
-    
-    // Offsreen
-    pickColor = *(widget->pick_color);
-    ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
 
     // Texte
     if(wf->text != NULL)
-        //drawTextWidget(surface, widget, wf, clipper);
+        drawTextWidget(surface, widget, wf, clipper);
 
     // Image
     if(wf->img != NULL)
-        //drawImgWidget(surface, widget, wf);
+        drawImgWidget(surface, widget, wf);
     
     hw_surface_unlock(surface);
     hw_surface_unlock(pick_surface);

@@ -40,17 +40,12 @@ void buttonDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface
     {
 	case (ei_relief_none): // Pas de bordure
 	case (ei_relief_raised): // Bordure plus claire
-	    draw_frameButton(widget, surface, clipper, EI_FALSE, EI_FALSE);
+	    draw_frameButton(widget, surface, clipper, EI_FALSE, EI_FALSE, pick_surface);
 	    break;
 	case (ei_relief_sunken): // Bordure plus foncée
-	    draw_frameButton(widget, surface, clipper, EI_TRUE, EI_FALSE);
+	    draw_frameButton(widget, surface, clipper, EI_TRUE, EI_FALSE, pick_surface);
 	    break;
     }
-    
-    //ei_draw_polyline(surface, cadre, gris, clipper);
-    // Offsreen
-    pickColor = *(widget->pick_color);
-    //ei_draw_polygon(pick_surface, cadre, pickColor, clipper);
 
     // Texte
     if(wb->text != NULL)
@@ -58,7 +53,7 @@ void buttonDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface
 
     // Image
     if(wb->img != NULL)
-        //drawImgWidget(surface, widget, wb);
+        drawImgWidget(surface, widget, wb);
     
     hw_surface_unlock(surface);
     //hw_surface_unlock(pick_surface);
