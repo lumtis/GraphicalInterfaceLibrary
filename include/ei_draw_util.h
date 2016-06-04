@@ -13,6 +13,10 @@ struct ei_widget_frame_t;
 struct ei_widget_t;
 
 
+int distPoint(ei_point_t t1, ei_point_t t2);
+int min(int a, int b);
+int max(int a, int b);
+
 // Fonctions points chainées
 void freeLinkedPoint(ei_linked_point_t* l);
 ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p);
@@ -27,6 +31,8 @@ void drawImgWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_wid
 // Frame
 void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper, ei_bool_t enfoncer, ei_bool_t isFrame);
 
+// Toplevel
+void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* clipper);
 
 
 
