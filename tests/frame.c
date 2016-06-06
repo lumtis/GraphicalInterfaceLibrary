@@ -27,15 +27,34 @@ int ei_main(int argc, char** argv)
 	ei_relief_t	frame_relief		= ei_relief_raised;
 	int		frame_border_width	= 6;
 
-	/* Create the application and change the color of the background. */
+
+	ei_anchor_t anc = ei_anc_north;
+	ei_widget_t* w;
+	ei_surface_t surface = ei_app_root_surface();
+	ei_surface_t surface_image = hw_image_load("misc/ball.png",surface);
+	ei_rect_t rect_image = hw_surface_get_rect(&surface_image);
+	ei_rect_t* rect1 = &rect_image; 
+
+/* Create the application and change the color of the background. */
 	ei_app_create(&screen_size, EI_FALSE);
-	ei_frame_configure(ei_app_root_widget(), NULL, &root_bgcol, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	ei_frame_configure(ei_app_root_widget(), &screen_size, &root_bgcol, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	
 	/* Create, configure and place the frame on screen. */
 	frame = ei_widget_create("frame", ei_app_root_widget());
-	ei_frame_configure(frame, &frame_size, &frame_color, &frame_border_width, &frame_relief, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-	
-	ei_place(frame, NULL, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
+
+	ei_frame_configure(frame, &frame_size, &frame_color, &frame_border_width, &frame_relief, NULL, NULL, NULL, NULL, &surface_image,&rect1, &anc);
+
+
+	ei_place(frame, NULL, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL ); 
+ 
+  hw_init();
+  hw_surface_lock(&surface);
+  drawImgWidget(surface,frame);
+
+  hw_surface_unlock(&surface);
+  hw_surface_update_rects(&surface, NULL);
+  getchar(); 
+  hw_quit();
 	
 	/* Run the application's main loop. */
 	ei_app_run();

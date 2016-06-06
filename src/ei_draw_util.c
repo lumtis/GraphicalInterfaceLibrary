@@ -308,93 +308,101 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
 }
 
 
-
-
 /*affiche une image dans un widget en tenant compte de l'ancrage; cette fonction fonctionne de la meme facon que drawTextWidget*/
-void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf)
+void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget)
 {
+     
+  ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
+  int copie;
+
+  //coordonnees du topleft de l'image
+  ei_point_t where;
+  ei_rect_t dest_rec,rect_image;
+  dest_rec = hw_surface_get_rect(surface);
   
-     //coordonnees du topleft de l'image
-     ei_point_t where;
+  rect_image = hw_surface_get_rect(wf->img); 
+  wf->img_rect = &rect_image;  
   
-     //calcul des coordonnees de where en fonction de l'ancrage   
-    if(wf->img_anchor == ei_anc_none)
+  //calcul des coordonnees de where en fonction de l'ancrage   
+  if(wf->img_anchor == ei_anc_none)
     
-      {
-	where.x = widget->screen_location.top_left.x;
-	where.y = widget->screen_location.top_left.y;
-      }
+    {
+      where.x = wf->w.screen_location.top_left.x;
+      where.y = wf->w.screen_location.top_left.y;
+    }
     
-    if(wf->img_anchor == ei_anc_center)
+  if(wf->img_anchor == ei_anc_center)
     
-      {	
-	where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width/2 - wf->img_rect->size.width/2;
-	where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 -wf->img_rect->size.height/2;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x+ wf->w.screen_location.size.width/2 - wf->img_rect->size.width/2;
+      where.y = wf->w.screen_location.top_left.y+wf->w.screen_location.size.height/2 -wf->img_rect->size.height/2;
+    }
    
 
-    if(wf->img_anchor == ei_anc_north)
+  if(wf->img_anchor == ei_anc_north)
     
-      {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 -wf->img_rect->size.width/2;
-	where.y = widget->screen_location.top_left.y+wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width/2 -wf->img_rect->size.width/2;
+      where.y = wf->w.screen_location.top_left.y+wf->border_width;
+    }
     
-    if(wf->img_anchor == ei_anc_northeast)
+  if(wf->img_anchor == ei_anc_northeast)
     
-      {	
-	where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width -wf->img_rect->size.width-wf->border_width;
-	where.y = widget->screen_location.top_left.y-wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x+ wf->w.screen_location.size.width -wf->img_rect->size.width-wf->border_width;
+      where.y = wf->w.screen_location.top_left.y-wf->border_width;
+    }
     
-    if(wf->img_anchor == ei_anc_east)
+  if(wf->img_anchor == ei_anc_east)
     
-      {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width -wf->img_rect->size.width -wf->border_width;
-	where.y = widget->screen_location.top_left.y +widget->screen_location.size.height/2 -wf->img_rect->size.height/2;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width -wf->img_rect->size.width -wf->border_width;
+      where.y = wf->w.screen_location.top_left.y +wf->w.screen_location.size.height/2 -wf->img_rect->size.height/2;
+    }
     
-    if(wf->img_anchor == ei_anc_southeast)
+  if(wf->img_anchor == ei_anc_southeast)
     
-      {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - wf->img_rect->size.width-wf->border_width;
-	where.y = widget->screen_location.top_left.y+widget->screen_location.size.height -wf->img_rect->size.height - wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width - wf->img_rect->size.width-wf->border_width;
+      where.y = wf->w.screen_location.top_left.y+wf->w.screen_location.size.height -wf->img_rect->size.height - wf->border_width;
+    }
 
- if(wf->img_anchor == ei_anc_south)
+  if(wf->img_anchor == ei_anc_south)
     
-      {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - wf->img_rect->size.width/2;
-	where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - wf->img_rect->size.height - wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width/2 - wf->img_rect->size.width/2;
+      where.y = wf->w.screen_location.top_left.y + wf->w.screen_location.size.height - wf->img_rect->size.height - wf->border_width;
+    }
     
-    if(wf->img_anchor == ei_anc_southwest)
+  if(wf->img_anchor == ei_anc_southwest)
     
-      {	
-	where.x = widget->screen_location.top_left.x + wf->border_width;
-	where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height -wf->img_rect->size.height - wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->border_width;
+      where.y = wf->w.screen_location.top_left.y+ wf->w.screen_location.size.height -wf->img_rect->size.height - wf->border_width;
+    }
 
 
   if(wf->img_anchor == ei_anc_west)
     
-      {	
-	where.x = widget->screen_location.top_left.x + wf->border_width;
-	where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - wf->img_rect->size.height/2;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->border_width;
+      where.y = wf->w.screen_location.top_left.y+wf->w.screen_location.size.height/2 - wf->img_rect->size.height/2;
+    }
 
 
 
   if(wf->img_anchor == ei_anc_northwest)
     
-      {
-	where.x = widget->screen_location.top_left.x+wf->border_width;
-	where.y = widget->screen_location.top_left.y+wf->border_width;
-      }
+    {
+      where.x = wf->w.screen_location.top_left.x+wf->border_width;
+      where.y = wf->w.screen_location.top_left.y+wf->border_width;
+    }
+  
+  
   
   //dessin de l'image
   wf->img_rect->top_left = where;
-  ei_copy_surface(surface, NULL, wf->img, wf->img_rect, EI_FALSE);
+  copie = ei_copy_surface(surface,&dest_rec,wf->img, wf->img_rect, EI_FALSE);
 
 }
 
@@ -427,7 +435,7 @@ ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleD, int angleF, int
       newPoint->point.y = -rayon*sin(angleDebut+i*pasAngle)+centre.y;
       newPoint->next = NULL;
       dernierPoint = addLinkedPoint(dernierPoint,newPoint->point);//on chaine ce nouveau point au dernier point
-      }
+    }
   
   return premierPoint; 
 }
@@ -475,7 +483,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
   pointInterieur2->point.x = rect.top_left.x +rect.size.width -  h;
   pointInterieur2->point.y = pointInterieur1->point.y;
  
-//calcule le centre de l arc qui formera le coin arrondi
+  //calcule le centre de l arc qui formera le coin arrondi
   centre1.x = rect.top_left.x + rayon;
   centre1.y = rect.top_left.y + rayon;
   debutArc1 = arc(centre1,rayon,90,180,1000);
