@@ -34,7 +34,6 @@ ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event,
 
 void traitement(ei_event_t event ,  ei_widget_t* widget)
 {
-  fprintf ( stderr,"%d \n ", widget->pick_id ); 
   traitant* tmp = tab_event[event.type];
   while ( tmp != NULL )
   {
@@ -177,6 +176,7 @@ void ei_app_run()
     // Premier dessin de la fenere entiere
     frameDrawfunc(racine, window, windowpick, racine->content_rect);
     ei_app_run_rec(racine->children_head, window, windowpick,NULL);
+    hw_surface_update_rects(window, NULL);
     
    while ( quit == EI_FALSE)
    {
@@ -201,6 +201,7 @@ void ei_app_run()
       courant=courant->next;
     }  
     freeLinkedRect(liste_rect);
+    hw_surface_update_rects(window, NULL);
   }  
 }
 
@@ -251,7 +252,7 @@ ei_surface_t ei_app_root_surface()
 
 ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
-    lastP = currentP;
+    lastP = ei_point(currentP.x, currentP.y);
     currentP = event->param.mouse.where;
     
     return EI_TRUE;
