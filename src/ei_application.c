@@ -30,7 +30,7 @@ ei_linked_rect_t*  liste_rect = NULL;
 ei_widget_t * focus ;
 
 ei_bool_t quitEchap(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param);
-
+ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param);
 
 void traitement(ei_event_t event ,  ei_widget_t* widget)
 {
@@ -144,6 +144,11 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     
     // Quitter lors ce qu'on appuis sur echap
     ei_bind(ei_ev_keydown, NULL, "all", quitEchap, NULL);
+    
+    // Position souris
+    currentP = ei_point(0,0);
+    lastP = ei_point(0,0);
+    ei_bind(ei_ev_mouse_move, NULL, "all", memorizePosition, NULL);
 }
 
 
@@ -151,6 +156,9 @@ void ei_app_free()
 {
     ei_widget_destroy(racine);
     hw_surface_free(window);
+    
+    ei_unbind(ei_ev_keydown, NULL, "all", quitEchap, NULL);
+    ei_unbind(ei_ev_mouse_move, NULL, "all", memorizePosition, NULL);
     
     // On termine le widget principale
     hw_quit();
@@ -186,7 +194,7 @@ void ei_app_run()
     courant = liste_rect;
     while ( courant != NULL)
     {
-      ei_app_run_rec(racine->children_head, window, windowpick,&(courant->rect));
+      ei_app_run_rec(racine, window, windowpick,&(courant->rect));
       courant=courant->next;
     }  
     freeLinkedRect(liste_rect);

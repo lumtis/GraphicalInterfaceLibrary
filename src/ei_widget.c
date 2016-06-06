@@ -59,12 +59,6 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
 }
 
 
-
-
-
-
-
-
 ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 			      ei_widget_t* parent)
 {
@@ -113,10 +107,6 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
       ei_bind(ei_ev_mouse_buttondown,new_widget,NULL,pushToplevel, NULL);
     return new_widget;
 }
-
-
-
-
 
 
 void ei_widget_destroy(ei_widget_t* widget)
@@ -222,7 +212,8 @@ void			ei_frame_configure		(ei_widget_t*		widget,
     {
         if(wf->text != NULL)
             free(wf->text);
-        wf->text = *text;
+	wf->text = malloc(strlen(*text)+1);
+        strcpy(wf->text, *text);
     }
     if(text_font != NULL)
         wf->text_font = *text_font;
@@ -237,11 +228,7 @@ void			ei_frame_configure		(ei_widget_t*		widget,
         wf->img = *img;
     }
     if(img_rect != NULL)
-    {
-        if(wf->img_rect != NULL)
-            free(wf->img_rect);
         wf->img_rect = *img_rect;
-    }
     if(img_anchor != NULL)
         wf->img_anchor = *img_anchor;
 }
@@ -280,11 +267,7 @@ void			ei_button_configure		(ei_widget_t*		widget,
     if(callback != NULL)
         wb->callback = *callback;
     if(user_param != NULL)
-    {
-        if(wb->user_param != NULL)
-            free(wb->user_param);
         wb->user_param = *user_param;
-    }
 
     ei_frame_configure(widget, requested_size, color, border_width, relief, text, text_font, text_color, text_anchor, img, img_rect, img_anchor);
 }
@@ -320,16 +303,13 @@ void			ei_toplevel_configure		(ei_widget_t*		widget,
     {
         if(wtl->title != NULL)
             free(wtl->title);
-        wtl->title = *title;
+	wtl->title = malloc(strlen(*title)+1);
+        strcpy(wtl->title, *title);
     }
     if(closable != NULL)
         wtl->closable = *closable;
     if(resizable != NULL)
         wtl->resizable = *resizable;
     if(min_size != NULL)
-    {
-        if(wtl->title != NULL)
-            free(wtl->title);
         wtl->min_size = *min_size;
-    }
 }

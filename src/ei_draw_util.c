@@ -13,7 +13,9 @@
 #include "hw_interface.h"
 
 
-// Obtient la distance entre deux points
+
+
+/* Obtient la distance entre deux points*/
 int distPoint(ei_point_t t1, ei_point_t t2)
 {
     return (int)sqrt((t1.x-t2.x)*(t1.x-t2.x)+(t1.y-t2.y)*(t1.y-t2.y));
