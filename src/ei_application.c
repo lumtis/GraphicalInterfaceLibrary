@@ -34,6 +34,7 @@ ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event,
 
 void traitement(ei_event_t event ,  ei_widget_t* widget)
 {
+  fprintf ( stderr,"%d \n ", widget->pick_id ); 
   traitant* tmp = tab_event[event.type];
   while ( tmp != NULL )
   {
@@ -93,8 +94,8 @@ void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windo
     else 
       widget->wclass->drawfunc(widget ,window, windowpick, clipper);
     
-    ei_app_run_rec(widget->next_sibling, window, windowpick,clipper);
-    ei_app_run_rec(widget->children_head, window, windowpick,clipper);
+      ei_app_run_rec(widget->next_sibling, window, windowpick,clipper);
+      ei_app_run_rec(widget->children_head, window, windowpick,clipper);
 }
 
 
@@ -102,7 +103,7 @@ void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windo
 void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
 { 
     ei_color_t * coloracine;
-  
+    
     hw_init();
     for ( ei_eventtype_t i = ei_ev_none ; i < ei_ev_last ; i++)
       tab_event[i]=NULL;
@@ -134,13 +135,15 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     *(racine->content_rect) = racine->screen_location;
     
     // Initialisation du tableau de widget 
-    for ( int i =0 ; i <256 ; i++)
+    tab_widget[255]=racine;
+    for ( int i =0 ; i <255 ; i++)
       tab_widget[i]=NULL;
 
     racine->geom_params = calloc(1, sizeof(ei_geometry_param_t));
     
     window = hw_create_window(main_window_size,fullscreen);
-    windowpick = hw_surface_create(window,main_window_size, EI_TRUE);;
+    windowpick = hw_surface_create(window,main_window_size, EI_TRUE);
+    
     
     // Quitter lors ce qu'on appuis sur echap
     ei_bind(ei_ev_keydown, NULL, "all", quitEchap, NULL);

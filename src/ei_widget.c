@@ -172,7 +172,7 @@ ei_widget_t* ei_widget_pick(ei_point_t*	where)
   int width=(hw_surface_get_size(ei_app_root_surface())).width;
   buffer= hw_surface_get_buffer(windowpick);
   hw_surface_get_channel_indices(windowpick, &rouge, &vert, &bleu, &alpha);
-  id=*( buffer + 4 * (((where->y))*width + (where->x)) + rouge);
+  id= buffer [ 4 * ((where->y)*width + (where->x)) + rouge];
   return tab_widget[id];
 }
 
