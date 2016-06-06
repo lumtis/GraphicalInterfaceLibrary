@@ -46,7 +46,7 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
 
     // Image
     if(wf->img != NULL)
-        drawImgWidget(surface, widget, wf);
+      drawImgWidget(surface, widget);
 }
 
 
