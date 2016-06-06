@@ -55,7 +55,7 @@ void traitement(ei_event_t event ,  ei_widget_t* widget)
 }
 
 
-// Definie quand faut il quitter l'application
+// Definit quand il faut  quitter l'application
 ei_bool_t quit = EI_FALSE;
 
 // Curseur position
@@ -145,7 +145,7 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     windowpick = hw_surface_create(window,main_window_size, EI_TRUE);
     
     
-    // Quitter lors ce qu'on appuis sur echap
+    // Quitter lorsqu'on appuie sur echap
     ei_bind(ei_ev_keydown, NULL, "all", quitEchap, NULL);
     
     // Position souris
@@ -163,7 +163,7 @@ void ei_app_free()
     ei_unbind(ei_ev_keydown, NULL, "all", quitEchap, NULL);
     ei_unbind(ei_ev_mouse_move, NULL, "all", memorizePosition, NULL);
     
-    // On termine le widget principale
+    // On termine le widget principal
     hw_quit();
   
     return;
