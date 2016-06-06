@@ -50,7 +50,7 @@ void buttonDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface
 
     // Image
     if(wb->img != NULL)
-        drawImgWidget(surface, widget, wb);
+        drawImgWidget(surface, widget);
 }
 
 
