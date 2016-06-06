@@ -130,7 +130,7 @@ ei_bool_t releaseButton(struct ei_widget_t* widget, struct ei_event_t* event, vo
     ei_widget_t* w = (ei_widget_t*)user_param;
     struct ei_event_t ev;
     ev.type = ei_ev_app;
-    ev.param.application = wb->user_param;
+    ev.param.application.user_param = wb->user_param;
     
     // Si le curseur est actuellement dans le button on change son relief
     if(isIn(getCurrent(), w->screen_location) == EI_TRUE)

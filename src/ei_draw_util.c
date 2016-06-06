@@ -685,7 +685,7 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
 
 
 /*dessine un toplevel*/
-void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* clipper)
+void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* clipper, ei_surface_t pick_surface)
 {
   ei_widget_toplevel_t* tpl = (ei_widget_toplevel_t*)widget;
   ei_rect_t rect = tpl->w.screen_location;
@@ -809,7 +809,7 @@ void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* c
 
   // Offsreen
   pickColor = *(widget->pick_color);
-  //ei_draw_polygon(pick_surface, partieAvecBordure, pickColor, clipper);
+  ei_draw_polygon(pick_surface, cadre_arriere, pickColor, clipper);
  
   freeLinkedPoint(cadre_arriere);
   freeLinkedPoint(cadre_avant);

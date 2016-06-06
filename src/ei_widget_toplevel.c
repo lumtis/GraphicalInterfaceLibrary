@@ -41,14 +41,8 @@ void toplevelDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surfa
 {
   ei_widget_toplevel_t* tpl = (ei_widget_toplevel_t*)widget;
   ei_color_t  pickColor = (*widget->pick_color);
-  
-  hw_surface_lock(surface);
-  
-  draw_toplevel(widget,surface,clipper);
-   hw_surface_unlock(surface);
-    //hw_surface_unlock(pick_surface);
-   hw_surface_update_rects(surface, NULL);
-
+   
+  draw_toplevel(widget,surface,clipper, pick_surface);
 }
 
 

@@ -166,7 +166,7 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
  * @param   clipper          le rectangle qui limite la surface ou on peut dessiner
  */
 
-void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* clipper);
+void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* clipper, ei_surface_t pick_surface);
 
 
 
