@@ -1,5 +1,5 @@
 /**
-*  Definie toute les variables globales necessaires au programme
+*  Definit toute les variables globales necessaires au programme
 **/
 
 #ifndef EI_GLOBAL_H

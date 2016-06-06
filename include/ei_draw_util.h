@@ -137,7 +137,7 @@ void drawImgWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_wid
 
 
 /**
- * \brief         dessine l'image  d'un widget et le place en fonction de son ancrage
+ * \brief         dessine un widget si c'est un bouton ou un cadre
  *
  * @param   widget           le widget que l'on veut dessiner 
  *
@@ -157,7 +157,7 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
 
 
 /**
- * \brief         dessine l'image  d'un widget et le place en fonction de son ancrage
+ * \brief         dessine un widget si c'est un toplevel
  *
  * @param   widget           le widget que l'on veut dessiner 
  *
