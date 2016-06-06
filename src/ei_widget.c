@@ -59,7 +59,6 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
 }
 
 
-
 ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 			      ei_widget_t* parent)
 {
@@ -110,14 +109,18 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 }
 
 
-
 void ei_widget_destroy(ei_widget_t* widget)
 {
     ei_widget_t* p;
     if (widget == NULL )
         return;
     else
+      
     {
+	if ( strcmp ( widget->wclass->name , "button" ))
+	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,pushButton, NULL);
+	if ( strcmp ( widget->wclass->name , "toplevel" ))
+	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,pushToplevel, NULL);
         if (widget->parent== NULL)
         {
             ei_widget_destroy_rec(widget->children_head);
