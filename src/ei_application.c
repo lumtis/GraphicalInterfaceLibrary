@@ -63,22 +63,24 @@ ei_point_t lastP;
 
 
 /*Libere une liste de rect*/
-void freeLinkedRect(ei_linked_rect_t* l)
+ei_linked_rect_t* freeLinkedRect(ei_linked_rect_t* l)
 {
     ei_linked_rect_t* tmp1 = l;
     ei_linked_rect_t* tmp2;
 
     if(tmp1 == NULL)
-        return;
+        return NULL;
+    if(tmp1->next == NULL)
+	free(tmp1);
 
-    tmp2 = tmp1->next;
-
-    while(tmp2 != NULL)
+    while(tmp1->next != NULL)
     {
+	tmp2 = tmp1->next;
         free(tmp1);
         tmp1 = tmp2;
-        tmp2 = tmp1->next;
     }
+    
+    return NULL;
 }
 
 
@@ -174,8 +176,10 @@ void ei_app_run()
     ei_event_t event;
     
     // Premier dessin de la fenere entiere
+    hw_surface_lock(window);
     frameDrawfunc(racine, window, windowpick, racine->content_rect);
     ei_app_run_rec(racine->children_head, window, windowpick,NULL);
+    hw_surface_unlock(window);
     hw_surface_update_rects(window, NULL);
     
    while ( quit == EI_FALSE)
@@ -195,16 +199,31 @@ void ei_app_run()
     }
     
     courant = liste_rect;
+    hw_surface_lock(window);
     while ( courant != NULL)
     {
       ei_app_run_rec(racine, window, windowpick,&(courant->rect));
       courant=courant->next;
     }  
-    freeLinkedRect(liste_rect);
+    liste_rect = freeLinkedRect(liste_rect);
+    hw_surface_unlock(window);
     hw_surface_update_rects(window, NULL);
   }  
 }
 
+
+printListRect(ei_linked_rect_t *l)
+{
+    int i = 0;
+    ei_rect_t rect;
+    while(l != NULL)
+    {
+	rect = l->rect;
+	printf("rect%d : %d %d %d %d\n", i, rect.top_left.x, rect.top_left.y, rect.size.width, rect.size.height);
+	i++;
+	l = l->next;
+    }
+}
 
 void ei_app_invalidate_rect(ei_rect_t* rect)
 {
@@ -212,7 +231,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
     ei_linked_rect_t * new_rect = calloc(1, sizeof(ei_linked_rect_t));
     new_rect->rect = *rect;
     ei_linked_rect_t * tmp;
-  
+    
     if (liste_rect == NULL)
       liste_rect = new_rect;
     else
@@ -221,6 +240,8 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
       for(tmp=liste_rect;tmp->next != NULL; tmp =tmp->next);
       tmp->next= new_rect;
     }
+    
+    printf("\n");
 }
 
 
