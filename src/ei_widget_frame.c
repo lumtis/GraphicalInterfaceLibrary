@@ -29,9 +29,6 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
 {
     ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
     
-    hw_surface_lock(surface);
-    hw_surface_lock(pick_surface);
-    
     switch (wf->relief)
     {
 	case (ei_relief_none): // Pas de bordure
@@ -50,10 +47,6 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
     // Image
     if(wf->img != NULL)
         drawImgWidget(surface, widget, wf);
-    
-    hw_surface_unlock(surface);
-    hw_surface_unlock(pick_surface);
-    hw_surface_update_rects(surface, NULL);
 }
 
 
