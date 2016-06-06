@@ -1,5 +1,5 @@
 /**
-* @file Definie toute  les fonctions de callbacks internes
+* @file Definit toutes  les fonctions de callbacks internes
 **/
 
 

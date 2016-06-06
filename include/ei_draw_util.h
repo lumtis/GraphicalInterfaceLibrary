@@ -130,7 +130,7 @@ void drawTextWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_wi
  *
  * @param   wf          un frame, dont le champ widget est "widget" 
  */
-void drawImgWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_widget_frame_t* wf);
+void drawImgWidget(ei_surface_t surface,struct ei_widget_t* widget);
 
 // Frame
 

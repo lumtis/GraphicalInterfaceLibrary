@@ -15,7 +15,7 @@
 
 
 
-/* Obtient la distance entre deux points*/
+/* retourne la distance entre deux points*/
 int distPoint(ei_point_t t1, ei_point_t t2)
 {
     return (int)sqrt((t1.x-t2.x)*(t1.x-t2.x)+(t1.y-t2.y)*(t1.y-t2.y));
@@ -32,7 +32,7 @@ int max(int a, int b)
 }
 
 
-/*Libere une liste de point*/
+/*Libere une liste de points*/
 void freeLinkedPoint(ei_linked_point_t* l)
 {
     ei_linked_point_t* tmp1 = l;
@@ -66,7 +66,7 @@ ei_linked_point_t* addLinkedPoint(ei_linked_point_t* l, ei_point_t p)
 }
 
 
-/*affiche l->point*/
+/*parcourt et affiche une liste de points*/
 void printLinkedPoint(ei_linked_point_t* l)
 {
     int i = 0;
@@ -96,6 +96,7 @@ ei_linked_point_t* lastPoint(ei_linked_point_t* l)
 ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_bool_t partieBasse)
 {
   
+  //declaration de tous les points dont on a besoin pour creer le frame
   ei_point_t sommet1 = rect.top_left;
   ei_point_t sommet2;
   ei_point_t sommet3;
@@ -107,11 +108,15 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
   ei_linked_point_t* s4 = malloc(sizeof(struct ei_linked_point_t));
   ei_linked_point_t* fin = malloc(sizeof(struct ei_linked_point_t));
   
+ 
   ei_linked_point_t* pointInterieur1 = malloc(sizeof(struct ei_linked_point_t)) ;
   ei_linked_point_t* pointInterieur2 = malloc(sizeof(struct ei_linked_point_t)) ;
 
+
+  //h permet de situer les pts interieurs par rapport au frame
   int h = min(rect.size.width,rect.size.height)/2;
 
+  //affectation des valeurs des sommets
   sommet2.x = rect.top_left.x;
   sommet2.y = rect.top_left.y + rect.size.height;
   
@@ -131,14 +136,17 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
   s3->next = NULL;
   s4->next = NULL;
   
- //pts Interieurs : pts pour former le relief a l'interieur du bouton 
-
+ //affectation des pts Interieurs : pts pour former le relief a l'interieur du bouton 
   pointInterieur1->point.x = rect.top_left.x + h;
   pointInterieur1->point.y = rect.top_left.y + rect.size.height - h;
   
   pointInterieur2->point.x = rect.top_left.x +rect.size.width -  h;
   pointInterieur2->point.y = pointInterieur1->point.y;
   
+
+  ////ci dessous, on chaine les points necessaires pour dessiner la partie qu'on desire afficher, et on retourne le premier point de la liste
+
+  //ici on ne cree que la partie haute du frame
   if (partieHaute == EI_TRUE && partieBasse == EI_FALSE)
   
     {
@@ -153,6 +161,7 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       return(s1);
     }
 
+  //ici on ne cree que la partie basse du frame
   if(partieHaute == EI_FALSE && partieBasse == EI_TRUE)
     {
       s3->next = s4;
@@ -166,11 +175,14 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       return(s3);
     }
 
+  //ici on ne cree aucune partie
   if(partieHaute == EI_FALSE && partieBasse == EI_FALSE)
     {
       return  NULL;
     }
  
+
+  //ici on cree le frame tout entier
   if (partieHaute == EI_TRUE && partieBasse == EI_TRUE)
     {  
       s1->next = s2;
@@ -182,9 +194,9 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
 
       return(s1);
     }
-    
-    return NULL;
 }
+
+
 
 /*renvoie non(b)*/
 ei_bool_t inverseBool(ei_bool_t b)
@@ -203,26 +215,29 @@ ei_bool_t inverseBool(ei_bool_t b)
 /*affiche le texte d'un bouton en prenant en compte l'ancrage*/
 void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf, ei_rect_t* clipper)
 {
+
+    //where correspond au point de depart du texte
     ei_point_t where;
+    
+    //text_width et text_height correspondront respectivement a la largeur et la hauteur du texte, stockees grace a hw_text_compute_size
     int* text_width = malloc(sizeof(int));
     int* text_height = malloc(sizeof(int));
-    hw_text_compute_size(wf->text,wf->text_font,text_width,text_height); //stocke la largeur et la hauteur du texte dans width_text et height_text
+    hw_text_compute_size(wf->text,wf->text_font,text_width,text_height); 
     
+
+    //ci dessous on calcule les coordonnee de where, en fonction de l'ancrage
     if(wf->text_anchor == ei_anc_none)
     
       {
     where.x = widget->screen_location.top_left.x;
     where.y = widget->screen_location.top_left.y;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
     
     if(wf->text_anchor == ei_anc_center)
     
-      {
-	
+      {	
     where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width/2 - *text_width/2;
     where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - *text_height/2;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
    
 
@@ -231,7 +246,6 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
       {	
 	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - *text_width/2;
 	where.y = widget->screen_location.top_left.y+wf->border_width;
-	ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
     
     if(wf->text_anchor == ei_anc_northeast)
@@ -240,7 +254,6 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
 	
     where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width - *text_width-wf->border_width;
     where.y = widget->screen_location.top_left.y-wf->border_width;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
 
  if(wf->text_anchor == ei_anc_east)
@@ -249,144 +262,147 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
 	
     where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width-wf->border_width;
     where.y = widget->screen_location.top_left.y +widget->screen_location.size.height/2 - *text_height/2;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
     
     if(wf->text_anchor == ei_anc_southeast)
     
-      {
-	
+      {	
     where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width-wf->border_width;
     where.y = widget->screen_location.top_left.y+widget->screen_location.size.height - *text_height - wf->border_width;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
 
  if(wf->text_anchor == ei_anc_south)
     
       {
-	
     where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - *text_width/2;
     where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - *text_height - wf->border_width;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
     
     if(wf->text_anchor == ei_anc_southwest)
     
-      {
-	
+      {	
     where.x = widget->screen_location.top_left.x + wf->border_width;
     where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height - *text_height - wf->border_width;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
 
 
   if(wf->text_anchor == ei_anc_west)
     
-      {
-	
+      {	
     where.x = widget->screen_location.top_left.x + wf->border_width;
     where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - *text_height/2;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
 
 
 
   if(wf->text_anchor == ei_anc_northwest)
     
-      {
-	
+      {	
     where.x = widget->screen_location.top_left.x+wf->border_width;
     where.y = widget->screen_location.top_left.y+wf->border_width;
-    ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
       }
-
-
+  
+  //ici on dessine le texte selon l'ancrage
+  ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
 
 }
 
 
-
-
-/*affiche une image dans un widget en tenant compte de l'ancrage*/
-void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_widget_frame_t* wf)
+/*affiche une image dans un widget en tenant compte de l'ancrage; cette fonction fonctionne de la meme facon que drawTextWidget*/
+void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget)
 {
-     ei_point_t where;
+     
+  ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
+  int copie;
+
+  //coordonnees du topleft de l'image
+  ei_point_t where;
+  ei_rect_t dest_rec,rect_image;
+  dest_rec = hw_surface_get_rect(surface);
   
-    if(wf->img_anchor == ei_anc_none)
+  rect_image = hw_surface_get_rect(wf->img); 
+  wf->img_rect = &rect_image;  
+  
+  //calcul des coordonnees de where en fonction de l'ancrage   
+  if(wf->img_anchor == ei_anc_none)
     
-      {
-	where.x = widget->screen_location.top_left.x;
-	where.y = widget->screen_location.top_left.y;
-      }
+    {
+      where.x = wf->w.screen_location.top_left.x;
+      where.y = wf->w.screen_location.top_left.y;
+    }
     
-    if(wf->img_anchor == ei_anc_center)
+  if(wf->img_anchor == ei_anc_center)
     
-      {	
-	where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width/2 - wf->img_rect->size.width/2;
-	where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 -wf->img_rect->size.height/2;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x+ wf->w.screen_location.size.width/2 - wf->img_rect->size.width/2;
+      where.y = wf->w.screen_location.top_left.y+wf->w.screen_location.size.height/2 -wf->img_rect->size.height/2;
+    }
    
 
-    if(wf->img_anchor == ei_anc_north)
+  if(wf->img_anchor == ei_anc_north)
     
-      {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 -wf->img_rect->size.width/2;
-	where.y = widget->screen_location.top_left.y+wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width/2 -wf->img_rect->size.width/2;
+      where.y = wf->w.screen_location.top_left.y+wf->border_width;
+    }
     
-    if(wf->img_anchor == ei_anc_northeast)
+  if(wf->img_anchor == ei_anc_northeast)
     
-      {	
-	where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width -wf->img_rect->size.width-wf->border_width;
-	where.y = widget->screen_location.top_left.y-wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x+ wf->w.screen_location.size.width -wf->img_rect->size.width-wf->border_width;
+      where.y = wf->w.screen_location.top_left.y-wf->border_width;
+    }
     
-    if(wf->img_anchor == ei_anc_east)
+  if(wf->img_anchor == ei_anc_east)
     
-      {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width -wf->img_rect->size.width -wf->border_width;
-	where.y = widget->screen_location.top_left.y +widget->screen_location.size.height/2 -wf->img_rect->size.height/2;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width -wf->img_rect->size.width -wf->border_width;
+      where.y = wf->w.screen_location.top_left.y +wf->w.screen_location.size.height/2 -wf->img_rect->size.height/2;
+    }
     
-    if(wf->img_anchor == ei_anc_southeast)
+  if(wf->img_anchor == ei_anc_southeast)
     
-      {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - wf->img_rect->size.width-wf->border_width;
-	where.y = widget->screen_location.top_left.y+widget->screen_location.size.height -wf->img_rect->size.height - wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width - wf->img_rect->size.width-wf->border_width;
+      where.y = wf->w.screen_location.top_left.y+wf->w.screen_location.size.height -wf->img_rect->size.height - wf->border_width;
+    }
 
- if(wf->img_anchor == ei_anc_south)
+  if(wf->img_anchor == ei_anc_south)
     
-      {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - wf->img_rect->size.width/2;
-	where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - wf->img_rect->size.height - wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width/2 - wf->img_rect->size.width/2;
+      where.y = wf->w.screen_location.top_left.y + wf->w.screen_location.size.height - wf->img_rect->size.height - wf->border_width;
+    }
     
-    if(wf->img_anchor == ei_anc_southwest)
+  if(wf->img_anchor == ei_anc_southwest)
     
-      {	
-	where.x = widget->screen_location.top_left.x + wf->border_width;
-	where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height -wf->img_rect->size.height - wf->border_width;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->border_width;
+      where.y = wf->w.screen_location.top_left.y+ wf->w.screen_location.size.height -wf->img_rect->size.height - wf->border_width;
+    }
 
 
   if(wf->img_anchor == ei_anc_west)
     
-      {	
-	where.x = widget->screen_location.top_left.x + wf->border_width;
-	where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - wf->img_rect->size.height/2;
-      }
+    {	
+      where.x = wf->w.screen_location.top_left.x + wf->border_width;
+      where.y = wf->w.screen_location.top_left.y+wf->w.screen_location.size.height/2 - wf->img_rect->size.height/2;
+    }
 
 
 
   if(wf->img_anchor == ei_anc_northwest)
     
-      {
-	where.x = widget->screen_location.top_left.x+wf->border_width;
-	where.y = widget->screen_location.top_left.y+wf->border_width;
-      }
+    {
+      where.x = wf->w.screen_location.top_left.x+wf->border_width;
+      where.y = wf->w.screen_location.top_left.y+wf->border_width;
+    }
+  
+  
+  
+  //dessin de l'image
   wf->img_rect->top_left = where;
-  ei_copy_surface(surface, NULL, wf->img, wf->img_rect, EI_FALSE);
+  copie = ei_copy_surface(surface,&dest_rec,wf->img, wf->img_rect, EI_FALSE);
 
 }
 
@@ -395,6 +411,8 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_w
 
 ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleD, int angleF, int nbPoints)
 {
+
+  //initialisation des parametres : angles convertis en radians, creation du premier et dernier point de l'arc
   float angleDebut = angleD*3.1415926/180;
   float angleFin = angleF*3.1415926/180;
   ei_linked_point_t* dernierPoint = malloc(sizeof(struct ei_linked_point_t));
@@ -402,18 +420,22 @@ ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleD, int angleF, int
   float pasAngle = (angleF-angleD)*3.1415926/(180*nbPoints);
   ei_linked_point_t* newPoint = malloc(sizeof(struct ei_linked_point_t));
   
-  premierPoint->point.x = rayon*cos(angleDebut)+centre.x; //on initialise le point du debut
+
+  //on initialise le premier point de l'arc, et dernier point = premierpoint
+  premierPoint->point.x = rayon*cos(angleDebut)+centre.x; 
   premierPoint->point.y = -rayon*sin(angleDebut)+centre.y;
   premierPoint->next = NULL;
   dernierPoint = premierPoint;
   dernierPoint = addLinkedPoint(dernierPoint,premierPoint->point);
+
+  //on cree autant de points que voulus grace a la trigonometrie
   for(int i=1; i<nbPoints+1;i++)
     {
       newPoint->point.x = rayon*cos(angleDebut+i*pasAngle)+centre.x; //on cree le point suivant
       newPoint->point.y = -rayon*sin(angleDebut+i*pasAngle)+centre.y;
       newPoint->next = NULL;
       dernierPoint = addLinkedPoint(dernierPoint,newPoint->point);//on chaine ce nouveau point au dernier point
-      }
+    }
   
   return premierPoint; 
 }
@@ -427,7 +449,7 @@ ei_linked_point_t* arc(ei_point_t centre, int rayon, int angleD, int angleF, int
 /*chaine les sommets d'un rect pour former soit la partie haute, soit la partie basse, soit les deux, d'un rounded frame ( c a d d'un bouton)*/
 ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaute, ei_bool_t partieBasse)
 {
-  
+  //declaration de tous les points dont on a besoin pour creer le rounded frame : le debut, la fin et le centre de chaque arc
   ei_point_t centre1;
   ei_linked_point_t* debutArc1 = malloc(sizeof(struct ei_linked_point_t));
   ei_linked_point_t* finArc1 = malloc(sizeof(struct ei_linked_point_t));
@@ -460,12 +482,12 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
   
   pointInterieur2->point.x = rect.top_left.x +rect.size.width -  h;
   pointInterieur2->point.y = pointInterieur1->point.y;
-
+ 
+  //calcule le centre de l arc qui formera le coin arrondi
   centre1.x = rect.top_left.x + rayon;
   centre1.y = rect.top_left.y + rayon;
-  //calcule le centre de l arc qui former le coin arrondi
-  debutArc1 = arc(centre1,rayon,90,180,1000); //retourne le 1er pt de l arc
-  finArc1 = lastPoint(debutArc1); // retourne le dernier pt de l arc
+  debutArc1 = arc(centre1,rayon,90,180,1000);
+  finArc1 = lastPoint(debutArc1);
   
   centre2.x = rect.top_left.x + rayon;
   centre2.y = rect.top_left.y +rect.size.height - rayon;
