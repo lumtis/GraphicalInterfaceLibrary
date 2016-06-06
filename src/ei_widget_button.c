@@ -33,9 +33,6 @@ void buttonDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface
       
     ei_color_t pickColor;
     
-    hw_surface_lock(surface);
-    //hw_surface_lock(pick_surface);
-    
     switch (wb->relief)
     {
 	case (ei_relief_none): // Pas de bordure
@@ -54,9 +51,6 @@ void buttonDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface
     // Image
     if(wb->img != NULL)
         drawImgWidget(surface, widget, wb);
-    
-    hw_surface_unlock(surface);
-    //hw_surface_unlock(pick_surface);
 }
 
 
@@ -134,14 +128,20 @@ ei_bool_t releaseButton(struct ei_widget_t* widget, struct ei_event_t* event, vo
 {
     ei_widget_button_t* wb = (ei_widget_button_t*)user_param;
     ei_widget_t* w = (ei_widget_t*)user_param;
-  
+    struct ei_event_t ev;
+    ev.type = ei_ev_app;
+    ev.param.application = wb->user_param;
+    
     // Si le curseur est actuellement dans le button on change son relief
     if(isIn(getCurrent(), w->screen_location) == EI_TRUE)
     {
 	wb->relief = reliefInvese(wb->relief);
 	
 	// on devra redessiner la partie
-	ei_app_invalidate_rect(&(widget->screen_location));
+	ei_app_invalidate_rect(&(w->screen_location));
+	
+	if(wb->callback != NULL)
+	    wb->callback(w, &ev, wb->user_param);
     }
     
     // On retire mes evenements precedents
