@@ -317,12 +317,15 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget)
 
   //coordonnees du topleft de l'image
   ei_point_t where;
-  ei_rect_t dest_rec,rect_image;
-  dest_rec = hw_surface_get_rect(surface);
+  ei_rect_t rect_dest,rect_image;
+  ei_size_t size_image;
   
   rect_image = hw_surface_get_rect(wf->img); 
-  wf->img_rect = &rect_image;  
-  
+  size_image = wf->img_rect->size;
+  surface = hw_surface_create(ei_app_root_widget(),&size_image,EI_TRUE);
+  rect_dest = hw_surface_get_rect(surface);  
+  wf->img_rect = &rect_image;
+
   //calcul des coordonnees de where en fonction de l'ancrage   
   if(wf->img_anchor == ei_anc_none)
     
@@ -401,9 +404,11 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget)
   
   
   //dessin de l'image
+  rect_dest.top_left = where;
   wf->img_rect->top_left = where;
-  copie = ei_copy_surface(surface,&dest_rec,wf->img, wf->img_rect, EI_FALSE);
-
+  hw_surface_lock(wf->img);
+  copie = ei_copy_surface(surface,&rect_dest,wf->img, wf->img_rect, EI_FALSE);
+  hw_surface_unlock(wf->img);
 }
 
 
