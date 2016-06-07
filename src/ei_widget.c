@@ -245,6 +245,9 @@ void			ei_frame_configure		(ei_widget_t*		widget,
 	widget->screen_location.size.width = widget->requested_size.width;
     if(widget->requested_size.height > widget->screen_location.size.height)
 	widget->screen_location.size.height = widget->requested_size.height;
+    
+    // On modifie son content_rect en fonction de sa classe
+    widget->wclass->geomnotifyfunc(widget, widget->screen_location);
 }
 
 
@@ -266,15 +269,6 @@ void			ei_button_configure		(ei_widget_t*		widget,
 							 void**			user_param)
 {
     ei_widget_button_t* wb = (ei_widget_button_t*)widget;
-
-    if(requested_size != NULL)
-    {
-        widget->requested_size = *requested_size;
-	if(widget->requested_size.width > widget->screen_location.size.width)
-	    widget->screen_location.size.width = widget->requested_size.width;
-	if(widget->requested_size.height > widget->screen_location.size.height)
-	    widget->screen_location.size.height = widget->requested_size.height;
-    }
 
     if(corner_radius != NULL)
         wb->corner_radius = *corner_radius;
@@ -326,4 +320,7 @@ void			ei_toplevel_configure		(ei_widget_t*		widget,
         wtl->resizable = *resizable;
     if(min_size != NULL)
         wtl->min_size = *min_size;
+    
+    // On modifie son content_rect en fonction de sa classe
+    widget->wclass->geomnotifyfunc(widget, widget->screen_location);
 }
