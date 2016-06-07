@@ -11,6 +11,21 @@ struct ei_event_t* event;
 
 
 // general
+<<<<<<< HEAD
+
+
+/** \brief obtient la position actuelle de la souris
+ *
+ * @param widget
+ * 
+ * @param  event
+ *
+ * @param  user_param
+ *
+ * @return 
+ */
+
+=======
 /**
  * \brief   met à jour le dernie point pointé par la souris , et le précédent 
  *
@@ -20,6 +35,7 @@ struct ei_event_t* event;
  * 
  * @return true si tout s'est bien deroulé
  */
+>>>>>>> b75cb69a6e4435510bb6d98bbec0f1a442a33e37
 ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param);
 
 

@@ -37,7 +37,7 @@ void* toplevelAllocfunc();
 
 
 /**
- * \brief	libere la memoire occupee par un toplevel
+ * @brief	libere la memoire occupee par un toplevel
  *
  * @param  widget     le toplevel qu'on veut liberer
  */
@@ -47,7 +47,7 @@ void toplevelReleasefunc(struct ei_widget_t* widget);
 
 
 /**
- * \brief	dessine le toplevel
+ * @brief	dessine le toplevel
  *
  * @param  widget     le toplevel qu'on veut dessiner
  * 
@@ -63,8 +63,8 @@ void toplevelDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surfa
 
 
 
-/**
- * \brief	mets a jour les parametres du toplevel en lui affectant des valeurs par defaut
+/*
+* @brief	met a jour les parametres du toplevel en lui affectant des valeurs par defaut
  *
  * @param  widget     le toplevel qu'on veut mettre a jour
  */

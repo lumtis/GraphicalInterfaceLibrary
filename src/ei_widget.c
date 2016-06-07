@@ -188,13 +188,13 @@ ei_widget_t* ei_widget_pick(ei_point_t*	where)
 {
   // le buffer pointe vers le pixel en haut à gauche
   uint8_t * buffer;
-  // on récupère l'odre du RGB 
+  // on récupère l'ordre du RGB 
   int rouge;
   int vert;
   int bleu;
   int alpha;
   uint32_t id ;
-  // width est la largeur de l'écrant ( mémoire organisé en tableau unidimentionnelle 
+  // width est la largeur de l'écran (mémoire organisé en tableau unidimensionnelle 
   int width=(hw_surface_get_size(ei_app_root_surface())).width;
   buffer= hw_surface_get_buffer(windowpick);
   hw_surface_get_channel_indices(windowpick, &rouge, &vert, &bleu, &alpha);
