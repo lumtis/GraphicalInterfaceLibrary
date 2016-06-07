@@ -68,7 +68,7 @@ void buttonSetdefaultsfunc(struct ei_widget_t* widget)
 
 void buttonGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 {
-
+    frameGeomnotifyfunc(widget, rect);
 }
 
 
@@ -110,8 +110,6 @@ ei_bool_t pushButton(struct ei_widget_t* widget, struct ei_event_t* event, void*
     
     // On change le relief lorsqu'il est pressé
     wb->relief = reliefInvese(wb->relief);
-    
-    printf("test\n");
     
     // On creer des evenements pour detecer quand est ce qu'on change le relief
     ei_bind(ei_ev_mouse_move , NULL, "all", isOutButton, widget);

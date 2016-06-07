@@ -22,7 +22,7 @@ void frameReleasefunc(struct ei_widget_t* widget)
     if(wf->img_rect != NULL)
         free(wf->img_rect);
     if(wf->img != NULL)
-         free(wf->img);
+         hw_surface_free(wf->img);
 }
 
 void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
@@ -65,13 +65,16 @@ void frameSetdefaultsfunc(struct ei_widget_t* widget)
     wf->img = NULL;
     wf->img_rect = NULL;
     wf->img_anchor = ei_anc_center;
-    
-    // Pour un frame le content_rect est egal au screen_location
-    widget->content_rect = &(widget->screen_location);
 }
 
 
 void frameGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 {
-
+    ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
+  
+    // Pour un frame le content_rect est egal au screen_location moins les bordure
+    widget->content_rect->top_left.x = rect.top_left.x + wf->border_width;
+    widget->content_rect->top_left.y = rect.top_left.y + wf->border_width;
+    widget->content_rect->size.width = rect.size.width - 2 * wf->border_width;
+    widget->content_rect->size.height = rect.size.height - 2 * wf->border_width;
 }

@@ -34,7 +34,7 @@ int ei_main(int argc, char** argv)
 	ei_size_t	screen_size	= {800, 800};
         ei_color_t      root_bgcol      = {0x52, 0x7f, 0xb4, 0xff};
 
-        ei_color_t	button_color	= {0x88, 0x88, 0x88, 0xff};
+        ei_color_t	button_color	= {0x20, 0x90, 0x10, 0xff};
         ei_color_t      text_color      = {0x00, 0x00, 0x00, 0xff};
         ei_relief_t     relief          = ei_relief_raised;
         int             button_border_width    = 4;
@@ -49,7 +49,7 @@ int ei_main(int argc, char** argv)
 	
         ei_size_t       window_size     = {400,400};
         char*           window_title    = "Hello World";
-        ei_color_t      window_color    = {0xA0,0xA0,0xA0, 0xff};
+        ei_color_t      window_color    = {0xA0,0x20,0x60, 0xff};
         int             window_border_width    = 2;
         ei_bool_t       closable        = EI_TRUE;
         ei_axis_set_t   window_resizable = ei_axis_both;
