@@ -623,6 +623,7 @@ ei_linked_point_t* round_and_rectangular_frame(ei_rect_t rect, int rayon)
 /*dessine le frame ou le bouton a partir de la liste chainee generee par rounded frame ou rectangular frame*/
 void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_t* clipper, ei_bool_t enfoncer, ei_bool_t isFrame, ei_surface_t pick_surface)
 {
+  ei_widget_button_t* button = (ei_widget_button_t*) widget;
   ei_widget_frame_t* frame = (ei_widget_frame_t*) widget;
   
   ei_rect_t rect = frame->w.screen_location;
@@ -649,10 +650,10 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
   }
   else
   {
-      partieAvecBordure = rounded_frame(rect, 20,EI_TRUE,EI_TRUE);
-      partieFonce = rounded_frame(rect, 20,enfoncer,inverseBool(enfoncer));
-      partieClaire = rounded_frame(rect, 20,inverseBool(enfoncer),enfoncer);
-      partieSansBordure = rounded_frame(rectint, 20,EI_TRUE,EI_TRUE);
+      partieAvecBordure = rounded_frame(rect, button->corner_radius, EI_TRUE,EI_TRUE);
+      partieFonce = rounded_frame(rect, button->corner_radius, enfoncer,inverseBool(enfoncer));
+      partieClaire = rounded_frame(rect, button->corner_radius, inverseBool(enfoncer),enfoncer);
+      partieSansBordure = rounded_frame(rectint, button->scorner_radius, EI_TRUE,EI_TRUE);
   }
   
   // couleurs pour les bordures
