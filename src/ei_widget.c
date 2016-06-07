@@ -225,7 +225,6 @@ void			ei_frame_configure		(ei_widget_t*		widget,
     if(img != NULL)
     {
         if(wf->img != NULL)
-            free(wf->img);
         wf->img = *img;
     }
     if(img_rect != NULL)
