@@ -653,7 +653,7 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
       partieAvecBordure = rounded_frame(rect, button->corner_radius, EI_TRUE,EI_TRUE);
       partieFonce = rounded_frame(rect, button->corner_radius, enfoncer,inverseBool(enfoncer));
       partieClaire = rounded_frame(rect, button->corner_radius, inverseBool(enfoncer),enfoncer);
-      partieSansBordure = rounded_frame(rectint, button->scorner_radius, EI_TRUE,EI_TRUE);
+      partieSansBordure = rounded_frame(rectint, button->corner_radius, EI_TRUE,EI_TRUE);
   }
   
   // couleurs pour les bordures

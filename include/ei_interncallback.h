@@ -37,6 +37,10 @@ ei_bool_t quitEchap(struct ei_widget_t* widget, struct ei_event_t* event, void* 
 
 
 
+// Frame
+ei_bool_t refreshFrame(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param);
+
+
 
 // Button
 /**
