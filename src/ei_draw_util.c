@@ -23,12 +23,12 @@ int distPoint(ei_point_t t1, ei_point_t t2)
 
 int min(int a, int b)
 {
-    return a < b ? a : b;
+    return ((a < b) ? a : b);
 }
 
 int max(int a, int b)
 {
-    return a > b ? a : b;
+    return ((a > b) ? a : b);
 }
 
 
@@ -220,9 +220,9 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     ei_point_t where;
     
     //text_width et text_height correspondront respectivement a la largeur et la hauteur du texte, stockees grace a hw_text_compute_size
-    int* text_width = malloc(sizeof(int));
-    int* text_height = malloc(sizeof(int));
-    hw_text_compute_size(wf->text,wf->text_font,text_width,text_height); 
+    int text_width;
+    int text_height;
+    hw_text_compute_size(wf->text,wf->text_font,&text_width,&text_height); 
     
 
     //ci dessous on calcule les coordonnee de where, en fonction de l'ancrage
@@ -236,15 +236,15 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     if(wf->text_anchor == ei_anc_center)
     
       {	
-    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width/2 - *text_width/2;
-    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - *text_height/2;
+    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width/2 - text_width/2;
+    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - text_height/2;
       }
    
 
  if(wf->text_anchor == ei_anc_north)
     
       {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - *text_width/2;
+	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - text_width/2;
 	where.y = widget->screen_location.top_left.y+wf->border_width;
       }
     
@@ -252,7 +252,7 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {
 	
-    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width - *text_width-wf->border_width;
+    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width - text_width-wf->border_width;
     where.y = widget->screen_location.top_left.y-wf->border_width;
       }
 
@@ -260,29 +260,29 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {
 	
-    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width-wf->border_width;
-    where.y = widget->screen_location.top_left.y +widget->screen_location.size.height/2 - *text_height/2;
+    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - text_width-wf->border_width;
+    where.y = widget->screen_location.top_left.y +widget->screen_location.size.height/2 - text_height/2;
       }
     
     if(wf->text_anchor == ei_anc_southeast)
     
       {	
-    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - *text_width-wf->border_width;
-    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height - *text_height - wf->border_width;
+    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - text_width-wf->border_width;
+    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height - text_height - wf->border_width;
       }
 
  if(wf->text_anchor == ei_anc_south)
     
       {
-    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - *text_width/2;
-    where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - *text_height - wf->border_width;
+    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - text_width/2;
+    where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - text_height - wf->border_width;
       }
     
     if(wf->text_anchor == ei_anc_southwest)
     
       {	
     where.x = widget->screen_location.top_left.x + wf->border_width;
-    where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height - *text_height - wf->border_width;
+    where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height - text_height - wf->border_width;
       }
 
 
@@ -290,7 +290,7 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     
       {	
     where.x = widget->screen_location.top_left.x + wf->border_width;
-    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - *text_height/2;
+    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - text_height/2;
       }
 
 
@@ -317,11 +317,15 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget)
 
   //coordonnees du topleft de l'image
   ei_point_t where;
-  ei_rect_t dest_rec,rect_image;
-  dest_rec = hw_surface_get_rect(surface);
+  ei_rect_t rect_dest,rect_image;
+  ei_size_t size_image;
   
   rect_image = hw_surface_get_rect(wf->img); 
-  wf->img_rect = &rect_image;  
+  size_image = wf->img_rect->size;
+  surface = hw_surface_create(ei_app_root_widget(),&size_image,EI_TRUE);
+  rect_dest = hw_surface_get_rect(surface);  
+  rect_image = rect_dest;
+  wf->img_rect = &rect_image;
   
   //calcul des coordonnees de where en fonction de l'ancrage   
   if(wf->img_anchor == ei_anc_none)
@@ -401,9 +405,11 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget)
   
   
   //dessin de l'image
+  rect_dest.top_left = where;
   wf->img_rect->top_left = where;
-  copie = ei_copy_surface(surface,&dest_rec,wf->img, wf->img_rect, EI_FALSE);
-
+  hw_surface_lock(wf->img);
+  copie = ei_copy_surface(surface,&rect_dest,wf->img, wf->img_rect, EI_FALSE);
+  hw_surface_unlock(wf->img);
 }
 
 
@@ -719,8 +725,8 @@ void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* c
   ei_point_t where;
   ei_color_t pickColor;
 
- tpl = toplevelAllocfunc();
-  toplevelSetdefaultsfunc(&(tpl->w));
+  //tpl = toplevelAllocfunc();
+  //toplevelSetdefaultsfunc(&(tpl->w));
 
   centre.x = rect.top_left.x + 1.5*rayon;
   centre.y = rect.top_left.y +1.5*rayon;
@@ -756,10 +762,10 @@ void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* c
   ei_color_t white; 
   ei_color_t black;
   
-  fonce.red = 100;
-  fonce.green = 100;
-  fonce.blue = 100;
-  fonce.alpha = 255;
+  fonce.red = 0;
+  fonce.green = 0;
+  fonce.blue = 0;
+  fonce.alpha = 127;
   
   clair.red = 215;
   clair.green = 215;
@@ -797,11 +803,11 @@ void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* c
   bouton_close3 = arc(centre,rayon,-135,45,1000);
   bouton_resize = rectangular_frame(rectresize,EI_TRUE,EI_TRUE);
   
+  ei_draw_polygon(surface,cadre_arriere,tpl->color,clipper);
   ei_draw_polygon(surface,cadre_arriere,fonce,clipper);  
   ei_draw_polyline(surface,cadre_arriere,black,clipper);  
   
-   
-  ei_draw_polygon(surface,cadre_avant,clair,clipper);
+  ei_draw_polygon(surface,cadre_avant,tpl->color,clipper);
   ei_draw_polyline(surface,cadre_avant,black,clipper);
 
   if(tpl->closable)
