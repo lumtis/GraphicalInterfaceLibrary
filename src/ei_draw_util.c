@@ -324,8 +324,9 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget)
   size_image = wf->img_rect->size;
   surface = hw_surface_create(ei_app_root_widget(),&size_image,EI_TRUE);
   rect_dest = hw_surface_get_rect(surface);  
+  rect_image = rect_dest;
   wf->img_rect = &rect_image;
-
+  
   //calcul des coordonnees de where en fonction de l'ancrage   
   if(wf->img_anchor == ei_anc_none)
     
