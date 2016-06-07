@@ -229,68 +229,68 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
     if(wf->text_anchor == ei_anc_none)
     
       {
-    where.x = widget->screen_location.top_left.x;
-    where.y = widget->screen_location.top_left.y;
+    where.x = widget->content_rect->top_left.x;
+    where.y = widget->content_rect->top_left.y;
       }
     
     if(wf->text_anchor == ei_anc_center)
     
       {	
-    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width/2 - text_width/2;
-    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - text_height/2;
+    where.x = widget->content_rect->top_left.x + widget->content_rect->size.width/2 - text_width/2;
+    where.y = widget->content_rect->top_left.y + widget->content_rect->size.height/2 - text_height/2;
       }
    
 
  if(wf->text_anchor == ei_anc_north)
     
       {	
-	where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - text_width/2;
-	where.y = widget->screen_location.top_left.y+wf->border_width;
+	where.x = widget->content_rect->top_left.x + widget->content_rect->size.width/2 - text_width/2;
+	where.y = widget->content_rect->top_left.y;
       }
     
     if(wf->text_anchor == ei_anc_northeast)
     
       {
 	
-    where.x = widget->screen_location.top_left.x+ widget->screen_location.size.width - text_width-wf->border_width;
-    where.y = widget->screen_location.top_left.y-wf->border_width;
+    where.x = widget->content_rect->top_left.x + widget->content_rect->size.width - text_width;
+    where.y = widget->content_rect->top_left.y;
       }
 
  if(wf->text_anchor == ei_anc_east)
     
       {
 	
-    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - text_width-wf->border_width;
-    where.y = widget->screen_location.top_left.y +widget->screen_location.size.height/2 - text_height/2;
+    where.x = widget->content_rect->top_left.x + widget->content_rect->size.width - text_width;
+    where.y = widget->content_rect->top_left.y + widget->content_rect->size.height/2 - text_height/2;
       }
     
     if(wf->text_anchor == ei_anc_southeast)
     
       {	
-    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width - text_width-wf->border_width;
-    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height - text_height - wf->border_width;
+    where.x = widget->content_rect->top_left.x + widget->content_rect->size.width - text_width;
+    where.y = widget->content_rect->top_left.y + widget->content_rect->size.height - text_height;
       }
 
  if(wf->text_anchor == ei_anc_south)
     
       {
-    where.x = widget->screen_location.top_left.x + widget->screen_location.size.width/2 - text_width/2;
-    where.y = widget->screen_location.top_left.y + widget->screen_location.size.height - text_height - wf->border_width;
+    where.x = widget->content_rect->top_left.x + widget->content_rect->size.width/2 - text_width/2;
+    where.y = widget->content_rect->top_left.y + widget->content_rect->size.height - text_height;
       }
     
     if(wf->text_anchor == ei_anc_southwest)
     
       {	
-    where.x = widget->screen_location.top_left.x + wf->border_width;
-    where.y = widget->screen_location.top_left.y+ widget->screen_location.size.height - text_height - wf->border_width;
+    where.x = widget->content_rect->top_left.x;
+    where.y = widget->content_rect->top_left.y + widget->content_rect->size.height - text_height;
       }
 
 
   if(wf->text_anchor == ei_anc_west)
     
       {	
-    where.x = widget->screen_location.top_left.x + wf->border_width;
-    where.y = widget->screen_location.top_left.y+widget->screen_location.size.height/2 - text_height/2;
+    where.x = widget->content_rect->top_left.x;
+    where.y = widget->content_rect->top_left.y + widget->content_rect->size.height/2 - text_height/2;
       }
 
 
@@ -298,13 +298,26 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
   if(wf->text_anchor == ei_anc_northwest)
     
       {	
-    where.x = widget->screen_location.top_left.x+wf->border_width;
-    where.y = widget->screen_location.top_left.y+wf->border_width;
+    where.x = widget->content_rect->top_left.x;
+    where.y = widget->content_rect->top_left.y;
       }
   
   //ici on dessine le texte selon l'ancrage
   ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
 
+}
+
+
+ei_rect_t intersection(ei_rect_t r1, ei_rect_t r2)
+{
+    ei_rect_t ret;
+    
+    ret.top_left.x = r1.top_left.x;
+    ret.top_left.y = r1.top_left.y;
+    ret.size.width = min(r1.size.width,r2.size.width);
+    ret.size.height = min(r1.size.height,r2.size.height);
+    
+    return ret;
 }
 
 
@@ -316,99 +329,83 @@ void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget)
   int copie;
 
   //coordonnees du topleft de l'image
-  ei_point_t where;
-  ei_rect_t rect_dest,rect_image;
-  ei_size_t size_image;
+  ei_rect_t img_rect;
+  ei_rect_t dst_rect;
+
   
-  rect_image = hw_surface_get_rect(wf->img); 
-  size_image = wf->img_rect->size;
-  surface = hw_surface_create(ei_app_root_widget(),&size_image,EI_TRUE);
-  rect_dest = hw_surface_get_rect(surface);  
-  rect_image = rect_dest;
-  wf->img_rect = &rect_image;
+  if(wf->img_rect == NULL)
+  {
+      img_rect = intersection(hw_surface_get_rect(wf->img), *(widget->content_rect));
+      dst_rect = intersection(*(widget->content_rect), hw_surface_get_rect(wf->img));
+  }
+  else
+  {
+      img_rect = intersection(*(wf->img_rect), *(widget->content_rect));
+      dst_rect = intersection(*(widget->content_rect), *(wf->img_rect));
+  }
   
-  //calcul des coordonnees de where en fonction de l'ancrage   
-  if(wf->img_anchor == ei_anc_none)
-    
-    {
-      where.x = wf->w.screen_location.top_left.x;
-      where.y = wf->w.screen_location.top_left.y;
-    }
-    
+  
   if(wf->img_anchor == ei_anc_center)
     
     {	
-      where.x = wf->w.screen_location.top_left.x+ wf->w.screen_location.size.width/2 - wf->img_rect->size.width/2;
-      where.y = wf->w.screen_location.top_left.y+wf->w.screen_location.size.height/2 -wf->img_rect->size.height/2;
+      dst_rect.top_left.x += widget->content_rect->size.width/2 - dst_rect.size.width/2;
+      dst_rect.top_left.y += widget->content_rect->size.height/2 - dst_rect.size.height/2;
     }
    
 
   if(wf->img_anchor == ei_anc_north)
     
     {	
-      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width/2 -wf->img_rect->size.width/2;
-      where.y = wf->w.screen_location.top_left.y+wf->border_width;
+      dst_rect.top_left.x += widget->content_rect->size.width/2 - dst_rect.size.width/2;
+      //dst_rect.top_left.y += ;
     }
     
   if(wf->img_anchor == ei_anc_northeast)
     
     {	
-      where.x = wf->w.screen_location.top_left.x+ wf->w.screen_location.size.width -wf->img_rect->size.width-wf->border_width;
-      where.y = wf->w.screen_location.top_left.y-wf->border_width;
+      dst_rect.top_left.x += widget->content_rect->size.width - dst_rect.size.width;
+      //dst_rect.top_left.y += ;
     }
     
   if(wf->img_anchor == ei_anc_east)
     
     {	
-      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width -wf->img_rect->size.width -wf->border_width;
-      where.y = wf->w.screen_location.top_left.y +wf->w.screen_location.size.height/2 -wf->img_rect->size.height/2;
+      dst_rect.top_left.x += widget->content_rect->size.width - dst_rect.size.width;
+      dst_rect.top_left.y += widget->content_rect->size.height/2 - dst_rect.size.height/2;
     }
     
   if(wf->img_anchor == ei_anc_southeast)
     
     {	
-      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width - wf->img_rect->size.width-wf->border_width;
-      where.y = wf->w.screen_location.top_left.y+wf->w.screen_location.size.height -wf->img_rect->size.height - wf->border_width;
+      dst_rect.top_left.x += widget->content_rect->size.width - dst_rect.size.width;
+      dst_rect.top_left.y += widget->content_rect->size.height - dst_rect.size.height;
     }
 
   if(wf->img_anchor == ei_anc_south)
     
     {	
-      where.x = wf->w.screen_location.top_left.x + wf->w.screen_location.size.width/2 - wf->img_rect->size.width/2;
-      where.y = wf->w.screen_location.top_left.y + wf->w.screen_location.size.height - wf->img_rect->size.height - wf->border_width;
+      dst_rect.top_left.x += widget->content_rect->size.width/2 - dst_rect.size.width/2;
+      dst_rect.top_left.y += widget->content_rect->size.height - dst_rect.size.height;
     }
     
   if(wf->img_anchor == ei_anc_southwest)
     
     {	
-      where.x = wf->w.screen_location.top_left.x + wf->border_width;
-      where.y = wf->w.screen_location.top_left.y+ wf->w.screen_location.size.height -wf->img_rect->size.height - wf->border_width;
+      //dst_rect.top_left.x += ;
+      dst_rect.top_left.y += widget->content_rect->size.height - dst_rect.size.height;
     }
 
 
   if(wf->img_anchor == ei_anc_west)
     
     {	
-      where.x = wf->w.screen_location.top_left.x + wf->border_width;
-      where.y = wf->w.screen_location.top_left.y+wf->w.screen_location.size.height/2 - wf->img_rect->size.height/2;
+      //dst_rect.top_left.x += ;
+      dst_rect.top_left.y += widget->content_rect->size.height/2 - dst_rect.size.height/2;
     }
-
-
-
-  if(wf->img_anchor == ei_anc_northwest)
-    
-    {
-      where.x = wf->w.screen_location.top_left.x+wf->border_width;
-      where.y = wf->w.screen_location.top_left.y+wf->border_width;
-    }
-  
-  
   
   //dessin de l'image
-  rect_dest.top_left = where;
-  wf->img_rect->top_left = where;
   hw_surface_lock(wf->img);
-  copie = ei_copy_surface(surface,&rect_dest,wf->img, wf->img_rect, EI_FALSE);
+  copie = ei_copy_surface(surface, &dst_rect, wf->img, &img_rect, EI_FALSE);
   hw_surface_unlock(wf->img);
 }
 

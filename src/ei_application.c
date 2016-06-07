@@ -84,16 +84,38 @@ ei_linked_rect_t* freeLinkedRect(ei_linked_rect_t* l)
 }
 
 
+// Obtient le clipper reel pour un widget (intersection avec le content_rect du parent)
+ei_rect_t getRealClipper(ei_widget_t* widget, ei_rect_t* clipper)
+{
+    ei_rect_t ret;
+    
+    // Si c'est la racine est nulle on retourne le clipper d'origine
+    if(widget->parent == NULL)
+	return *clipper;
+      
+    ret.top_left.x = max(widget->parent->content_rect->top_left.x, clipper->top_left.x);
+    ret.top_left.y = max(widget->parent->content_rect->top_left.y, clipper->top_left.y);
+    ret.size.width = min(widget->parent->content_rect->size.width, clipper->size.width);
+    ret.size.height = min(widget->parent->content_rect->size.height,clipper->size.height);
+    
+    return ret;
+}
+
 
 void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick, ei_rect_t* clipper)
 {
+    ei_rect_t tmp;
+  
     if(widget == NULL)
         return;
     
     if (clipper == NULL)
       widget->wclass->drawfunc(widget ,window, windowpick, widget->parent->content_rect);
     else 
-      widget->wclass->drawfunc(widget ,window, windowpick, clipper);
+    {
+      tmp = getRealClipper(widget, clipper);
+      widget->wclass->drawfunc(widget ,window, windowpick, &tmp);
+    }
     
     ei_app_run_rec(widget->children_head, window, windowpick, clipper);
     ei_app_run_rec(widget->next_sibling, window, windowpick, clipper);
