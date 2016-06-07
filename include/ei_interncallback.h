@@ -11,6 +11,19 @@ struct ei_event_t* event;
 
 
 // general
+
+
+/** \brief obtient la position actuelle de la souris
+ *
+ * @param widget
+ * 
+ * @param  event
+ *
+ * @param  user_param
+ *
+ * @return 
+ */
+
 ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param);
 ei_bool_t quitEchap(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param);
 
