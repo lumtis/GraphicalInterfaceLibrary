@@ -31,8 +31,8 @@ int ei_main(int argc, char** argv)
 	ei_anchor_t anc = ei_anc_north;
 	ei_widget_t* w;
 	ei_surface_t surface = ei_app_root_surface();
-	ei_surface_t surface_image = hw_image_load("misc/ball.png",surface);
-	ei_rect_t rect_image = hw_surface_get_rect(&surface_image);
+	ei_surface_t surface_image = hw_image_load("misc/ball.png",ei_app_root_surface());
+	ei_rect_t rect_image = hw_surface_get_rect(surface_image);
 	ei_rect_t* rect1 = &rect_image; 
 
 /* Create the application and change the color of the background. */
@@ -48,11 +48,11 @@ int ei_main(int argc, char** argv)
 	ei_place(frame, NULL, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL ); 
  
   hw_init();
-  hw_surface_lock(&surface);
+  hw_surface_lock(surface);
   drawImgWidget(surface,frame);
 
-  hw_surface_unlock(&surface);
-  hw_surface_update_rects(&surface, NULL);
+  hw_surface_unlock(surface);
+  hw_surface_update_rects(surface, NULL);
   getchar(); 
   hw_quit();
 	
