@@ -251,7 +251,12 @@ void			ei_frame_configure		(ei_widget_t*		widget,
         wf->img = *img;
     }
     if(img_rect != NULL)
-        wf->img_rect = *img_rect;
+    {
+	if(wf->img_rect != NULL)
+	    free(wf->img_rect);
+        wf->img_rect = malloc(sizeof(ei_rect_t));
+        *(wf->img_rect) = *(*img_rect);
+    }
     if(img_anchor != NULL)
         wf->img_anchor = *img_anchor;
     

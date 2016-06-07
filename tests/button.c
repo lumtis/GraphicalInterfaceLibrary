@@ -53,7 +53,7 @@ int ei_main(int argc, char** argv)
 	char*		button_title		= "lala3";
 	ei_color_t	button_text_color	= {0x00, 0x00, 0x90, 0xff};
 	int		button_corner_radius	= 20;
-	ei_relief_t	button_relief		= ei_relief_sunken;
+	ei_relief_t	button_relief		= ei_relief_raised;
 	int		button_border_width	= 12;
 	ei_callback_t	button_callback 	= button_press;
 	ei_anchor_t a = ei_anc_center;
