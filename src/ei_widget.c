@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "ei_application.h"
 #include "ei_widget.h"
 #include "debug.h"
@@ -21,13 +22,15 @@
 
 
 
-uint32_t vgpick_id = 0;
+uint32_t vgpick_id = 1;
 
 
 // Libere un widget
 void freeWidget(ei_widget_t * widget)
-{
+{   
+    // libère les pointeurs spécifiques à la classe
     widget->wclass->releasefunc(widget);
+    // libère les autres pointeurs s'ils sont non nuls
     if(widget->pick_color != NULL)
 	free(widget->pick_color);
     if(widget->content_rect != NULL)
@@ -43,7 +46,7 @@ void freeWidget(ei_widget_t * widget)
 
 
 /**
- * @name ei_widget_destroy_rec
+ * \brief  libère tous les widgets frères et fils du widget en paramètre ainsi que le widget lui même 
  */
 void ei_widget_destroy_rec(ei_widget_t * widget)
 {
@@ -52,8 +55,10 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
     else
     {
         if (widget->children_head != NULL )
+	  // libère les fils
             ei_widget_destroy_rec(widget->children_head);
         if (widget->next_sibling != NULL )
+	  // libère les frères 
             ei_widget_destroy_rec(widget->next_sibling);
 	
         freeWidget(widget);
@@ -64,24 +69,33 @@ void ei_widget_destroy_rec(ei_widget_t * widget)
 ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 			      ei_widget_t* parent)
 {
+  
   ei_widget_t* new_widget ;
+  // obtenion de class à partir de son nom
   ei_widgetclass_t * classe_new_widget = ei_widgetclass_from_name(class_name);
+  // si on ne connait pas la classe souhaitée , on retoune NULL 
   if ( classe_new_widget == NULL)
     return NULL;
   else
     {
+      // allocation de l'espace necessaire pour cette classe de widget précisemment 
       new_widget = (ei_widget_t*)classe_new_widget->allocfunc();
       new_widget->wclass = classe_new_widget;
+      // initialisation de valeur spécifiques à la classe
       classe_new_widget->setdefaultsfunc(new_widget);
       
-      // identifiant
+      // initialisaion des autres valeurs 
       new_widget->pick_id = vgpick_id ;
       new_widget->pick_color = calloc(1, sizeof(ei_color_t));
-      new_widget->pick_color->red = vgpick_id;
+      // fonction bijective entre [0,2^(64)-1] et [0,255]*[0,255]*[0,255] 
+      new_widget->pick_color->red = vgpick_id % 256;
       new_widget->pick_color->alpha = 255 ;
-      new_widget->pick_color->blue =0;	
-      new_widget->pick_color->green=0;
-      
+      new_widget->pick_color->blue = (vgpick_id / 256 ) % 256;	
+      new_widget->pick_color->green=(vgpick_id / (256*256)) % 256 ;
+      // maximum de widget possible est 256*256*256
+      if (vgpick_id > 256*256*256 -1)
+	fprintf( stderr , "trop de widget tue le widget" );
+	
       // Arborescence
       new_widget->parent = parent;
       if (parent->children_head == NULL )
@@ -91,8 +105,8 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
 	}
       else
 	{
-	  parent->children_head->next_sibling = new_widget;
-	  parent->children_head = new_widget;
+	  parent->children_tail->next_sibling = new_widget;
+	  parent->children_tail = new_widget;
 	}
     }
     
@@ -104,6 +118,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
     // mise à jour du tableau de widget
     tab_widget[vgpick_id]=new_widget;
     vgpick_id++; 
+    // création des mind des button et top level 
     if ( strcmp ( class_name ,"button" ) == 0 )
       ei_bind(ei_ev_mouse_buttondown,new_widget,NULL,pushButton, NULL);
     if ( strcmp( class_name, "toplevel" ) == 0 )
@@ -120,30 +135,34 @@ void ei_widget_destroy(ei_widget_t* widget)
     else
       
     {
+	// avant de détruire les widget , on enlève les bind correspondants
 	if ( strcmp ( widget->wclass->name , "button" ))
 	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,pushButton, NULL);
 	if ( strcmp ( widget->wclass->name , "toplevel" ))
 	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,pushToplevel, NULL);
         if (widget->parent== NULL)
-        {
+        {   
+	    //libère tout l'arbre 
             ei_widget_destroy_rec(widget->children_head);
             freeWidget(widget);
         }
         else
         {
+	    // recherche du 1èr frère précédent le widget à liberer 
             p= widget->parent->children_head;
             if ( p == widget)
             {
+	        // cas où le widget est un fils unique 
               	if (p==widget->parent->children_tail)
               	{
                   	  widget->parent->children_head = NULL;
                   	  widget->parent->children_tail= NULL;
                   	  ei_widget_destroy_rec(widget->children_head);
-                  	  
-			  freeWidget(widget);
+                  	  freeWidget(widget);
               	}
               	 else
               	 {
+		   //cas où c'est le plus grand des fils 
                   	  widget->parent->children_head= p->next_sibling;
                   	  ei_widget_destroy_rec(widget->children_head);
                   	  
@@ -152,6 +171,7 @@ void ei_widget_destroy(ei_widget_t* widget)
       	    }
       	    else
       	    {
+		// les autres cas
           	    while ( p->next_sibling != widget )
           	        p=p->next_sibling;
           	    p->next_sibling=widget->next_sibling;
@@ -166,23 +186,27 @@ void ei_widget_destroy(ei_widget_t* widget)
 
 ei_widget_t* ei_widget_pick(ei_point_t*	where)
 {
+  // le buffer pointe vers le pixel en haut à gauche
   uint8_t * buffer;
+  // on récupère l'odre du RGB 
   int rouge;
   int vert;
   int bleu;
   int alpha;
   uint32_t id ;
+  // width est la largeur de l'écrant ( mémoire organisé en tableau unidimentionnelle 
   int width=(hw_surface_get_size(ei_app_root_surface())).width;
   buffer= hw_surface_get_buffer(windowpick);
   hw_surface_get_channel_indices(windowpick, &rouge, &vert, &bleu, &alpha);
-  id= buffer [ 4 * ((where->y)*width + (where->x)) + rouge];
-  //printf("%d\n", id);
+  // on récupère l'identité à partir de la couleur de la surface de picking et la fonction bijective
+  id= buffer [ 4 * ((where->y)*width + (where->x)) + rouge] + 256 * buffer [ 4 * ((where->y)*width + (where->x)) + bleu ] + 256*256* buffer [ 4 * ((where->y)*width + (where->x)) + vert ]; 
+  // on retourne le widget correspondant
   return tab_widget[id];
 }
 
 
 
-// TODO : AJouter requested_size pour img
+
 void			ei_frame_configure		(ei_widget_t*		widget,
 							 ei_size_t*		requested_size,
 							 const ei_color_t*	color,

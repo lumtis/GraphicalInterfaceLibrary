@@ -93,12 +93,14 @@ ei_bool_t pushToplevel(struct ei_widget_t* widget, struct ei_event_t* event, voi
     // On regarde si nous sommes sur le boutton
     if(distPoint(cur, bPos) < 8 && wtl->closable == EI_TRUE)
 	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, widget);
+    // On regarde si nous sommes sur l'en-tête    
     else if(cur.y < widget->screen_location.top_left.y + TAILLE_ENTETE)// On regarde si nous sommes sur l'en-tête
     {
 	ei_bind(ei_ev_mouse_move, NULL, "all", moveToplevel, widget);
 	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseMoveToplevel, widget);
     }
-    else if(isIn(cur, recadr) == EI_TRUE && wtl->resizable != ei_axis_none)// On regarde si nous sommes sur le carré de recadrement
+    // On regarde si nous sommes sur le carré de recadrement
+    else if(isIn(cur, recadr) == EI_TRUE && wtl->resizable != ei_axis_none)
     {
 	ei_bind(ei_ev_mouse_move, NULL, "all", moveResizeToplevel, widget);
 	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, widget);
