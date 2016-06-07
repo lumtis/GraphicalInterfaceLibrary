@@ -30,6 +30,8 @@ void freeWidget(ei_widget_t * widget)
     widget->wclass->releasefunc(widget);
     if(widget->pick_color != NULL)
 	free(widget->pick_color);
+    if(widget->content_rect != NULL)
+	free(widget->content_rect);
     if(widget->geom_params != NULL)
     {
 	if(widget->geom_params->manager != NULL)
@@ -97,6 +99,7 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
     // Localistation, geometrie
     new_widget->screen_location.top_left = parent->screen_location.top_left;
     new_widget->geom_params = calloc(1, sizeof(ei_geometry_param_t));
+    new_widget->content_rect = calloc(1, sizeof(ei_rect_t));
     
     // mise à jour du tableau de widget
     tab_widget[vgpick_id]=new_widget;
@@ -179,6 +182,7 @@ ei_widget_t* ei_widget_pick(ei_point_t*	where)
 
 
 
+// TODO : AJouter requested_size pour img
 void			ei_frame_configure		(ei_widget_t*		widget,
 							 ei_size_t*		requested_size,
 							 const ei_color_t*	color,
@@ -193,15 +197,9 @@ void			ei_frame_configure		(ei_widget_t*		widget,
 							 ei_anchor_t*		img_anchor)
 {
     ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
-
-    if(requested_size != NULL)
-    {
-        widget->requested_size = *requested_size;
-	if(widget->requested_size.width > widget->screen_location.size.width)
-	    widget->screen_location.size.width = widget->requested_size.width;
-	if(widget->requested_size.height > widget->screen_location.size.height)
-	    widget->screen_location.size.height = widget->requested_size.height;
-    }
+    
+    int text_width = 0;
+    int text_height = 0;
 
     if(color != NULL)
         wf->color = *color;
@@ -225,12 +223,28 @@ void			ei_frame_configure		(ei_widget_t*		widget,
     if(img != NULL)
     {
         if(wf->img != NULL)
+            hw_surface_free(wf->img);
         wf->img = *img;
     }
     if(img_rect != NULL)
         wf->img_rect = *img_rect;
     if(img_anchor != NULL)
         wf->img_anchor = *img_anchor;
+    
+    if(requested_size != NULL)
+        widget->requested_size = *requested_size;
+    if(wf->text != NULL && wf->text_font != NULL)
+    {
+	hw_text_compute_size(wf->text,wf->text_font,&text_width,&text_height);
+	if(widget->requested_size.width < text_width+2*wf->border_width)
+	    widget->requested_size.width = text_width+2*wf->border_width;
+	if(widget->requested_size.height < text_height+2*wf->border_width)
+	    widget->requested_size.height = text_height+2*wf->border_width;
+    }
+    if(widget->requested_size.width > widget->screen_location.size.width)
+	widget->screen_location.size.width = widget->requested_size.width;
+    if(widget->requested_size.height > widget->screen_location.size.height)
+	widget->screen_location.size.height = widget->requested_size.height;
 }
 
 

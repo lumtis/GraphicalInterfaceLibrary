@@ -37,16 +37,16 @@ void traitement(ei_event_t event ,  ei_widget_t* widget)
   traitant* tmp = tab_event[event.type];
   while ( tmp != NULL )
   {
-    if (tmp->widget== NULL)
+    if(tmp->widget == NULL)
     { 
-      if( strcmp(tmp->tag ,"all" )==0)
+      if(strcmp(tmp->tag ,"all") == 0)
 	tmp->callback( widget , &(event) , tmp->user_param);
-      if ( strcmp( tmp->tag , widget->wclass->name ) == 0 )
+      if(strcmp( tmp->tag , widget->wclass->name ) == 0)
 	tmp->callback(widget, &(event),tmp->user_param);
     }
     else 
     {
-      if ( tmp->widget ==widget )
+      if(tmp->widget == widget)
 	tmp->callback(widget , &(event),tmp->user_param);
     }
     tmp=tmp->next;
@@ -95,8 +95,8 @@ void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windo
     else 
       widget->wclass->drawfunc(widget ,window, windowpick, clipper);
     
-      ei_app_run_rec(widget->next_sibling, window, windowpick,clipper);
-      ei_app_run_rec(widget->children_head, window, windowpick,clipper);
+    ei_app_run_rec(widget->children_head, window, windowpick, clipper);
+    ei_app_run_rec(widget->next_sibling, window, windowpick, clipper);
 }
 
 
@@ -240,8 +240,6 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
       for(tmp=liste_rect;tmp->next != NULL; tmp =tmp->next);
       tmp->next= new_rect;
     }
-    
-    printf("\n");
 }
 
 
