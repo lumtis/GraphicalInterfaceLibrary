@@ -183,6 +183,15 @@ ei_bool_t moveResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* even
     int newWidth = w->screen_location.size.width + mov.x;
     int newHeight = w->screen_location.size.height + mov.y;
     
+    if(w->screen_location.size.width + mov.x > wtl->min_size->width)
+	 newWidth = w->screen_location.size.width + mov.x;
+    else
+	newWidth =wtl->min_size->width;
+    if(w->screen_location.size.height + mov.y > wtl->min_size->height)
+	 newHeight = w->screen_location.size.height + mov.y;
+    else
+	newHeight = wtl->min_size->height;
+    
     // Rectangle à mettre a jour
     update.top_left.x = w->screen_location.top_left.x;
     update.top_left.y = w->screen_location.top_left.y;
@@ -192,6 +201,7 @@ ei_bool_t moveResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* even
     // Met à jour sa position
     switch(wtl->resizable)
     {
+      
       case ei_axis_both :
 	ei_place(w, NULL, NULL, NULL, &newWidth, &newHeight, NULL, NULL, NULL, NULL);
 	break;
