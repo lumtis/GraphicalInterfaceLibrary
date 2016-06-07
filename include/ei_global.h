@@ -6,9 +6,11 @@
 #define Ei_GLOBAL_H
 #include "ei_event.h"
 #include "ei_widget.h"
+#include <math.h>
+
 
 extern ei_surface_t windowpick;
-extern ei_widget_t* tab_widget[256];
+extern ei_widget_t* tab_widget[256*256*256];
 
 
 

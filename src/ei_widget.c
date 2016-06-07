@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "ei_application.h"
 #include "ei_widget.h"
 #include "debug.h"
@@ -21,7 +22,7 @@
 
 
 
-uint32_t vgpick_id = 0;
+uint32_t vgpick_id = 1;
 
 
 // Libere un widget
@@ -75,11 +76,16 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
       // identifiant
       new_widget->pick_id = vgpick_id ;
       new_widget->pick_color = calloc(1, sizeof(ei_color_t));
-      new_widget->pick_color->red = vgpick_id;
+
+
+      new_widget->pick_color->red = vgpick_id % 256;
       new_widget->pick_color->alpha = 255 ;
-      new_widget->pick_color->blue =0;	
-      new_widget->pick_color->green=0;
-      
+      new_widget->pick_color->blue = (vgpick_id / 256 ) % 256;	
+      new_widget->pick_color->green=(vgpick_id / (256*256)) % 256 ;
+  
+      if (vgpick_id > 256*256*256)
+	fprintf( stderr , "trop de widget tue le widget" );
+	
       // Arborescence
       new_widget->parent = parent;
       if (parent->children_head == NULL )
@@ -172,8 +178,8 @@ ei_widget_t* ei_widget_pick(ei_point_t*	where)
   int width=(hw_surface_get_size(ei_app_root_surface())).width;
   buffer= hw_surface_get_buffer(windowpick);
   hw_surface_get_channel_indices(windowpick, &rouge, &vert, &bleu, &alpha);
-  id= buffer [ 4 * ((where->y)*width + (where->x)) + rouge];
-  //printf("%d\n", id);
+  id= buffer [ 4 * ((where->y)*width + (where->x)) + rouge] + 256 * buffer [ 4 * ((where->y)*width + (where->x)) + bleu ] + 256*256* buffer [ 4 * ((where->y)*width + (where->x)) + vert ]; 
+  
   return tab_widget[id];
 }
 
