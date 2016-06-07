@@ -35,8 +35,13 @@ int ei_main(int argc, char** argv)
 	ei_anchor_t anc = ei_anc_north;
 	ei_widget_t* w;
 	ei_surface_t surface = ei_app_root_surface();
+<<<<<<< HEAD
+	surface_image= hw_image_load("klimt.jpg",surface);
+	ei_rect_t rect_image = hw_surface_get_rect(&surface_image);
+=======
 	surface_image = hw_image_load("misc/klimt.jpg",surface);
 	ei_rect_t rect_image = hw_surface_get_rect(surface_image);
+>>>>>>> 66a2507cd2c9cb8441c218b7c6141308a757ec24
 	ei_rect_t* rect1 = &rect_image; 
 	frame = ei_widget_create("frame", ei_app_root_widget());
 	frame->img = surface_image;
@@ -50,12 +55,17 @@ int ei_main(int argc, char** argv)
 
 	ei_place(frame, NULL, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL ); 
 
+<<<<<<< HEAD
+	hw_surface_lock(surface_image);  
+	drawImgWidget(surface_image,frame);
+=======
 	hw_surface_lock(surface_image);
 	drawImgWidget(surface_image,frame);	
+>>>>>>> 66a2507cd2c9cb8441c218b7c6141308a757ec24
 	hw_surface_unlock(surface_image);
 	hw_surface_update_rects(surface_image, NULL);
 	getchar(); 
-	hw_quit();
+// 	hw_quit();
 	
 	/* Run the application's main loop. */
 	ei_app_run();

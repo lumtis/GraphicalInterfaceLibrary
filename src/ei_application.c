@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "ei_application.h"
 #include "debug.h"
 #include "ei_widgetclass.h"
@@ -21,10 +22,11 @@
 #include "ei_utils.h"
 
 
+
 ei_widget_t * racine;
 ei_surface_t window;
 ei_surface_t windowpick;
-ei_widget_t* tab_widget[256];
+ei_widget_t* tab_widget[256*256*256] = {NULL};
 traitant* tab_event[ei_ev_last];
 ei_linked_rect_t*  liste_rect = NULL;
 ei_widget_t * focus ;
@@ -117,7 +119,7 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     frameSetdefaultsfunc(racine);
     focus= ei_app_root_widget();
     coloracine=malloc(sizeof(ei_color_t));
-    coloracine->red = 255;
+    coloracine->red = 0;
     coloracine->green = 0;
     coloracine->blue = 0;
     coloracine->alpha = 255;
@@ -125,7 +127,7 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     // Identifiant
     racine->pick_color = coloracine;
     racine->wclass = ei_widgetclass_from_name("frame");
-    racine->pick_id = 255;
+    racine->pick_id = 0;
     
     // Taille
     racine->requested_size = *main_window_size;
@@ -136,9 +138,9 @@ void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
     *(racine->content_rect) = racine->screen_location;
     
     // Initialisation du tableau de widget 
-    tab_widget[255]=racine;
-    for ( int i =0 ; i <255 ; i++)
-      tab_widget[i]=NULL;
+     tab_widget[0]=racine;
+//     for ( int i =1 ; i <256 ; i++)
+//       tab_widget[i]=NULL;
 
     racine->geom_params = calloc(1, sizeof(ei_geometry_param_t));
     

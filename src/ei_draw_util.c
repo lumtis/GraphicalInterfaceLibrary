@@ -157,6 +157,8 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       s4->next = fin;
       fin->point = s1->point;
       fin->next = NULL;
+      
+      freeLinkedpoint(s2);
 
       return(s1);
     }
@@ -171,7 +173,9 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       s2->next = fin;
       fin->point = s3->point;
       fin->next = NULL;
-
+      
+      freeLinkedpoint(s4);
+      
       return(s3);
     }
 
@@ -191,7 +195,9 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       s4->next = fin;
       fin->point = s1->point;
       fin->next = NULL;
-
+      
+      freeLinkedpoint(s2);
+      
       return(s1);
     }
 }
