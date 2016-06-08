@@ -242,7 +242,7 @@ void			ei_frame_configure		(ei_widget_t*		widget,
     {
         if(wf->text != NULL)
             free(wf->text);
-	wf->text = malloc(strlen(*text)+1);
+	wf->text = malloc(strlen(*text)+1); // c'est à cette ligne le blem au niveau du restart 
         strcpy(wf->text, *text);
     }
     if(text_font != NULL)
