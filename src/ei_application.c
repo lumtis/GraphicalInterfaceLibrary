@@ -40,14 +40,15 @@ ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event,
 
 // Definit quand il faut  quitter l'application
 ei_bool_t quit = EI_FALSE;
-// definit quand il faut stoper l'appel au callback
-ei_bool_t stopcallback = EI_FALSE;
 // Curseur position
 ei_point_t currentP;
 ei_point_t lastP;
 
 void traitement(ei_event_t event ,  ei_widget_t* widget)
 {
+  // definit quand il faut stoper l'appel au callback
+  ei_bool_t stopcallback = EI_FALSE;
+  
   traitant* tmp = tab_event[event.type];
   while ( tmp != NULL && stopcallback== EI_FALSE)
   {
@@ -276,8 +277,12 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 ei_bool_t quitEchap(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
     if(event->param.key.key_sym == SDLK_RETURN)
+    {
 	ei_app_quit_request();
-    return EI_TRUE;
+	
+	return EI_TRUE;
+    }
+    return EI_FALSE;
 }
 
 
@@ -304,7 +309,7 @@ ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event,
     lastP = ei_point(currentP.x, currentP.y);
     currentP = event->param.mouse.where;
     
-    return EI_TRUE;
+    return EI_FALSE;
 }
 
 ei_point_t getCurrent()

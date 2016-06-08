@@ -106,7 +106,7 @@ ei_bool_t pushToplevel(struct ei_widget_t* widget, struct ei_event_t* event, voi
 	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, widget);
     }
     
-    return EI_TRUE;
+    return EI_FALSE;
 }
 
 

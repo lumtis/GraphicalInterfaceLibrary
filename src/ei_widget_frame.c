@@ -86,4 +86,6 @@ ei_bool_t refreshFrame(struct ei_widget_t* widget, struct ei_event_t* event, voi
 {
     // on demande de rafraichir la frame
     ei_app_invalidate_rect(&(widget->parent->screen_location));
+    
+    return EI_FALSE;
 }

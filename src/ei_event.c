@@ -26,7 +26,7 @@ void		ei_bind			(ei_eventtype_t		eventtype,
   tmp->tag = tag;
   tmp->callback = callback;
   tmp->user_param= user_param;
-  tmp->next = tab[eventtype]
+  tmp->next = tab_event[eventtype];
   tab_event[eventtype]=tmp;
   
 //   if (tab_event[eventtype]== NULL)

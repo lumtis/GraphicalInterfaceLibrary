@@ -118,7 +118,7 @@ ei_bool_t pushButton(struct ei_widget_t* widget, struct ei_event_t* event, void*
     // on devra redessiner la partie
     ei_app_invalidate_rect(&(widget->screen_location));
     
-    return EI_TRUE;
+    return EI_FALSE;
 }
 
 
@@ -143,7 +143,7 @@ ei_bool_t releaseButton(struct ei_widget_t* widget, struct ei_event_t* event, vo
 	ei_app_invalidate_rect(&(w->screen_location));
 	
 	if(wb->callback != NULL)
-	    wb->callback(w, &ev, wb->user_param);
+	    return wb->callback(w, &ev, wb->user_param);
 	
 	//return EI_TRUE;
     }
