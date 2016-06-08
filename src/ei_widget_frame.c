@@ -78,3 +78,12 @@ void frameGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
     widget->content_rect->size.width = rect.size.width - 2 * wf->border_width;
     widget->content_rect->size.height = rect.size.height - 2 * wf->border_width;
 }
+
+
+// Callback
+
+ei_bool_t refreshFrame(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
+{
+    // on demande de rafraichir la frame
+    ei_app_invalidate_rect(&(widget->parent->screen_location));
+}

@@ -133,7 +133,11 @@ void	ei_place	(ei_widget_t*		widget,
     if (width != NULL)
         manager->width = *width;
     if (height != NULL)
+    {
+	//if(strcmp(widget->wclass->name, "toplevel") == 0)
+	    //*height += 10;
         manager->height = *height;
+    }
     if (rel_x != NULL)
         manager->rel_x = *rel_x;
     if (rel_y != NULL)
@@ -142,7 +146,7 @@ void	ei_place	(ei_widget_t*		widget,
         manager->rel_width = *rel_width;
     if (rel_height != NULL)
         manager->rel_height = *rel_height;
-
+    
     // Met à jour les modifs
     widget->geom_params->manager->runfunc(widget);
 }

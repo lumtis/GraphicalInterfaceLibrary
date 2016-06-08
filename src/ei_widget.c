@@ -119,10 +119,12 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
     tab_widget[vgpick_id]=new_widget;
     vgpick_id++; 
     // création des mind des button et top level 
+    if ( strcmp( class_name, "frame" ) == 0 )
+      ei_bind(ei_ev_mouse_buttondown, new_widget, NULL, refreshFrame, NULL);
     if ( strcmp ( class_name ,"button" ) == 0 )
-      ei_bind(ei_ev_mouse_buttondown,new_widget,NULL,pushButton, NULL);
+      ei_bind(ei_ev_mouse_buttondown, new_widget, NULL, pushButton, NULL);
     if ( strcmp( class_name, "toplevel" ) == 0 )
-      ei_bind(ei_ev_mouse_buttondown,new_widget,NULL,pushToplevel, NULL);
+      ei_bind(ei_ev_mouse_buttondown, new_widget, NULL, pushToplevel, NULL);
     return new_widget;
 }
 
@@ -136,6 +138,8 @@ void ei_widget_destroy(ei_widget_t* widget)
       
     {
 	// avant de détruire les widget , on enlève les bind correspondants
+	if ( strcmp( widget->wclass->name, "frame" ) == 0 )
+	  ei_unbind(ei_ev_mouse_buttondown, widget, NULL, refreshFrame, NULL);
 	if ( strcmp ( widget->wclass->name , "button" ))
 	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,pushButton, NULL);
 	if ( strcmp ( widget->wclass->name , "toplevel" ))

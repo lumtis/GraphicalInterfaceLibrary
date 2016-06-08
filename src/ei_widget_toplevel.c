@@ -121,6 +121,9 @@ ei_bool_t releaseCloseToplevel(struct ei_widget_t* widget, struct ei_event_t* ev
     update.size.width++;
     update.size.height++;
     
+    // On retire l'evenement
+    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, w);
+    
     // Si le curseur est actuellement dans le button on change coupe la fenetre
     if(distPoint(cur, bPos) < 8 && wtl->closable == EI_TRUE)
     {
@@ -128,12 +131,11 @@ ei_bool_t releaseCloseToplevel(struct ei_widget_t* widget, struct ei_event_t* ev
 	ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, w);
 	ei_app_invalidate_rect(&update);
 	ei_widget_destroy(w);
+	
+ 	return EI_TRUE;
     }
     
-    // On retire juste l'evenement
-    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, w);
-    
-    return EI_TRUE;
+    return EI_FALSE;
 }
 
 
@@ -161,7 +163,7 @@ ei_bool_t moveToplevel(struct ei_widget_t* widget, struct ei_event_t* event, voi
     ei_place(w, NULL, &newX, &newY, NULL, NULL, NULL, NULL, NULL, NULL);
     ei_app_invalidate_rect(&update);
     
-    return EI_TRUE;
+    return EI_FALSE;
 }
 
 ei_bool_t releaseMoveToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
@@ -172,7 +174,7 @@ ei_bool_t releaseMoveToplevel(struct ei_widget_t* widget, struct ei_event_t* eve
     ei_unbind(ei_ev_mouse_move, NULL, "all", moveToplevel, w);
     ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseMoveToplevel, w);
     
-    return EI_TRUE;
+    return EI_FALSE;
 }
 
 
@@ -219,7 +221,7 @@ ei_bool_t moveResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* even
     
     ei_app_invalidate_rect(&update);
     
-    return EI_TRUE;
+    return EI_FALSE;
 }
 
 ei_bool_t releaseResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
@@ -230,6 +232,6 @@ ei_bool_t releaseResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* e
     ei_unbind(ei_ev_mouse_move, NULL, "all", moveResizeToplevel, w);
     ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, w);
     
-    return EI_TRUE;
+    return EI_FALSE;
 }
 
