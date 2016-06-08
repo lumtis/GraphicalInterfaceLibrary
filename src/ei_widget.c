@@ -144,6 +144,9 @@ void ei_widget_destroy(ei_widget_t* widget)
 	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,pushButton, NULL);
 	if ( strcmp ( widget->wclass->name , "toplevel" ))
 	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,pushToplevel, NULL);
+	// necesaire pour minesweeper
+	if ( strcmp ( widget->wclass->name , "frame" ))
+	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,refreshFrame, NULL);
         if (widget->parent== NULL)
         {   
 	    //libère tout l'arbre 
