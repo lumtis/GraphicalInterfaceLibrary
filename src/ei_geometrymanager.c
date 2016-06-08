@@ -134,8 +134,8 @@ void	ei_place	(ei_widget_t*		widget,
         manager->width = *width;
     if (height != NULL)
     {
-	if(strcmp(widget->wclass->name, "toplevel") == 0)
-	    *height += 10;
+	//if(strcmp(widget->wclass->name, "toplevel") == 0)
+	    //*height += 10;
         manager->height = *height;
     }
     if (rel_x != NULL)

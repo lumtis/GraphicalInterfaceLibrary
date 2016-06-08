@@ -130,6 +130,10 @@ ei_bool_t releaseButton(struct ei_widget_t* widget, struct ei_event_t* event, vo
     ev.type = ei_ev_app;
     ev.param.application.user_param = wb->user_param;
     
+    // On retire mes evenements precedents
+    ei_unbind(ei_ev_mouse_move , NULL, "all", isOutButton, w);
+    ei_unbind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, w);
+    
     // Si le curseur est actuellement dans le button on change son relief
     if(isIn(getCurrent(), w->screen_location) == EI_TRUE)
     {
@@ -140,13 +144,11 @@ ei_bool_t releaseButton(struct ei_widget_t* widget, struct ei_event_t* event, vo
 	
 	if(wb->callback != NULL)
 	    wb->callback(w, &ev, wb->user_param);
+	
+	//return EI_TRUE;
     }
     
-    // On retire mes evenements precedents
-    ei_unbind(ei_ev_mouse_move , NULL, "all", isOutButton, w);
-    ei_unbind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, w);
-    
-    return EI_TRUE;
+    return EI_FALSE;
 }
 
 
@@ -171,5 +173,5 @@ ei_bool_t isOutButton(struct ei_widget_t* widget, struct ei_event_t* event, void
 	ei_app_invalidate_rect(&(w->screen_location));
     }
     
-    return EI_TRUE;
+    return EI_FALSE;
 }
