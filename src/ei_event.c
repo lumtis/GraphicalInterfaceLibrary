@@ -20,21 +20,23 @@ void		ei_bind			(ei_eventtype_t		eventtype,
 					 void*			user_param)
 {
   traitant * tmp = calloc(1,sizeof(struct traitant));
-  traitant *tmp1 ;
+  traitant * tmp1 = tab_event[eventtype];
+//   traitant *tmp1 ;
   tmp->widget= widget;
   tmp->tag = tag;
   tmp->callback = callback;
   tmp->user_param= user_param;
+  tmp->next = tab[eventtype]
+  tab_event[eventtype]=tmp;
   
-  
-  if (tab_event[eventtype]== NULL)
-    tab_event[eventtype]= tmp;
-  else
-  {
-    
-    for (tmp1=tab_event[eventtype]; tmp1->next != NULL ; tmp1=tmp1->next);
-    tmp1->next=tmp;
-  }
+//   if (tab_event[eventtype]== NULL)
+//     tab_event[eventtype]= tmp;
+//   else
+//   {
+//     
+//     for (tmp1=tab_event[eventtype]; tmp1->next != NULL ; tmp1=tmp1->next);
+//     tmp1->next=tmp;
+//   }
   
  
 }

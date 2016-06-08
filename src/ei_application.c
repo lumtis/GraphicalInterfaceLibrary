@@ -31,37 +31,43 @@ traitant* tab_event[ei_ev_last];
 ei_linked_rect_t*  liste_rect = NULL;
 ei_widget_t * focus ;
 
+
+
+
 ei_bool_t quitEchap(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param);
 ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param);
+
+
+// Definit quand il faut  quitter l'application
+ei_bool_t quit = EI_FALSE;
+// definit quand il faut stoper l'appel au callback
+ei_bool_t stopcallback = EI_FALSE;
+// Curseur position
+ei_point_t currentP;
+ei_point_t lastP;
 
 void traitement(ei_event_t event ,  ei_widget_t* widget)
 {
   traitant* tmp = tab_event[event.type];
-  while ( tmp != NULL )
+  while ( tmp != NULL && stopcallback== EI_FALSE)
   {
     if(tmp->widget == NULL)
     { 
       if(strcmp(tmp->tag ,"all") == 0)
-	tmp->callback( widget , &(event) , tmp->user_param);
+	stopcallback=tmp->callback( widget , &(event) , tmp->user_param);
       if(strcmp( tmp->tag , widget->wclass->name ) == 0)
-	tmp->callback(widget, &(event),tmp->user_param);
+	stopcallback=tmp->callback(widget, &(event),tmp->user_param);
     }
     else 
     {
       if(tmp->widget == widget)
-	tmp->callback(widget , &(event),tmp->user_param);
+	stopcallback=tmp->callback(widget , &(event),tmp->user_param);
     }
     tmp=tmp->next;
   }
 }
 
 
-// Definit quand il faut  quitter l'application
-ei_bool_t quit = EI_FALSE;
-
-// Curseur position
-ei_point_t currentP;
-ei_point_t lastP;
 
 
 /*Libere une liste de rect*/
