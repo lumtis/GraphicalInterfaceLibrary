@@ -20,7 +20,10 @@
 #include "ei_types.h"
 #include "ei_event.h"
 #include "ei_utils.h"
+#include "ei_draw_util.h"
 
+// Est ce qu'on rafraichit tout, ou est ce qu'on fait tout les rectangles
+//#define RAFRAICHISSEMENT_TOTAL
 
 
 ei_widget_t * racine;
@@ -43,6 +46,8 @@ ei_bool_t quit = EI_FALSE;
 // Curseur position
 ei_point_t currentP;
 ei_point_t lastP;
+
+
 
 void traitement(ei_event_t event ,  ei_widget_t* widget)
 {
@@ -93,24 +98,6 @@ ei_linked_rect_t* freeLinkedRect(ei_linked_rect_t* l)
 }
 
 
-// Obtient le clipper reel pour un widget (intersection avec le content_rect du parent)
-ei_rect_t getRealClipper(ei_widget_t* widget, ei_rect_t* clipper)
-{
-    ei_rect_t ret;
-    
-    // Si c'est la racine est nulle on retourne le clipper d'origine
-    if(widget->parent == NULL)
-	return *clipper;
-      
-    ret.top_left.x = max(widget->parent->content_rect->top_left.x, clipper->top_left.x);
-    ret.top_left.y = max(widget->parent->content_rect->top_left.y, clipper->top_left.y);
-    ret.size.width = min(widget->parent->content_rect->size.width, clipper->size.width);
-    ret.size.height = min(widget->parent->content_rect->size.height,clipper->size.height);
-    
-    return ret;
-}
-
-
 void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windowpick, ei_rect_t* clipper)
 {
     ei_rect_t tmp;
@@ -118,20 +105,29 @@ void ei_app_run_rec(ei_widget_t* widget, ei_surface_t window, ei_surface_t windo
     if(widget == NULL)
         return;
     
-    if (clipper == NULL)
-      widget->wclass->drawfunc(widget ,window, windowpick, widget->parent->content_rect);
-    else 
+    if(widget->parent == NULL)
     {
-      tmp = getRealClipper(widget, clipper);
-      widget->wclass->drawfunc(widget ,window, windowpick, &tmp);
-    }
+	widget->wclass->drawfunc(widget ,window, windowpick, clipper);
     
-    ei_app_run_rec(widget->children_head, window, windowpick, clipper);
-    ei_app_run_rec(widget->next_sibling, window, windowpick, clipper);
+	ei_app_run_rec(widget->children_head, window, windowpick, clipper);
+	ei_app_run_rec(widget->next_sibling, window, windowpick, clipper);
+    }
+    else
+    {
+	tmp = realIntersection(widget->parent->content_rect, clipper);
+	
+	if(tmp.size.width > 0)
+	{
+	    widget->wclass->drawfunc(widget ,window, windowpick, &tmp);
+	    ei_app_run_rec(widget->children_head, window, windowpick, &tmp);
+	}
+	
+	ei_app_run_rec(widget->next_sibling, window, windowpick, clipper);
+    }
 }
 
 
-// TODO : Implémenter fullscreen
+
 void ei_app_create(ei_size_t* main_window_size, ei_bool_t fullscreen)
 { 
     ei_color_t * coloracine;
@@ -208,8 +204,8 @@ void ei_app_run()
     
     // Premier dessin de la fenere entiere
     hw_surface_lock(window);
-    frameDrawfunc(racine, window, windowpick, racine->content_rect);
-    ei_app_run_rec(racine->children_head, window, windowpick,NULL);
+    //frameDrawfunc(racine, window, windowpick, racine->content_rect);
+    ei_app_run_rec(racine, window, windowpick, racine->content_rect);
     hw_surface_unlock(window);
     hw_surface_update_rects(window, NULL);
     
@@ -219,10 +215,10 @@ void ei_app_run()
     switch ( event.type )
     {
       case ei_ev_none:
-      case ei_ev_app: 
       case ei_ev_last : break;
+      case ei_ev_app:
       case ei_ev_keydown :
-      case ei_ev_keyup :traitement( event, focus);break;
+      case ei_ev_keyup :traitement(event, focus);break;
       case ei_ev_mouse_buttondown : focus = ei_widget_pick(&(event.param.mouse.where)); traitement(event, focus) ;break;
       case ei_ev_mouse_buttonup : 
       case ei_ev_mouse_move : traitement(event, ei_widget_pick(&(event.param.mouse.where)));break;
@@ -231,11 +227,16 @@ void ei_app_run()
     
     courant = liste_rect;
     hw_surface_lock(window);
+    #ifdef RAFRAICHISSEMENT_TOTAL
+    if( courant != NULL)
+	ei_app_run_rec(racine, window, windowpick, racine->content_rect);
+    #else
     while ( courant != NULL)
     {
       ei_app_run_rec(racine, window, windowpick,&(courant->rect));
       courant=courant->next;
-    }  
+    }
+    #endif
     liste_rect = freeLinkedRect(liste_rect);
     hw_surface_unlock(window);
     hw_surface_update_rects(window, NULL);
@@ -263,6 +264,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
     new_rect->rect = *rect;
     ei_linked_rect_t * tmp;
     
+    // On rajoute le rectangles à la fin de la liste
     if (liste_rect == NULL)
       liste_rect = new_rect;
     else
@@ -306,6 +308,7 @@ ei_surface_t ei_app_root_surface()
 
 ei_bool_t memorizePosition(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
+    // On met à jour la position courante et precedante
     lastP = ei_point(currentP.x, currentP.y);
     currentP = event->param.mouse.where;
     

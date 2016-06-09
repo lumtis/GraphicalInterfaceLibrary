@@ -8,10 +8,10 @@
 #include "ei_widget_toplevel.h"
 #include "ei_draw_util.h"
 #include "ei_types.h"
-#include"ei_widget.h"
+#include "ei_widget.h"
 #include "ei_widgetclass.h"
 #include "hw_interface.h"
-
+#include "ei_utils.h"
 
 
 
@@ -178,9 +178,7 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
 
   //ici on ne cree aucune partie
   if(partieHaute == EI_FALSE && partieBasse == EI_FALSE)
-    {
       return  NULL;
-    }
  
 
   //ici on cree le frame tout entier
@@ -192,7 +190,6 @@ ei_linked_point_t* rectangular_frame(ei_rect_t rect, ei_bool_t partieHaute, ei_b
       s4->next = fin;
       fin->point = s1->point;
       fin->next = NULL;
-      
       return(s1);
     }
 }
@@ -228,76 +225,51 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
 
     //ci dessous on calcule les coordonnee de where, en fonction de l'ancrage
     if(wf->text_anchor == ei_anc_none)
-    
       {
     where.x = widget->content_rect->top_left.x;
     where.y = widget->content_rect->top_left.y;
       }
-    
     if(wf->text_anchor == ei_anc_center)
-    
       {	
     where.x = widget->content_rect->top_left.x + widget->content_rect->size.width/2 - text_width/2;
     where.y = widget->content_rect->top_left.y + widget->content_rect->size.height/2 - text_height/2;
       }
-   
-
  if(wf->text_anchor == ei_anc_north)
-    
       {	
 	where.x = widget->content_rect->top_left.x + widget->content_rect->size.width/2 - text_width/2;
 	where.y = widget->content_rect->top_left.y;
       }
-    
     if(wf->text_anchor == ei_anc_northeast)
-    
-      {
-	
+      {	
     where.x = widget->content_rect->top_left.x + widget->content_rect->size.width - text_width;
     where.y = widget->content_rect->top_left.y;
       }
-
- if(wf->text_anchor == ei_anc_east)
-    
-      {
-	
+ if(wf->text_anchor == ei_anc_east)  
+      {	
     where.x = widget->content_rect->top_left.x + widget->content_rect->size.width - text_width;
     where.y = widget->content_rect->top_left.y + widget->content_rect->size.height/2 - text_height/2;
-      }
-    
+      }  
     if(wf->text_anchor == ei_anc_southeast)
-    
       {	
     where.x = widget->content_rect->top_left.x + widget->content_rect->size.width - text_width;
     where.y = widget->content_rect->top_left.y + widget->content_rect->size.height - text_height;
       }
-
  if(wf->text_anchor == ei_anc_south)
-    
       {
     where.x = widget->content_rect->top_left.x + widget->content_rect->size.width/2 - text_width/2;
     where.y = widget->content_rect->top_left.y + widget->content_rect->size.height - text_height;
       }
-    
     if(wf->text_anchor == ei_anc_southwest)
-    
       {	
     where.x = widget->content_rect->top_left.x;
     where.y = widget->content_rect->top_left.y + widget->content_rect->size.height - text_height;
       }
-
-
   if(wf->text_anchor == ei_anc_west)
-    
       {	
     where.x = widget->content_rect->top_left.x;
     where.y = widget->content_rect->top_left.y + widget->content_rect->size.height/2 - text_height/2;
       }
-
-
-
-  if(wf->text_anchor == ei_anc_northwest)
-    
+  if(wf->text_anchor == ei_anc_northwest)   
       {	
     where.x = widget->content_rect->top_left.x;
     where.y = widget->content_rect->top_left.y;
@@ -305,7 +277,23 @@ void drawTextWidget(ei_surface_t surface, struct ei_widget_t* widget, struct ei_
   
   //ici on dessine le texte selon l'ancrage
   ei_draw_text(surface, &where, wf->text, wf->text_font, &wf->text_color, clipper);
+}
 
+
+
+ei_rect_t realIntersection(ei_rect_t* r1, ei_rect_t* r2)
+{
+    ei_rect_t ret;
+    
+    ret.top_left.x = max(r1->top_left.x, r2->top_left.x);
+    ret.top_left.y = max(r1->top_left.y, r2->top_left.y);
+    ret.size.width = min(r1->top_left.x + r1->size.width, r2->top_left.x + r2->size.width) - ret.top_left.x;
+    ret.size.height = min(r1->top_left.y + r1->size.height, r2->top_left.y + r2->size.height) - ret.top_left.y;
+    
+    if(ret.size.width <= 0 || ret.size.height <= 0)
+	return ei_rect(ei_point(0,0), ei_size(0,0));
+    
+    return ret;
 }
 
 
@@ -323,85 +311,68 @@ ei_rect_t intersection(ei_rect_t r1, ei_rect_t r2)
 
 
 /*affiche une image dans un widget en tenant compte de l'ancrage; cette fonction fonctionne de la meme facon que drawTextWidget*/
-void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget)
+void drawImgWidget(ei_surface_t surface, struct ei_widget_t* widget, ei_rect_t* clipper)
 {
      
   ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
   int copie;
 
   //coordonnees du topleft de l'image
+  ei_rect_t clipper_image = realIntersection(widget->content_rect, clipper);
   ei_rect_t img_rect;
   ei_rect_t dst_rect;
-
   
   if(wf->img_rect == NULL)
   {
-      img_rect = intersection(hw_surface_get_rect(wf->img), *(widget->content_rect));
-      dst_rect = intersection(*(widget->content_rect), hw_surface_get_rect(wf->img));
+      img_rect = intersection(hw_surface_get_rect(wf->img), clipper_image);
+      dst_rect = intersection(clipper_image, hw_surface_get_rect(wf->img));
   }
   else
   {
-      img_rect = intersection(*(wf->img_rect), *(widget->content_rect));
-      dst_rect = intersection(*(widget->content_rect), *(wf->img_rect));
+      img_rect = intersection(*(wf->img_rect), clipper_image);
+      dst_rect = intersection(clipper_image, *(wf->img_rect));
   }
   
   
-  if(wf->img_anchor == ei_anc_center)
-    
+  if(wf->img_anchor == ei_anc_center)    
     {	
-      dst_rect.top_left.x += widget->content_rect->size.width/2 - dst_rect.size.width/2;
-      dst_rect.top_left.y += widget->content_rect->size.height/2 - dst_rect.size.height/2;
+      dst_rect.top_left.x += clipper_image.size.width/2 - dst_rect.size.width/2;
+      dst_rect.top_left.y += clipper_image.size.height/2 - dst_rect.size.height/2;
     }
-   
-
-  if(wf->img_anchor == ei_anc_north)
-    
+  if(wf->img_anchor == ei_anc_north)  
     {	
-      dst_rect.top_left.x += widget->content_rect->size.width/2 - dst_rect.size.width/2;
+      dst_rect.top_left.x += clipper_image.size.width/2 - dst_rect.size.width/2;
+      //dst_rect.top_left.y += ;
+    } 
+  if(wf->img_anchor == ei_anc_northeast) 
+    {	
+      dst_rect.top_left.x += clipper_image.size.width - dst_rect.size.width;
       //dst_rect.top_left.y += ;
     }
-    
-  if(wf->img_anchor == ei_anc_northeast)
-    
-    {	
-      dst_rect.top_left.x += widget->content_rect->size.width - dst_rect.size.width;
-      //dst_rect.top_left.y += ;
-    }
-    
   if(wf->img_anchor == ei_anc_east)
-    
     {	
-      dst_rect.top_left.x += widget->content_rect->size.width - dst_rect.size.width;
-      dst_rect.top_left.y += widget->content_rect->size.height/2 - dst_rect.size.height/2;
+      dst_rect.top_left.x += clipper_image.size.width - dst_rect.size.width;
+      dst_rect.top_left.y += clipper_image.size.height/2 - dst_rect.size.height/2;
     }
-    
-  if(wf->img_anchor == ei_anc_southeast)
-    
+  if(wf->img_anchor == ei_anc_southeast) 
     {	
-      dst_rect.top_left.x += widget->content_rect->size.width - dst_rect.size.width;
-      dst_rect.top_left.y += widget->content_rect->size.height - dst_rect.size.height;
+      dst_rect.top_left.x += clipper_image.size.width - dst_rect.size.width;
+      dst_rect.top_left.y += clipper_image.size.height - dst_rect.size.height;
     }
-
-  if(wf->img_anchor == ei_anc_south)
-    
+  if(wf->img_anchor == ei_anc_south) 
     {	
-      dst_rect.top_left.x += widget->content_rect->size.width/2 - dst_rect.size.width/2;
-      dst_rect.top_left.y += widget->content_rect->size.height - dst_rect.size.height;
-    }
-    
-  if(wf->img_anchor == ei_anc_southwest)
-    
+      dst_rect.top_left.x += clipper_image.size.width/2 - dst_rect.size.width/2;
+      dst_rect.top_left.y += clipper_image.size.height - dst_rect.size.height;
+    }  
+  if(wf->img_anchor == ei_anc_southwest)   
     {	
       //dst_rect.top_left.x += ;
-      dst_rect.top_left.y += widget->content_rect->size.height - dst_rect.size.height;
+      dst_rect.top_left.y += clipper_image.size.height - dst_rect.size.height;
     }
-
-
-  if(wf->img_anchor == ei_anc_west)
-    
+  if(wf->img_anchor == ei_anc_west)  
     {	
       //dst_rect.top_left.x += ;
-      dst_rect.top_left.y += widget->content_rect->size.height/2 - dst_rect.size.height/2;
+      dst_rect.top_left.y += clipper_image.size.height/2 - dst_rect.size.height/2;
     }
   
   //dessin de l'image
@@ -516,7 +487,6 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
   //ci dessous on chaine chaque arc au suivant
   
   if (partieHaute == EI_TRUE && partieBasse == EI_FALSE)
-  
     {
       finArc1->next = debutArc2; 
       finArc2->next = pointInterieur1;
@@ -528,7 +498,6 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
 
       return(debutArc1);
     }
-
   if(partieHaute == EI_FALSE && partieBasse == EI_TRUE)
     {
       finArc3->next = debutArc4;
@@ -541,12 +510,10 @@ ei_linked_point_t* rounded_frame(ei_rect_t rect, int rayon, ei_bool_t partieHaut
       
       return(debutArc3);
     }
-
   if(partieHaute == EI_FALSE && partieBasse == EI_FALSE)
     {
       return  NULL;
     }
- 
   if (partieHaute == EI_TRUE && partieBasse == EI_TRUE)
     { 
       finArc1->next = debutArc2;
@@ -810,7 +777,6 @@ void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* c
   ei_draw_polyline(surface,cadre_avant,black,clipper);
 
   if(tpl->closable)
-
     {
       ei_draw_polygon(surface,bouton_close2,color2,clipper);
       ei_draw_polygon(surface,bouton_close3,color3,clipper); 
@@ -821,7 +787,6 @@ void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* c
      
     }
  if(tpl->resizable)
-
     {
   ei_draw_polygon(surface,bouton_resize,fonce,clipper);
   ei_draw_polyline(surface,bouton_resize,black,clipper);

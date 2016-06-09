@@ -66,15 +66,12 @@ void toplevelGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 {
     ei_widget_toplevel_t* tpl = (ei_widget_toplevel_t*)widget;
     int b = tpl->border_width;
-    int x = rect.top_left.x;
-    int y = rect.top_left.y;
-    int w = rect.size.width;
-    int h = rect.size.height;
-    
-    widget->content_rect->top_left.x = x + 1 + b;
-    widget->content_rect->top_left.y = y + TAILLE_ENTETE + 1 + b;
-    widget->content_rect->size.width = w - 2 - 2*b;
-    widget->content_rect->size.height = h - 2 - 2*b - TAILLE_ENTETE;
+
+    // Pour un frame le content_rect est egal au screen_location moins les bordure
+    widget->content_rect->top_left.x = rect.top_left.x + 1 + b;
+    widget->content_rect->top_left.y = rect.top_left.y + TAILLE_ENTETE + 1 + b;
+    widget->content_rect->size.width = rect.size.width - 2 - 2*b;
+    widget->content_rect->size.height = rect.size.height - 2 - 2*b - TAILLE_ENTETE;
 }
 
 
@@ -90,20 +87,26 @@ ei_bool_t pushToplevel(struct ei_widget_t* widget, struct ei_event_t* event, voi
     ei_point_t bPos = ei_point(widget->screen_location.top_left.x + POS_BOUTON, widget->screen_location.top_left.y + POS_BOUTON); // Position du bouton
     ei_rect_t recadr = ei_rect(ei_point(widget->screen_location.top_left.x + widget->screen_location.size.width - TAILLE_RECADR, widget->screen_location.top_left.y + widget->screen_location.size.height - TAILLE_RECADR), ei_size(TAILLE_RECADR,TAILLE_RECADR));
     
-    // On regarde si nous sommes sur le boutton
-    if(distPoint(cur, bPos) < 8 && wtl->closable == EI_TRUE)
-	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, widget);
-    // On regarde si nous sommes sur l'en-tête    
-    else if(cur.y < widget->screen_location.top_left.y + TAILLE_ENTETE)// On regarde si nous sommes sur l'en-tête
+    // Click droit
+    if(event->param.mouse.button_number == 1)
     {
-	ei_bind(ei_ev_mouse_move, NULL, "all", moveToplevel, widget);
-	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseMoveToplevel, widget);
-    }
-    // On regarde si nous sommes sur le carré de recadrement
-    else if(isIn(cur, recadr) == EI_TRUE && wtl->resizable != ei_axis_none)
-    {
-	ei_bind(ei_ev_mouse_move, NULL, "all", moveResizeToplevel, widget);
-	ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, widget);
+    
+	// On regarde si nous sommes sur le boutton
+	if(distPoint(cur, bPos) < 8 && wtl->closable == EI_TRUE)
+	    ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, widget);
+	// On regarde si nous sommes sur l'en-tête    
+	else if(cur.y < widget->screen_location.top_left.y + TAILLE_ENTETE)// On regarde si nous sommes sur l'en-tête
+	{
+	    ei_bind(ei_ev_mouse_move, NULL, "all", moveToplevel, widget);
+	    ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseMoveToplevel, widget);
+	}
+	// On regarde si nous sommes sur le carré de recadrement
+	else if(isIn(cur, recadr) == EI_TRUE && wtl->resizable != ei_axis_none)
+	{
+	    ei_bind(ei_ev_mouse_move, NULL, "all", moveResizeToplevel, widget);
+	    ei_bind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, widget);
+	}
+    
     }
     
     return EI_FALSE;
@@ -116,23 +119,24 @@ ei_bool_t releaseCloseToplevel(struct ei_widget_t* widget, struct ei_event_t* ev
     ei_point_t cur = getCurrent();
     ei_widget_t* w = (ei_widget_t*)user_param;
     ei_point_t bPos = ei_point(w->screen_location.top_left.x + POS_BOUTON, w->screen_location.top_left.y + POS_BOUTON);
-    ei_rect_t update = w->screen_location;
     
-    update.size.width++;
-    update.size.height++;
-    
-    // On retire l'evenement
-    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, w);
-    
-    // Si le curseur est actuellement dans le button on change coupe la fenetre
-    if(distPoint(cur, bPos) < 8 && wtl->closable == EI_TRUE)
+    // Click droit
+    if(event->param.mouse.button_number == 1)
     {
+    
 	// On retire l'evenement
 	ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseCloseToplevel, w);
-	ei_app_invalidate_rect(&update);
-	ei_widget_destroy(w);
 	
- 	return EI_TRUE;
+	// Si le curseur est actuellement dans le button on change coupe la fenetre
+	if(distPoint(cur, bPos) < 8 && wtl->closable == EI_TRUE)
+	{
+	    // On retire l'evenement
+	    //ei_app_invalidate_rect(&update);
+	    ei_widget_destroy(w);
+	    
+	    return EI_TRUE;
+	}
+    
     }
     
     return EI_FALSE;
@@ -170,9 +174,15 @@ ei_bool_t releaseMoveToplevel(struct ei_widget_t* widget, struct ei_event_t* eve
 {
     ei_widget_t* w = (ei_widget_t*)user_param;
     
-    // On retire les evenements
-    ei_unbind(ei_ev_mouse_move, NULL, "all", moveToplevel, w);
-    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseMoveToplevel, w);
+    // Click droit
+    if(event->param.mouse.button_number == 1)
+    {
+    
+	// On retire les evenements
+	ei_unbind(ei_ev_mouse_move, NULL, "all", moveToplevel, w);
+	ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseMoveToplevel, w);
+    
+    }
     
     return EI_FALSE;
 }
@@ -228,9 +238,15 @@ ei_bool_t releaseResizeToplevel(struct ei_widget_t* widget, struct ei_event_t* e
 {
     ei_widget_t* w = (ei_widget_t*)user_param;
     
-    // On retire les evenements
-    ei_unbind(ei_ev_mouse_move, NULL, "all", moveResizeToplevel, w);
-    ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, w);
+    // Click droit
+    if(event->param.mouse.button_number == 1)
+    {
+    
+	// On retire les evenements
+	ei_unbind(ei_ev_mouse_move, NULL, "all", moveResizeToplevel, w);
+	ei_unbind(ei_ev_mouse_buttonup, NULL, "all", releaseResizeToplevel, w);
+    
+    }
     
     return EI_FALSE;
 }

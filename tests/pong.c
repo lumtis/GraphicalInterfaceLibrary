@@ -18,7 +18,7 @@
 #include "ei_geometrymanager.h"
 
 
-static char*			g_ball_filename			= "misc/ball.png";
+static char*			g_ball_filename			= "misc/bomb.png";
 static ei_point_t		g_toplevel_position		= {30, 10};
 static ei_size_t		g_toplevel_size			= { 800, 600 };
 static ei_color_t		g_toplevel_bg_color		= { 0xff, 0xff, 0xff, 0xff };
@@ -124,7 +124,7 @@ void create_pong_window()
 
 	if (use_toplevel) {
 		root = toplevel;
-		ei_place(toplevel, &top_anchor, &(g_toplevel_position.x), &(g_toplevel_position.y), NULL, NULL, NULL, NULL, NULL, NULL);
+		ei_place(toplevel, &top_anchor, &(g_toplevel_position.x), &(g_toplevel_position.y), &(g_toplevel_size), &(g_toplevel_size), NULL, NULL, NULL, NULL);
 
 	} else
 		g_toplevel_size		= hw_surface_get_size(ei_app_root_surface());
@@ -142,7 +142,7 @@ void create_pong_window()
 	g_ball_size			= hw_surface_get_size(g_ball_image);
 	g_ball_midsize			= ei_point(g_ball_size.width / 2, g_ball_size.height / 2);
 
-	g_ball				= ei_widget_create("frame", root);
+	g_ball				= ei_widget_create("frame", toplevel);
 	ei_frame_configure(g_ball, &g_ball_size, &g_ball_color, &ball_bd, NULL, NULL, NULL, NULL, NULL, &g_ball_image, NULL, NULL);
 
 	g_ball_position			= ei_point(g_toplevel_size.width / 2, g_toplevel_size.height / 2);
@@ -152,7 +152,7 @@ void create_pong_window()
 	// Rackets
 
 	for (i = 0; i < 2; i++) {
-		g_rackets[i]		= ei_widget_create("frame", root);
+		g_rackets[i]		= ei_widget_create("frame", toplevel);
 		ei_frame_configure(g_rackets[i], &g_rackets_size, &g_rackets_color, &racket_bd, &racket_relief, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 		g_rackets_pos[i]	= ei_point(g_toplevel_size.width * i + g_racket_top_margin, 10);

@@ -130,7 +130,7 @@ void drawTextWidget(ei_surface_t surface,struct ei_widget_t* widget,struct ei_wi
  *
  * @param   wf          un frame, dont le champ widget est "widget" 
  */
-void drawImgWidget(ei_surface_t surface,struct ei_widget_t* widget);
+void drawImgWidget(ei_surface_t surface,struct ei_widget_t* widget, ei_rect_t* clipper);
 
 // Frame
 
@@ -168,6 +168,8 @@ void draw_frameButton(struct ei_widget_t* widget, ei_surface_t surface, ei_rect_
 
 void draw_toplevel(struct ei_widget_t* widget,ei_surface_t surface, ei_rect_t* clipper, ei_surface_t pick_surface);
 
+
+ei_rect_t realIntersection(ei_rect_t* r1, ei_rect_t* r2);
 
 
 #endif

@@ -91,6 +91,9 @@ ei_bool_t handle_tile_press(ei_widget_t* widget, ei_event_t* event, void* user_p
 		}
 	}
 
+	// Raffraichissement
+	ei_app_invalidate_rect(&(widget->parent->screen_location));
+
 	return EI_TRUE;
 }
 

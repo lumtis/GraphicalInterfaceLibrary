@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "debug.h"
 #include "ei_widget_frame.h"
+#include "ei_draw_util.h"
 
 void* frameAllocfunc()
 {
@@ -21,13 +22,20 @@ void frameReleasefunc(struct ei_widget_t* widget)
         free(wf->text);
     if(wf->img_rect != NULL)
         free(wf->img_rect);
-    if(wf->img != NULL)
-         hw_surface_free(wf->img);
+    //if(wf->img != NULL)
+    //     hw_surface_free(wf->img);
 }
 
 void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t* clipper)
 {
     ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
+    
+    if(widget->parent != NULL)
+    {
+    int x_rel = widget->content_rect->top_left.x - widget->parent->content_rect->top_left.x;
+    int y_rel = widget->content_rect->top_left.y - widget->parent->content_rect->top_left.y;
+  
+    }
     
     switch (wf->relief)
     {
@@ -46,7 +54,7 @@ void frameDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface_
 
     // Image
     if(wf->img != NULL)
-      drawImgWidget(surface, widget);
+      drawImgWidget(surface, widget, clipper);
 }
 
 
@@ -71,8 +79,7 @@ void frameSetdefaultsfunc(struct ei_widget_t* widget)
 void frameGeomnotifyfunc(struct ei_widget_t* widget, ei_rect_t rect)
 {
     ei_widget_frame_t* wf = (ei_widget_frame_t*)widget;
-  
-    // Pour un frame le content_rect est egal au screen_location moins les bordure
+    
     widget->content_rect->top_left.x = rect.top_left.x + wf->border_width;
     widget->content_rect->top_left.y = rect.top_left.y + wf->border_width;
     widget->content_rect->size.width = rect.size.width - 2 * wf->border_width;

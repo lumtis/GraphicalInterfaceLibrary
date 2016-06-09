@@ -57,7 +57,12 @@ ei_geometrymanager_t* ei_geometrymanager_from_name(ei_geometrymanager_name_t nam
 
 void ei_geometrymanager_unmap(ei_widget_t* widget)
 {
-    ei_app_invalidate_rect(&(widget->screen_location));
+    // Il faut prendre en compte les bords noirs que nous avons ajouté
+    ei_rect_t invalide = widget->screen_location;
+    invalide.size.width++;
+    invalide.size.height++;
+  
+    ei_app_invalidate_rect(&invalide);
     widget->screen_location.top_left.x = 0; //place le widget a la position (0,0)
     widget->screen_location.top_left.y = 0;
     widget->screen_location.size.height = 0; // la taille du widget est reduite a 0
@@ -133,11 +138,7 @@ void	ei_place	(ei_widget_t*		widget,
     if (width != NULL)
         manager->width = *width;
     if (height != NULL)
-    {
-	//if(strcmp(widget->wclass->name, "toplevel") == 0)
-	    //*height += 10;
         manager->height = *height;
-    }
     if (rel_x != NULL)
         manager->rel_x = *rel_x;
     if (rel_y != NULL)

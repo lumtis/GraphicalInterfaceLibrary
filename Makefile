@@ -136,6 +136,14 @@ two048 : ${OBJDIR}/two048.o ${LIBEIBASE} ${LIBEI}
 ${OBJDIR}/two048.o : ${TESTS}/two048.c
 	${CC} ${CCFLAGS} ${INCFLAGS} ${TESTS}/two048.c -o ${OBJDIR}/two048.o
 
+#pong
+
+pong : ${OBJDIR}/pong.o ${LIBEIBASE} ${LIBEI}
+	${LINK} -o pong ${OBJDIR}/pong.o ${LIBEI} ${LIBS}
+
+${OBJDIR}/pong.o : ${TESTS}/pong.c
+	${CC} ${CCFLAGS} ${INCFLAGS} ${TESTS}/pong.c -o ${OBJDIR}/pong.o
+
 # minesweeper
 
 minesweeper : ${OBJDIR}/minesweeper.o ${LIBEIBASE} ${LIBEI}

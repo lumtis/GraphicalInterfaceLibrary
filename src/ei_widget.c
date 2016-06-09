@@ -119,8 +119,8 @@ ei_widget_t* ei_widget_create(ei_widgetclass_name_t class_name,
     tab_widget[vgpick_id]=new_widget;
     vgpick_id++; 
     // création des mind des button et top level 
-    if ( strcmp( class_name, "frame" ) == 0 )
-      ei_bind(ei_ev_mouse_buttondown, new_widget, NULL, refreshFrame, NULL);
+//     if ( strcmp( class_name, "frame" ) == 0 )
+//       ei_bind(ei_ev_mouse_buttondown, new_widget, NULL, refreshFrame, NULL);
     if ( strcmp ( class_name ,"button" ) == 0 )
       ei_bind(ei_ev_mouse_buttondown, new_widget, NULL, pushButton, NULL);
     if ( strcmp( class_name, "toplevel" ) == 0 )
@@ -134,19 +134,21 @@ void ei_widget_destroy(ei_widget_t* widget)
     ei_widget_t* p;
     if (widget == NULL )
         return;
-    else
-      
+    else    
     {
 	// avant de détruire les widget , on enlève les bind correspondants
-	if ( strcmp( widget->wclass->name, "frame" ) == 0 )
-	  ei_unbind(ei_ev_mouse_buttondown, widget, NULL, refreshFrame, NULL);
 	if ( strcmp ( widget->wclass->name , "button" ))
 	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,pushButton, NULL);
 	if ( strcmp ( widget->wclass->name , "toplevel" ))
 	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,pushToplevel, NULL);
-	// necesaire pour minesweeper
-	if ( strcmp ( widget->wclass->name , "frame" ))
-	  ei_unbind(ei_ev_mouse_buttondown,widget,NULL,refreshFrame, NULL);
+	
+	// On unmap le widget pour mettre à jour la liste des rectangles à rafraichir
+	if(widget->geom_params != NULL)
+	{
+	    if(widget->geom_params->manager != NULL)
+		ei_geometrymanager_unmap(widget);
+	}
+	
         if (widget->parent== NULL)
         {   
 	    //libère tout l'arbre 
@@ -242,8 +244,13 @@ void			ei_frame_configure		(ei_widget_t*		widget,
     {
         if(wf->text != NULL)
             free(wf->text);
-	wf->text = malloc(strlen(*text)+1);
-        strcpy(wf->text, *text);
+	if(*text == NULL)
+	    wf->text = NULL;
+	else
+	{
+	    wf->text = malloc(strlen(*text)+1);
+	    strcpy(wf->text, *text);
+	}
     }
     if(text_font != NULL)
         wf->text_font = *text_font;
@@ -252,17 +259,18 @@ void			ei_frame_configure		(ei_widget_t*		widget,
     if(text_anchor != NULL)
         wf->text_anchor = *text_anchor;
     if(img != NULL)
-    {
-        if(wf->img != NULL)
-            hw_surface_free(wf->img);
         wf->img = *img;
-    }
     if(img_rect != NULL)
     {
 	if(wf->img_rect != NULL)
 	    free(wf->img_rect);
-        wf->img_rect = malloc(sizeof(ei_rect_t));
-        *(wf->img_rect) = *(*img_rect);
+	if(*img_rect == NULL)
+	    wf->img_rect = NULL;
+	else
+	{
+	    wf->img_rect = malloc(sizeof(ei_rect_t));
+	    *(wf->img_rect) = *(*img_rect);
+	}
     }
     if(img_anchor != NULL)
         wf->img_anchor = *img_anchor;
@@ -281,6 +289,8 @@ void			ei_frame_configure		(ei_widget_t*		widget,
 	widget->screen_location.size.width = widget->requested_size.width;
     if(widget->requested_size.height > widget->screen_location.size.height)
 	widget->screen_location.size.height = widget->requested_size.height;
+    
+    ei_app_invalidate_rect(&(widget->screen_location));
     
     // On modifie son content_rect en fonction de sa classe
     widget->wclass->geomnotifyfunc(widget, widget->screen_location);
@@ -347,8 +357,13 @@ void			ei_toplevel_configure		(ei_widget_t*		widget,
     {
         if(wtl->title != NULL)
             free(wtl->title);
-	wtl->title = malloc(strlen(*title)+1);
-        strcpy(wtl->title, *title);
+	if(*title == NULL)
+	    wtl->title = NULL;
+	else
+	{
+	    wtl->title = malloc(strlen(*title)+1);
+	    strcpy(wtl->title, *title);
+	}
     }
     if(closable != NULL)
         wtl->closable = *closable;
@@ -356,6 +371,8 @@ void			ei_toplevel_configure		(ei_widget_t*		widget,
         wtl->resizable = *resizable;
     if(min_size != NULL)
         wtl->min_size = *min_size;
+    
+    ei_app_invalidate_rect(&(widget->screen_location));
     
     // On modifie son content_rect en fonction de sa classe
     widget->wclass->geomnotifyfunc(widget, widget->screen_location);

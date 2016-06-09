@@ -22,8 +22,6 @@ void buttonReleasefunc(struct ei_widget_t* widget)
     ei_widget_button_t* wb = (ei_widget_button_t*)widget;
 
     frameReleasefunc(widget);
-    if(wb->user_param != NULL)
-        free(wb->user_param);
 }
 
 
@@ -50,7 +48,7 @@ void buttonDrawfunc(struct ei_widget_t* widget, ei_surface_t surface, ei_surface
 
     // Image
     if(wb->img != NULL)
-        drawImgWidget(surface, widget);
+        drawImgWidget(surface, widget, clipper);
 }
 
 
@@ -107,16 +105,21 @@ ei_bool_t isIn(ei_point_t p, ei_rect_t r)
 ei_bool_t pushButton(struct ei_widget_t* widget, struct ei_event_t* event, void* user_param)
 {
     ei_widget_button_t* wb = (ei_widget_button_t*)widget;
+    ei_relief_t inverse = reliefInvese(wb->relief);
     
-    // On change le relief lorsqu'il est pressé
-    wb->relief = reliefInvese(wb->relief);
-    
-    // On creer des evenements pour detecer quand est ce qu'on change le relief
-    ei_bind(ei_ev_mouse_move , NULL, "all", isOutButton, widget);
-    ei_bind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, widget);
-    
-    // on devra redessiner la partie
-    ei_app_invalidate_rect(&(widget->screen_location));
+    // Click droit
+    if(event->param.mouse.button_number == 1)
+    { 
+	// On change le relief lorsqu'il est pressé
+	wb->relief = reliefInvese(wb->relief);
+	
+	// On creer des evenements pour detecer quand est ce qu'on change le relief
+	ei_bind(ei_ev_mouse_move , NULL, "all", isOutButton, widget);
+	ei_bind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, widget);
+	
+	// on devra redessiner la partie
+	ei_button_configure(widget, NULL, NULL, NULL, NULL, &inverse, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    }
     
     return EI_FALSE;
 }
@@ -129,23 +132,23 @@ ei_bool_t releaseButton(struct ei_widget_t* widget, struct ei_event_t* event, vo
     struct ei_event_t ev;
     ev.type = ei_ev_app;
     ev.param.application.user_param = wb->user_param;
+    ei_relief_t inverse = reliefInvese(wb->relief);
     
-    // On retire mes evenements precedents
-    ei_unbind(ei_ev_mouse_move , NULL, "all", isOutButton, w);
-    ei_unbind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, w);
-    
-    // Si le curseur est actuellement dans le button on change son relief
-    if(isIn(getCurrent(), w->screen_location) == EI_TRUE)
-    {
-	wb->relief = reliefInvese(wb->relief);
+    if(event->param.mouse.button_number == 1)
+    {  
+	// On retire mes evenements precedents
+	ei_unbind(ei_ev_mouse_move , NULL, "all", isOutButton, w);
+	ei_unbind(ei_ev_mouse_buttonup , NULL, "all", releaseButton, w);
 	
-	// on devra redessiner la partie
-	ei_app_invalidate_rect(&(w->screen_location));
-	
-	if(wb->callback != NULL)
-	    return wb->callback(w, &ev, wb->user_param);
-	
-	//return EI_TRUE;
+	// Si le curseur est actuellement dans le button on change son relief
+	if(isIn(getCurrent(), w->screen_location) == EI_TRUE)
+	{
+	    ei_button_configure(w, NULL, NULL, NULL, NULL, &inverse, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	    
+	    // On execute le callback
+	    if(wb->callback != NULL)
+		return wb->callback(w, &ev, wb->user_param);
+	}
     }
     
     return EI_FALSE;
@@ -156,22 +159,13 @@ ei_bool_t isOutButton(struct ei_widget_t* widget, struct ei_event_t* event, void
 {
     ei_widget_button_t* wb = (ei_widget_button_t*)user_param;
     ei_widget_t* w = (ei_widget_t*)user_param;
+    ei_relief_t inverse = reliefInvese(wb->relief);
     
     // Si on sort du bouton on inverse le relief et inversement
     if(isIn(getCurrent(), w->screen_location) == EI_TRUE && isIn(getLast(), w->screen_location) == EI_FALSE)
-    {
-	wb->relief = reliefInvese(wb->relief);
-	
-	// on devra redessiner la partie
-	ei_app_invalidate_rect(&(w->screen_location));
-    }
+	ei_button_configure(w, NULL, NULL, NULL, NULL, &inverse, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     else if(isIn(getCurrent(), w->screen_location) == EI_FALSE && isIn(getLast(), w->screen_location) == EI_TRUE)
-    {
-	wb->relief = reliefInvese(wb->relief);
-	
-	// on devra redessiner la partie
-	ei_app_invalidate_rect(&(w->screen_location));
-    }
+	ei_button_configure(w, NULL, NULL, NULL, NULL, &inverse, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     
     return EI_FALSE;
 }
