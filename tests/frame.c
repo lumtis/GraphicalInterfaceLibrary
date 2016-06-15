@@ -36,8 +36,9 @@ int ei_main(int argc, char** argv)
 	ei_widget_t* w;
 	ei_surface_t surface = ei_app_root_surface();
 
-	surface_image= hw_image_load("misc/klimt.jpg",surface);
+	surface_image= hw_image_load("klimt.jpg",surface);
 	ei_rect_t rect_image = hw_surface_get_rect(&surface_image);
+	ei_rect_t rect_image = hw_surface_get_rect(surface_image);
 	frame = ei_widget_create("frame", ei_app_root_widget());
 /* Create the application and change the color of the background. */
 	
